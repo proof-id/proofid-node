@@ -21,11 +21,11 @@
 use cumulus_primitives_core::ParaId;
 use hex_literal::hex;
 use pid_primitives::{
-	constants::{INFLATION_CONFIG, KILT, MAX_COLLATOR_STAKE},
+	constants::{INFLATION_CONFIG, PID, MAX_COLLATOR_STAKE},
 	AccountId, AuthorityId, Balance, BlockNumber,
 };
 use peregrine_runtime::{
-	BalancesConfig, CouncilConfig, CrowdloanContributorsConfig, GenesisConfig, InflationInfo, KiltLaunchConfig,
+	BalancesConfig, CouncilConfig, CrowdloanContributorsConfig, GenesisConfig, InflationInfo, PidLaunchConfig,
 	MinCollatorStake, ParachainInfoConfig, ParachainStakingConfig, SessionConfig, SudoConfig, SystemConfig,
 	TechnicalCommitteeConfig, VestingConfig, WASM_BINARY,
 };
@@ -119,12 +119,12 @@ pub fn make_new_spec(id: ParaId) -> Result<ChainSpec, String> {
 					(
 						hex!["d206033ba2eadf615c510f2c11f32d931b27442e5cfb64884afa2241dfa66e70"].into(),
 						None,
-						10_000 * KILT,
+						10_000 * PID,
 					),
 					(
 						hex!["b67fe6413ffe5cf91ae38a6475c37deea70a25c6c86b3dd17bb82d09efd9b350"].into(),
 						None,
-						10_000 * KILT,
+						10_000 * PID,
 					),
 				],
 				kilt_inflation_config(),
@@ -205,7 +205,7 @@ fn testnet_genesis(
 		},
 		sudo: SudoConfig { key: root_key },
 		parachain_info: ParachainInfoConfig { parachain_id: id },
-		pid_launch: KiltLaunchConfig {
+		pid_launch: PidLaunchConfig {
 			vesting: airdrop_accounts
 				.iter()
 				.cloned()

@@ -20,7 +20,7 @@
 
 use pid_primitives::{constants::BLOCKS_PER_YEAR, AccountId, AccountPublic, Balance, BlockNumber};
 use mashnet_node_runtime::{
-	BalancesConfig, CrowdloanContributorsConfig, GenesisConfig, KiltLaunchConfig, SessionConfig, SudoConfig,
+	BalancesConfig, CrowdloanContributorsConfig, GenesisConfig, PidLaunchConfig, SessionConfig, SudoConfig,
 	SystemConfig, VestingConfig, WASM_BINARY,
 };
 
@@ -251,7 +251,7 @@ fn testnet_genesis(
 		aura: Default::default(),
 		grandpa: Default::default(),
 		sudo: SudoConfig { key: root_key },
-		pid_launch: KiltLaunchConfig {
+		pid_launch: PidLaunchConfig {
 			balance_locks: airdrop_accounts
 				.iter()
 				.cloned()

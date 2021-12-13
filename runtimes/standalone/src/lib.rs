@@ -45,7 +45,7 @@ use pid_primitives::{
 			MAX_TOTAL_KEY_AGREEMENT_KEYS, MAX_URL_LENGTH,
 		},
 		staking::MAX_CANDIDATES,
-		KILT, MICRO_KILT, MILLI_KILT, MIN_VESTED_TRANSFER_AMOUNT, SLOT_DURATION,
+		PID, MICRO_PID, MILLI_PID, MIN_VESTED_TRANSFER_AMOUNT, SLOT_DURATION,
 	},
 	fees::ToAuthor,
 	AccountId, Balance, BlockNumber, DidIdentifier, Hash, Index, Signature, SlowAdjustingFeeUpdate,
@@ -262,7 +262,7 @@ impl pallet_indices::Config for Runtime {
 }
 
 parameter_types! {
-	pub const ExistentialDeposit: Balance = 10 * MILLI_KILT;
+	pub const ExistentialDeposit: Balance = 10 * MILLI_PID;
 	pub const MaxLocks: u32 = 50;
 	pub const MaxReserves: u32 = 50;
 }

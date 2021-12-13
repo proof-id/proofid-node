@@ -25,7 +25,7 @@ use frame_support::{
 	weights::constants::RocksDbWeight,
 };
 use frame_system::EnsureSigned;
-use pid_primitives::{constants::MICRO_KILT, AccountId, Balance};
+use pid_primitives::{constants::MICRO_PID, AccountId, Balance};
 use pallet_balances::NegativeImbalance;
 use sp_core::{ecdsa, ed25519, sr25519, Pair};
 use sp_keystore::{testing::KeyStore, KeystoreExt};

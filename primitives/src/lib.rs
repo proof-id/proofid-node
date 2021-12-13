@@ -115,7 +115,7 @@ pub type NegativeImbalanceOf<T> =
 pub enum CurrencyId {
 	Dot = 0_isize,
 	Ksm,
-	Kilt,
+	PID,
 }
 
 impl TryFrom<Vec<u8>> for CurrencyId {

@@ -65,7 +65,7 @@ use pid_primitives::{
 			SPEND_PERIOD, TECHNICAL_MOTION_DURATION, VOTING_PERIOD,
 		},
 		treasury::{INITIAL_PERIOD_LENGTH, INITIAL_PERIOD_REWARD_PER_BLOCK, TREASURY_PALLET_ID},
-		KILT, MAXIMUM_BLOCK_WEIGHT, MICRO_KILT, MILLI_KILT, MIN_VESTED_TRANSFER_AMOUNT, SLOT_DURATION,
+		PID, MAXIMUM_BLOCK_WEIGHT, MICRO_PID, MILLI_PID, MIN_VESTED_TRANSFER_AMOUNT, SLOT_DURATION,
 	},
 	fees::{ToAuthor, WeightToFee},
 	AccountId, AuthorityId, Balance, BlockHashCount, BlockLength, BlockNumber, BlockWeights, DidIdentifier, FeeSplit,
@@ -191,7 +191,7 @@ impl pallet_timestamp::Config for Runtime {
 }
 
 parameter_types! {
-	pub const ExistentialDeposit: u128 = 10 * MILLI_KILT;
+	pub const ExistentialDeposit: u128 = 10 * MILLI_PID;
 	pub const TransactionByteFee: u128 = MICRO_KILT;
 	pub const MaxLocks: u32 = 50;
 	pub const MaxReserves: u32 = 50;
@@ -340,7 +340,7 @@ parameter_types! {
 	pub const EnactmentPeriod: BlockNumber = ENACTMENT_PERIOD;
 	pub const CooloffPeriod: BlockNumber = COOLOFF_PERIOD;
 	// One cent: $10,000 / MB
-	pub const PreimageByteDeposit: Balance = 10 * MILLI_KILT;
+	pub const PreimageByteDeposit: Balance = 10 * MILLI_PID;
 	pub const InstantAllowed: bool = true;
 	pub const MaxVotes: u32 = 100;
 	pub const MaxProposals: u32 = 100;
@@ -554,7 +554,7 @@ impl delegation::Config for Runtime {
 }
 
 parameter_types! {
-	pub const Fee: Balance = MILLI_KILT;
+	pub const Fee: Balance = MILLI_PID;
 }
 
 impl ctype::Config for Runtime {

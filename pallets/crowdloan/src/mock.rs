@@ -19,7 +19,7 @@
 use crate::{pallet as pallet_crowdloan, GratitudeConfig, ReserveAccounts};
 use frame_support::parameter_types;
 use frame_system::{EnsureRoot, EventRecord};
-use pid_primitives::{constants::KILT, AccountId, Balance, BlockNumber, Hash, Index};
+use pid_primitives::{constants::PID, AccountId, Balance, BlockNumber, Hash, Index};
 use sp_runtime::{
 	testing::Header,
 	traits::{BlakeTwo256, ConvertInto, IdentityLookup},

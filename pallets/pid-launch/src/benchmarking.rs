@@ -27,14 +27,14 @@ use frame_support::{
 	traits::{Currency, Get, Hooks},
 };
 use frame_system::{Pallet as System, RawOrigin};
-use pid_primitives::{constants::KILT, Balance};
+use pid_primitives::{constants::PID, Balance};
 use pallet_balances::Locks;
 use pallet_vesting::{Vesting, VestingInfo};
 use sp_runtime::traits::StaticLookup;
 use sp_std::convert::TryFrom;
 
 const SEED: u32 = 0;
-const AMOUNT: Balance = KILT;
+const AMOUNT: Balance = PID;
 const PER_BLOCK: u32 = 100;
 const UNLOCK_BLOCK: u32 = 1337;
 

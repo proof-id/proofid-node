@@ -94,7 +94,7 @@ pub(crate) mod runtime {
 	use delegation::{DelegationHierarchyDetails, DelegationNode, DelegatorIdOf};
 	use frame_support::{parameter_types, weights::constants::RocksDbWeight};
 	use frame_system::EnsureSigned;
-	use pid_primitives::constants::{attestation::ATTESTATION_DEPOSIT, delegation::DELEGATION_DEPOSIT, MILLI_KILT};
+	use pid_primitives::constants::{attestation::ATTESTATION_DEPOSIT, delegation::DELEGATION_DEPOSIT, MILLI_PID};
 	use pid_support::signature::EqualVerify;
 	use sp_core::{ed25519, sr25519, Pair};
 	use sp_keystore::{testing::KeyStore, KeystoreExt};
@@ -162,7 +162,7 @@ pub(crate) mod runtime {
 	}
 
 	parameter_types! {
-		pub const ExistentialDeposit: TestBalance = MILLI_KILT;
+		pub const ExistentialDeposit: TestBalance = MILLI_PID;
 		pub const MaxLocks: u32 = 50;
 		pub const MaxReserves: u32 = 50;
 	}
