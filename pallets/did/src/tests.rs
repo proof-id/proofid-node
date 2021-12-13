@@ -2325,7 +2325,7 @@ fn check_did_not_found_call_error() {
 	let did = get_did_identifier_from_sr25519_key(auth_key.public());
 	let caller = ACCOUNT_00;
 
-	let submitter = kilt_primitives::AccountId::default();
+	let submitter = pid_primitives::AccountId::default();
 
 	let call_operation = generate_test_did_call(did::DidVerificationKeyRelationship::Authentication, did, submitter);
 	let signature = auth_key.sign(call_operation.encode().as_ref());
@@ -2352,7 +2352,7 @@ fn check_too_small_tx_counter_after_wrap_call_error() {
 	// After wrapping tx_counter becomes 0 again.
 	mock_did.last_tx_counter = 0u64;
 
-	let submitter = kilt_primitives::AccountId::default();
+	let submitter = pid_primitives::AccountId::default();
 
 	let mut call_operation = generate_test_did_call(
 		did::DidVerificationKeyRelationship::Authentication,
@@ -2385,7 +2385,7 @@ fn check_too_small_tx_counter_call_error() {
 	let mut mock_did = generate_base_did_details::<Test>(did::DidVerificationKey::from(auth_key.public()));
 	mock_did.last_tx_counter = 1u64;
 
-	let submitter = kilt_primitives::AccountId::default();
+	let submitter = pid_primitives::AccountId::default();
 
 	let mut call_operation = generate_test_did_call(
 		did::DidVerificationKeyRelationship::Authentication,
@@ -2417,7 +2417,7 @@ fn check_equal_tx_counter_call_error() {
 	let caller = ACCOUNT_00;
 	let mock_did = generate_base_did_details::<Test>(did::DidVerificationKey::from(auth_key.public()));
 
-	let submitter = kilt_primitives::AccountId::default();
+	let submitter = pid_primitives::AccountId::default();
 
 	let mut call_operation = generate_test_did_call(
 		did::DidVerificationKeyRelationship::Authentication,
@@ -2449,7 +2449,7 @@ fn check_too_large_tx_counter_call_error() {
 	let caller = ACCOUNT_00;
 	let mock_did = generate_base_did_details::<Test>(did::DidVerificationKey::from(auth_key.public()));
 
-	let submitter = kilt_primitives::AccountId::default();
+	let submitter = pid_primitives::AccountId::default();
 
 	let mut call_operation = generate_test_did_call(
 		did::DidVerificationKeyRelationship::Authentication,
@@ -2482,7 +2482,7 @@ fn check_tx_block_number_too_low_error() {
 
 	let mock_did = generate_base_did_details::<Test>(did::DidVerificationKey::from(auth_key.public()));
 
-	let submitter = kilt_primitives::AccountId::default();
+	let submitter = pid_primitives::AccountId::default();
 
 	let call_operation = generate_test_did_call(
 		did::DidVerificationKeyRelationship::Authentication,
@@ -2524,7 +2524,7 @@ fn check_tx_block_number_too_high_error() {
 
 	let mock_did = generate_base_did_details::<Test>(did::DidVerificationKey::from(auth_key.public()));
 
-	let submitter = kilt_primitives::AccountId::default();
+	let submitter = pid_primitives::AccountId::default();
 
 	let mut call_operation = generate_test_did_call(
 		did::DidVerificationKeyRelationship::Authentication,
@@ -2561,7 +2561,7 @@ fn check_verification_key_not_present_call_error() {
 
 	// The operation requires the delegation key that is currently not stored for
 	// the given DID.
-	let submitter = kilt_primitives::AccountId::default();
+	let submitter = pid_primitives::AccountId::default();
 
 	let call_operation = generate_test_did_call(
 		did::DidVerificationKeyRelationship::CapabilityDelegation,
@@ -2593,7 +2593,7 @@ fn check_invalid_signature_format_call_error() {
 	let alternative_auth_key = get_ed25519_authentication_key(true);
 	let mock_did = generate_base_did_details::<Test>(did::DidVerificationKey::from(auth_key.public()));
 
-	let submitter = kilt_primitives::AccountId::default();
+	let submitter = pid_primitives::AccountId::default();
 
 	let call_operation = generate_test_did_call(
 		did::DidVerificationKeyRelationship::Authentication,
@@ -2657,7 +2657,7 @@ fn check_invalid_signature_call_error() {
 	let alternative_auth_key = get_sr25519_authentication_key(false);
 	let mock_did = generate_base_did_details::<Test>(did::DidVerificationKey::from(auth_key.public()));
 
-	let submitter = kilt_primitives::AccountId::default();
+	let submitter = pid_primitives::AccountId::default();
 
 	let call_operation = generate_test_did_call(
 		did::DidVerificationKeyRelationship::Authentication,
@@ -2691,7 +2691,7 @@ fn check_call_attestation_key_successful() {
 	let mut mock_did = generate_base_did_details::<Test>(did::DidVerificationKey::from(auth_key.public()));
 	assert_ok!(mock_did.update_attestation_key(did::DidVerificationKey::from(attestation_key.public()), 0));
 
-	let submitter = kilt_primitives::AccountId::default();
+	let submitter = pid_primitives::AccountId::default();
 
 	let call_operation = generate_test_did_call(
 		did::DidVerificationKeyRelationship::AssertionMethod,
@@ -2722,7 +2722,7 @@ fn check_call_attestation_key_error() {
 	let mut mock_did = generate_base_did_details::<Test>(did::DidVerificationKey::from(auth_key.public()));
 	assert_ok!(mock_did.update_attestation_key(did::DidVerificationKey::from(attestation_key.public()), 0));
 
-	let submitter = kilt_primitives::AccountId::default();
+	let submitter = pid_primitives::AccountId::default();
 
 	let call_operation = generate_test_did_call(
 		did::DidVerificationKeyRelationship::AssertionMethod,
@@ -2760,7 +2760,7 @@ fn check_call_delegation_key_successful() {
 	let mut mock_did = generate_base_did_details::<Test>(did::DidVerificationKey::from(auth_key.public()));
 	assert_ok!(mock_did.update_delegation_key(did::DidVerificationKey::from(delegation_key.public()), 0));
 
-	let submitter = kilt_primitives::AccountId::default();
+	let submitter = pid_primitives::AccountId::default();
 
 	let call_operation = generate_test_did_call(
 		did::DidVerificationKeyRelationship::CapabilityDelegation,
@@ -2791,7 +2791,7 @@ fn check_call_delegation_key_error() {
 	let mut mock_did = generate_base_did_details::<Test>(did::DidVerificationKey::from(auth_key.public()));
 	assert_ok!(mock_did.update_delegation_key(did::DidVerificationKey::from(delegation_key.public()), 0));
 
-	let submitter = kilt_primitives::AccountId::default();
+	let submitter = pid_primitives::AccountId::default();
 
 	let call_operation = generate_test_did_call(
 		did::DidVerificationKeyRelationship::CapabilityDelegation,
@@ -2827,7 +2827,7 @@ fn check_call_authentication_key_successful() {
 
 	let mock_did = generate_base_did_details::<Test>(did::DidVerificationKey::from(auth_key.public()));
 
-	let submitter = kilt_primitives::AccountId::default();
+	let submitter = pid_primitives::AccountId::default();
 
 	let call_operation = generate_test_did_call(
 		did::DidVerificationKeyRelationship::Authentication,
@@ -2856,7 +2856,7 @@ fn check_call_authentication_key_error() {
 
 	let mock_did = generate_base_did_details::<Test>(did::DidVerificationKey::from(auth_key.public()));
 
-	let submitter = kilt_primitives::AccountId::default();
+	let submitter = pid_primitives::AccountId::default();
 
 	let call_operation = generate_test_did_call(
 		did::DidVerificationKeyRelationship::Authentication,
@@ -2890,7 +2890,7 @@ fn check_null_key_error() {
 	let did = get_did_identifier_from_sr25519_key(auth_key.public());
 	let caller = ACCOUNT_00;
 
-	let submitter = kilt_primitives::AccountId::default();
+	let submitter = pid_primitives::AccountId::default();
 
 	// CapabilityInvocation is not supported at the moment, so it should return no
 	// key and hence the operation fail.
@@ -2922,7 +2922,7 @@ fn check_authentication_successful_operation_verification() {
 
 	let mock_did = generate_base_did_details::<Test>(did::DidVerificationKey::from(auth_key.public()));
 
-	let submitter = kilt_primitives::AccountId::default();
+	let submitter = pid_primitives::AccountId::default();
 
 	let call_operation = generate_test_did_call(
 		did::DidVerificationKeyRelationship::Authentication,
@@ -2957,7 +2957,7 @@ fn check_attestation_successful_operation_verification() {
 	let mut mock_did = generate_base_did_details::<Test>(did::DidVerificationKey::from(auth_key.public()));
 	assert_ok!(mock_did.update_attestation_key(did::DidVerificationKey::from(attestation_key.public()), 0));
 
-	let submitter = kilt_primitives::AccountId::default();
+	let submitter = pid_primitives::AccountId::default();
 
 	let call_operation = generate_test_did_call(
 		did::DidVerificationKeyRelationship::AssertionMethod,
@@ -2992,7 +2992,7 @@ fn check_delegation_successful_operation_verification() {
 	let mut mock_did = generate_base_did_details::<Test>(did::DidVerificationKey::from(auth_key.public()));
 	assert_ok!(mock_did.update_delegation_key(did::DidVerificationKey::from(delegation_key.public()), 0));
 
-	let submitter = kilt_primitives::AccountId::default();
+	let submitter = pid_primitives::AccountId::default();
 
 	let call_operation = generate_test_did_call(
 		did::DidVerificationKeyRelationship::CapabilityDelegation,
@@ -3023,7 +3023,7 @@ fn check_did_not_present_operation_verification() {
 	let auth_key = get_sr25519_authentication_key(true);
 	let did = get_did_identifier_from_sr25519_key(auth_key.public());
 
-	let submitter = kilt_primitives::AccountId::default();
+	let submitter = pid_primitives::AccountId::default();
 
 	let call_operation = generate_test_did_call(
 		did::DidVerificationKeyRelationship::CapabilityDelegation,
@@ -3051,7 +3051,7 @@ fn check_tx_counter_wrap_operation_verification() {
 	let mut mock_did = generate_base_did_details::<Test>(did::DidVerificationKey::from(auth_key.public()));
 	mock_did.set_tx_counter(u64::MAX);
 
-	let submitter = kilt_primitives::AccountId::default();
+	let submitter = pid_primitives::AccountId::default();
 
 	let mut call_operation = generate_test_did_call(
 		did::DidVerificationKeyRelationship::Authentication,
@@ -3084,7 +3084,7 @@ fn check_smaller_counter_operation_verification() {
 	let mut mock_did = generate_base_did_details::<Test>(did::DidVerificationKey::from(auth_key.public()));
 	mock_did.last_tx_counter = 1;
 
-	let submitter = kilt_primitives::AccountId::default();
+	let submitter = pid_primitives::AccountId::default();
 
 	let mut call_operation = generate_test_did_call(
 		did::DidVerificationKeyRelationship::CapabilityDelegation,
@@ -3115,7 +3115,7 @@ fn check_equal_counter_operation_verification() {
 
 	let mock_did = generate_base_did_details::<Test>(did::DidVerificationKey::from(auth_key.public()));
 
-	let submitter = kilt_primitives::AccountId::default();
+	let submitter = pid_primitives::AccountId::default();
 
 	let mut call_operation = generate_test_did_call(
 		did::DidVerificationKeyRelationship::CapabilityDelegation,
@@ -3146,7 +3146,7 @@ fn check_too_large_counter_operation_verification() {
 
 	let mock_did = generate_base_did_details::<Test>(did::DidVerificationKey::from(auth_key.public()));
 
-	let submitter = kilt_primitives::AccountId::default();
+	let submitter = pid_primitives::AccountId::default();
 
 	let mut call_operation = generate_test_did_call(
 		did::DidVerificationKeyRelationship::CapabilityDelegation,
@@ -3177,7 +3177,7 @@ fn check_verification_key_not_present_operation_verification() {
 
 	let mock_did = generate_base_did_details::<Test>(did::DidVerificationKey::from(auth_key.public()));
 
-	let submitter = kilt_primitives::AccountId::default();
+	let submitter = pid_primitives::AccountId::default();
 
 	let call_operation = generate_test_did_call(
 		did::DidVerificationKeyRelationship::AssertionMethod,
@@ -3211,7 +3211,7 @@ fn check_invalid_signature_format_operation_verification() {
 
 	let mock_did = generate_base_did_details::<Test>(did::DidVerificationKey::from(auth_key.public()));
 
-	let submitter = kilt_primitives::AccountId::default();
+	let submitter = pid_primitives::AccountId::default();
 
 	let call_operation = generate_test_did_call(
 		did::DidVerificationKeyRelationship::Authentication,
@@ -3243,7 +3243,7 @@ fn check_invalid_signature_operation_verification() {
 
 	let mock_did = generate_base_did_details::<Test>(did::DidVerificationKey::from(auth_key.public()));
 
-	let submitter = kilt_primitives::AccountId::default();
+	let submitter = pid_primitives::AccountId::default();
 
 	let call_operation = generate_test_did_call(
 		did::DidVerificationKeyRelationship::Authentication,

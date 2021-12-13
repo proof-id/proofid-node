@@ -110,7 +110,7 @@ pub mod pallet {
 	use super::*;
 	use frame_support::{pallet_prelude::*, traits::Currency};
 	use frame_system::pallet_prelude::*;
-	use kilt_support::{
+	use pid_support::{
 		signature::{SignatureVerificationError, VerifySignature},
 		traits::CallSources,
 	};
@@ -956,7 +956,7 @@ impl<T: Config> Pallet<T> {
 		// We can clear storage now that all children have been removed
 		DelegationNodes::<T>::remove(*delegation);
 
-		kilt_support::free_deposit::<AccountIdOf<T>, CurrencyOf<T>>(&delegation_node.deposit);
+		pid_support::free_deposit::<AccountIdOf<T>, CurrencyOf<T>>(&delegation_node.deposit);
 
 		consumed_weight = consumed_weight.saturating_add(T::DbWeight::get().reads_writes(1, 2));
 

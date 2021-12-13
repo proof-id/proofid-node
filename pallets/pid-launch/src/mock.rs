@@ -18,10 +18,10 @@
 
 #![allow(clippy::from_over_into)]
 
-use crate as kilt_launch;
+use crate as pid_launch;
 use frame_support::{assert_noop, assert_ok, parameter_types, traits::GenesisBuild};
 use frame_system as system;
-use kilt_primitives::{constants::MIN_VESTED_TRANSFER_AMOUNT, AccountId, Balance, BlockNumber, Hash, Index};
+use pid_primitives::{constants::MIN_VESTED_TRANSFER_AMOUNT, AccountId, Balance, BlockNumber, Hash, Index};
 use pallet_balances::{BalanceLock, Locks, Reasons};
 use pallet_vesting::VestingInfo;
 use sp_runtime::{
@@ -49,7 +49,7 @@ frame_support::construct_runtime!(
 	{
 		System: frame_system::{Pallet, Call, Config, Storage, Event<T>},
 		Balances: pallet_balances::{Pallet, Call, Config<T>, Storage, Event<T>},
-		KiltLaunch: kilt_launch::{Pallet, Call, Config<T>, Storage, Event<T>},
+		KiltLaunch: pid_launch::{Pallet, Call, Config<T>, Storage, Event<T>},
 		Vesting: pallet_vesting::{Pallet, Call, Config<T>, Storage, Event<T>},
 	}
 );
@@ -111,7 +111,7 @@ parameter_types! {
 	pub const AutoUnlockBound: u32 = 70;
 }
 
-impl kilt_launch::Config for Test {
+impl pid_launch::Config for Test {
 	type Event = Event;
 	type MaxClaims = MaxClaims;
 	type UsableBalance = UsableBalance;
@@ -130,7 +130,7 @@ impl pallet_vesting::Config for Test {
 	// disable vested transfers by setting min amount to max balance
 	type MinVestedTransfer = MinVestedTransfer;
 	type WeightInfo = ();
-	const MAX_VESTING_SCHEDULES: u32 = kilt_primitives::constants::MAX_VESTING_SCHEDULES;
+	const MAX_VESTING_SCHEDULES: u32 = pid_primitives::constants::MAX_VESTING_SCHEDULES;
 }
 
 pub struct ExtBuilder {
@@ -156,11 +156,11 @@ pub fn ensure_single_migration_works(
 	source: &AccountId,
 	dest: &AccountId,
 	vesting_info: Option<VestingInfo<Balance, BlockNumber>>,
-	locked_info: Option<(kilt_launch::LockedBalance<Test>, Balance)>,
+	locked_info: Option<(pid_launch::LockedBalance<Test>, Balance)>,
 ) {
 	assert_noop!(
 		KiltLaunch::migrate_genesis_account(Origin::signed(PSEUDO_1), source.to_owned(), dest.to_owned()),
-		kilt_launch::Error::<Test>::Unauthorized
+		pid_launch::Error::<Test>::Unauthorized
 	);
 	assert_ok!(KiltLaunch::migrate_genesis_account(
 		Origin::signed(TRANSFER_ACCOUNT),
@@ -172,7 +172,7 @@ pub fn ensure_single_migration_works(
 	// Check for desired death of allocation account
 	assert!(Balances::free_balance(source).is_zero());
 	assert!(Vesting::vesting(source).is_none());
-	assert!(kilt_launch::BalanceLocks::<Test>::get(source).is_none());
+	assert!(pid_launch::BalanceLocks::<Test>::get(source).is_none());
 	assert!(!frame_system::Account::<Test>::contains_key(source));
 
 	// Check storage migration to dest
@@ -192,9 +192,9 @@ pub fn ensure_single_migration_works(
 	if let Some((lock, _)) = locked_info.clone() {
 		// only if the lock is not expired, it should show up here
 		if lock.block > now {
-			assert_eq!(kilt_launch::BalanceLocks::<Test>::get(dest), Some(lock.clone()));
+			assert_eq!(pid_launch::BalanceLocks::<Test>::get(dest), Some(lock.clone()));
 			assert_eq!(
-				kilt_launch::UnlockingAt::<Test>::get(lock.block)
+				pid_launch::UnlockingAt::<Test>::get(lock.block)
 					.unwrap_or_default()
 					.into_inner(),
 				vec![dest.to_owned()]
@@ -218,7 +218,7 @@ pub fn ensure_single_migration_works(
 				usable_balance = vesting.per_block();
 				assert_eq!(reasons, Reasons::Misc);
 			}
-			crate::KILT_LAUNCH_ID => {
+			crate::pid_launch_ID => {
 				let (lock, add) = locked_info.clone().expect("No vesting schedule found");
 				assert_eq!(amount, lock.amount);
 				assert_eq!(reasons, Reasons::All);
@@ -231,7 +231,7 @@ pub fn ensure_single_migration_works(
 	if num_of_locks > 0 {
 		assert_noop!(
 			KiltLaunch::migrate_genesis_account(Origin::signed(TRANSFER_ACCOUNT), dest.to_owned(), TRANSFER_ACCOUNT),
-			kilt_launch::Error::<Test>::NotUnownedAccount
+			pid_launch::Error::<Test>::NotUnownedAccount
 		);
 	}
 
@@ -266,7 +266,7 @@ pub fn ensure_single_migration_works(
 		);
 	}
 
-	assert!(kilt_launch::UnownedAccount::<Test>::get(source).is_none());
+	assert!(pid_launch::UnownedAccount::<Test>::get(source).is_none());
 }
 
 // Checks whether the usable balance meets the expectations and if exists, if it
@@ -337,7 +337,7 @@ impl ExtBuilder {
 		.assimilate_storage(&mut t)
 		.unwrap();
 
-		kilt_launch::GenesisConfig::<Test> {
+		pid_launch::GenesisConfig::<Test> {
 			balance_locks: self.balance_locks,
 			vesting: self.vesting,
 			transfer_account: TRANSFER_ACCOUNT,
@@ -362,7 +362,7 @@ impl ExtBuilder {
 			.assimilate_storage(&mut t)
 			.unwrap();
 
-		kilt_launch::GenesisConfig::<Test> {
+		pid_launch::GenesisConfig::<Test> {
 			balance_locks,
 			vesting,
 			transfer_account: TRANSFER_ACCOUNT,

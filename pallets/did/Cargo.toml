@@ -17,14 +17,14 @@ env_logger = {version = "0.8.3"}
 serde = {version = "1.0.124"}
 
 ctype = {features = ["mock"], path = "../ctype"}
-kilt-primitives = {default-features = false, path = "../../primitives"}
+pid-primitives = {default-features = false, path = "../../primitives"}
 pallet-balances = {branch = "polkadot-v0.9.12", default-features = false, git = "https://github.com/paritytech/substrate"}
 
 [dependencies]
 # Internal dependencies
 ctype = {optional = true, path = "../ctype"}
-kilt-primitives = {default-features = false, path = "../../primitives"}
-kilt-support = {default-features = false, path = "../../support"}
+pid-primitives = {default-features = false, path = "../../primitives"}
+pid-support = {default-features = false, path = "../../support"}
 
 # External dependencies
 env_logger = {default-features = false, optional = true, version = "0.8.3"}
@@ -66,9 +66,9 @@ std = [
   "frame-support/std",
   "frame-system/std",
   "hex/std",
-  "kilt-primitives/std",
-  "kilt-support/std",
-  "kilt-support/std",
+  "pid-primitives/std",
+  "pid-support/std",
+  "pid-support/std",
   "log/std",
   "pallet-balances/std",
   "scale-info/std",
@@ -80,5 +80,5 @@ std = [
 ]
 try-runtime = [
   "frame-support/try-runtime",
-  "kilt-support/try-runtime",
+  "pid-support/try-runtime",
 ]

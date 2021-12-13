@@ -20,7 +20,7 @@
 
 use cumulus_primitives_core::ParaId;
 use hex_literal::hex;
-use kilt_primitives::{
+use pid_primitives::{
 	constants::{INFLATION_CONFIG, KILT, MAX_COLLATOR_STAKE},
 	AccountId, AuthorityId, Balance, BlockNumber,
 };
@@ -205,7 +205,7 @@ fn testnet_genesis(
 		},
 		sudo: SudoConfig { key: root_key },
 		parachain_info: ParachainInfoConfig { parachain_id: id },
-		kilt_launch: KiltLaunchConfig {
+		pid_launch: KiltLaunchConfig {
 			vesting: airdrop_accounts
 				.iter()
 				.cloned()

@@ -26,7 +26,7 @@ use frame_support::{
 	traits::{Currency, GenesisBuild, OnFinalize, OnInitialize, OnUnbalanced},
 	weights::Weight,
 };
-use kilt_primitives::constants::{staking::NETWORK_REWARD_RATE, treasury::INITIAL_PERIOD_LENGTH, KILT};
+use pid_primitives::constants::{staking::NETWORK_REWARD_RATE, treasury::INITIAL_PERIOD_LENGTH, KILT};
 use pallet_authorship::EventHandler;
 use sp_consensus_aura::sr25519::AuthorityId;
 use sp_core::H256;
@@ -38,7 +38,7 @@ use sp_runtime::{
 };
 use sp_std::fmt::Debug;
 
-pub use kilt_primitives::BlockNumber;
+pub use pid_primitives::BlockNumber;
 
 pub type AccountId = u64;
 pub type Balance = u128;

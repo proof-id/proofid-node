@@ -171,7 +171,7 @@ parameter_types! {
 }
 
 /// Split the fees using a preconfigured Ratio
-/// (`kilt_primitives::FeeSplitRatio`).
+/// (`pid_primitives::FeeSplitRatio`).
 pub type FeeSplit<R, B1, B2> = SplitFeesByRatio<R, FeeSplitRatio, B1, B2>;
 
 /// Parameterized slow adjusting fee updated based on

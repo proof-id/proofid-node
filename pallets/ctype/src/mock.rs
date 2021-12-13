@@ -20,7 +20,7 @@
 use crate::{AccountIdOf, BalanceOf, Ctypes};
 use crate::{Config, CtypeHashOf};
 use frame_support::{parameter_types, weights::constants::RocksDbWeight};
-use kilt_primitives::Balance;
+use pid_primitives::Balance;
 use sp_core::H256;
 use sp_runtime::{
 	testing::Header,
@@ -30,8 +30,8 @@ use sp_runtime::{
 pub type UncheckedExtrinsic = frame_system::mocking::MockUncheckedExtrinsic<Test>;
 pub type Block = frame_system::mocking::MockBlock<Test>;
 
-pub type TestCtypeOwner = kilt_primitives::AccountId;
-pub type TestCtypeHash = kilt_primitives::Hash;
+pub type TestCtypeOwner = pid_primitives::AccountId;
+pub type TestCtypeHash = pid_primitives::Hash;
 
 frame_support::construct_runtime!(
 	pub enum Test where
@@ -55,9 +55,9 @@ impl frame_system::Config for Test {
 	type Call = Call;
 	type Index = u64;
 	type BlockNumber = u64;
-	type Hash = kilt_primitives::Hash;
+	type Hash = pid_primitives::Hash;
 	type Hashing = BlakeTwo256;
-	type AccountId = <<kilt_primitives::Signature as Verify>::Signer as IdentifyAccount>::AccountId;
+	type AccountId = <<pid_primitives::Signature as Verify>::Signer as IdentifyAccount>::AccountId;
 	type Lookup = IdentityLookup<Self::AccountId>;
 	type Header = Header;
 	type Event = ();

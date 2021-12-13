@@ -20,7 +20,7 @@ use delegation::{benchmarking::setup_delegations, Permissions};
 use frame_benchmarking::{benchmarks, impl_benchmark_test_suite};
 use frame_support::traits::{Currency, Get};
 use frame_system::RawOrigin;
-use kilt_support::signature::VerifySignature;
+use pid_support::signature::VerifySignature;
 use sp_core::sr25519;
 use sp_runtime::traits::Hash;
 use sp_std::num::NonZeroU32;
@@ -58,7 +58,7 @@ benchmarks! {
 			attester: delegate_acc.into(),
 			delegation_id: Some(delegation_id),
 			revoked: false,
-			deposit: kilt_support::deposit::Deposit {
+			deposit: pid_support::deposit::Deposit {
 				owner: delegate_public.into(),
 				amount: <T as Config>::Deposit::get(),
 			}
@@ -87,7 +87,7 @@ benchmarks! {
 			attester: delegate_acc.into(),
 			delegation_id: Some(delegation_id),
 			revoked: true,
-			deposit: kilt_support::deposit::Deposit {
+			deposit: pid_support::deposit::Deposit {
 				owner: delegate_public.into(),
 				amount: <T as Config>::Deposit::get(),
 			}

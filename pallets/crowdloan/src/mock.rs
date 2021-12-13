@@ -19,7 +19,7 @@
 use crate::{pallet as pallet_crowdloan, GratitudeConfig, ReserveAccounts};
 use frame_support::parameter_types;
 use frame_system::{EnsureRoot, EventRecord};
-use kilt_primitives::{constants::KILT, AccountId, Balance, BlockNumber, Hash, Index};
+use pid_primitives::{constants::KILT, AccountId, Balance, BlockNumber, Hash, Index};
 use sp_runtime::{
 	testing::Header,
 	traits::{BlakeTwo256, ConvertInto, IdentityLookup},
@@ -105,7 +105,7 @@ impl pallet_vesting::Config for Test {
 	// disable vested transfers by setting min amount to max balance
 	type MinVestedTransfer = MinVestedTransfer;
 	type WeightInfo = ();
-	const MAX_VESTING_SCHEDULES: u32 = kilt_primitives::constants::MAX_VESTING_SCHEDULES;
+	const MAX_VESTING_SCHEDULES: u32 = pid_primitives::constants::MAX_VESTING_SCHEDULES;
 }
 
 impl pallet_crowdloan::Config for Test {
@@ -131,7 +131,7 @@ pub(crate) const GRATITUDE_CONFIG: GratitudeConfig<BlockNumber> = GratitudeConfi
 	vesting_length: 10,
 };
 
-pub(crate) fn get_generated_events() -> Vec<EventRecord<Event, kilt_primitives::Hash>> {
+pub(crate) fn get_generated_events() -> Vec<EventRecord<Event, pid_primitives::Hash>> {
 	let events = System::events();
 	events
 		.into_iter()

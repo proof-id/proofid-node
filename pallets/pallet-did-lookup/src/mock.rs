@@ -26,7 +26,7 @@ use sp_runtime::{
 };
 
 use crate as pallet_did_lookup;
-use kilt_primitives::{AccountId, AccountPublic, Balance, BlockHashCount, BlockNumber, Hash, Index, Signature};
+use pid_primitives::{AccountId, AccountPublic, Balance, BlockHashCount, BlockNumber, Hash, Index, Signature};
 
 type UncheckedExtrinsic = frame_system::mocking::MockUncheckedExtrinsic<Test>;
 type Block = frame_system::mocking::MockBlock<Test>;
@@ -115,8 +115,8 @@ impl mock_origin::Config for Test {
 	type Origin = Origin;
 }
 
-pub(crate) const ACCOUNT_00: kilt_primitives::AccountId = kilt_primitives::AccountId::new([0u8; 32]);
-pub(crate) const ACCOUNT_01: kilt_primitives::AccountId = kilt_primitives::AccountId::new([1u8; 32]);
+pub(crate) const ACCOUNT_00: pid_primitives::AccountId = pid_primitives::AccountId::new([0u8; 32]);
+pub(crate) const ACCOUNT_01: pid_primitives::AccountId = pid_primitives::AccountId::new([1u8; 32]);
 pub(crate) const DID_00: DidIdentifier = DidIdentifier(ACCOUNT_00);
 pub(crate) const DID_01: DidIdentifier = DidIdentifier(ACCOUNT_01);
 
@@ -133,7 +133,7 @@ impl From<AccountId32> for DidIdentifier {
 #[allow(dead_code)]
 pub mod mock_origin {
 	use super::{AccountId, DidIdentifier};
-	use kilt_support::traits::CallSources;
+	use pid_support::traits::CallSources;
 
 	use codec::{Decode, Encode};
 	use frame_support::traits::EnsureOrigin;
@@ -181,7 +181,7 @@ pub mod mock_origin {
 	}
 
 	#[cfg(feature = "runtime-benchmarks")]
-	impl<OuterOrigin> kilt_support::traits::GenerateBenchmarkOrigin<OuterOrigin, AccountId, DidIdentifier>
+	impl<OuterOrigin> pid_support::traits::GenerateBenchmarkOrigin<OuterOrigin, AccountId, DidIdentifier>
 		for EnsureDoubleOrigin
 	where
 		OuterOrigin: Into<Result<DoubleOrigin, OuterOrigin>> + From<DoubleOrigin>,

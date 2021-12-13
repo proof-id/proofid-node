@@ -26,7 +26,7 @@
 use ctype::CtypeHashOf;
 use delegation::DelegationNodeIdOf;
 use frame_support::traits::Get;
-use kilt_support::deposit::Deposit;
+use pid_support::deposit::Deposit;
 use sp_core::H256;
 
 use crate::{AccountIdOf, AttestationDetails, AttesterOf, BalanceOf, ClaimHashOf, Config};
@@ -94,8 +94,8 @@ pub(crate) mod runtime {
 	use delegation::{DelegationHierarchyDetails, DelegationNode, DelegatorIdOf};
 	use frame_support::{parameter_types, weights::constants::RocksDbWeight};
 	use frame_system::EnsureSigned;
-	use kilt_primitives::constants::{attestation::ATTESTATION_DEPOSIT, delegation::DELEGATION_DEPOSIT, MILLI_KILT};
-	use kilt_support::signature::EqualVerify;
+	use pid_primitives::constants::{attestation::ATTESTATION_DEPOSIT, delegation::DELEGATION_DEPOSIT, MILLI_KILT};
+	use pid_support::signature::EqualVerify;
 	use sp_core::{ed25519, sr25519, Pair};
 	use sp_keystore::{testing::KeyStore, KeystoreExt};
 	use sp_runtime::{
@@ -107,13 +107,13 @@ pub(crate) mod runtime {
 	type UncheckedExtrinsic = frame_system::mocking::MockUncheckedExtrinsic<Test>;
 	type Block = frame_system::mocking::MockBlock<Test>;
 
-	type TestCtypeOwner = kilt_primitives::AccountId;
-	type TestCtypeHash = kilt_primitives::Hash;
-	type TestDelegationNodeId = kilt_primitives::Hash;
-	type TestDelegatorId = kilt_primitives::AccountId;
-	type TestClaimHash = kilt_primitives::Hash;
+	type TestCtypeOwner = pid_primitives::AccountId;
+	type TestCtypeHash = pid_primitives::Hash;
+	type TestDelegationNodeId = pid_primitives::Hash;
+	type TestDelegatorId = pid_primitives::AccountId;
+	type TestClaimHash = pid_primitives::Hash;
 	type TestAttester = TestDelegatorId;
-	type TestBalance = kilt_primitives::Balance;
+	type TestBalance = pid_primitives::Balance;
 
 	frame_support::construct_runtime!(
 		pub enum Test where
@@ -139,9 +139,9 @@ pub(crate) mod runtime {
 		type Call = Call;
 		type Index = u64;
 		type BlockNumber = u64;
-		type Hash = kilt_primitives::Hash;
+		type Hash = pid_primitives::Hash;
 		type Hashing = BlakeTwo256;
-		type AccountId = <<kilt_primitives::Signature as Verify>::Signer as IdentifyAccount>::AccountId;
+		type AccountId = <<pid_primitives::Signature as Verify>::Signer as IdentifyAccount>::AccountId;
 		type Lookup = IdentityLookup<Self::AccountId>;
 		type Header = Header;
 		type Event = ();

@@ -25,7 +25,7 @@
 
 use std::sync::Arc;
 
-use kilt_primitives::{AccountId, Balance, Index};
+use pid_primitives::{AccountId, Balance, Index};
 use mashnet_node_runtime::opaque::Block;
 pub use sc_rpc_api::DenyUnsafe;
 use sc_transaction_pool_api::TransactionPool;

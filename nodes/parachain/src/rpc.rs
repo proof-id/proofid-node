@@ -25,7 +25,7 @@
 
 use std::sync::Arc;
 
-use kilt_primitives::{AccountId, Balance, Block, Index};
+use pid_primitives::{AccountId, Balance, Block, Index};
 use polkadot_service::AuxStore;
 use sc_service::Error;
 use sc_transaction_pool_api::TransactionPool;

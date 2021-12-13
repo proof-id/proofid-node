@@ -18,7 +18,7 @@
 
 use codec::{Decode, Encode};
 use frame_support::dispatch::Weight;
-use kilt_support::traits::VersionMigratorTrait;
+use pid_support::traits::VersionMigratorTrait;
 use scale_info::TypeInfo;
 use sp_runtime::traits::Zero;
 use sp_std::marker::PhantomData;

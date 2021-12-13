@@ -24,7 +24,7 @@ use frame_support::{
 	weights::constants::RocksDbWeight,
 };
 use frame_system::EnsureSigned;
-use kilt_primitives::constants::delegation::DELEGATION_DEPOSIT;
+use pid_primitives::constants::delegation::DELEGATION_DEPOSIT;
 use sp_core::{ed25519, sr25519, Pair, H256};
 use sp_keystore::{testing::KeyStore, KeystoreExt};
 use sp_runtime::{
@@ -34,7 +34,7 @@ use sp_runtime::{
 };
 use sp_std::sync::Arc;
 
-use kilt_support::{deposit::Deposit, signature::EqualVerify};
+use pid_support::{deposit::Deposit, signature::EqualVerify};
 
 use crate as delegation;
 use crate::*;
@@ -45,11 +45,11 @@ use codec::Encode;
 pub type UncheckedExtrinsic = frame_system::mocking::MockUncheckedExtrinsic<Test>;
 pub type Block = frame_system::mocking::MockBlock<Test>;
 
-type TestCtypeOwner = kilt_primitives::AccountId;
-type TestDelegationNodeId = kilt_primitives::Hash;
+type TestCtypeOwner = pid_primitives::AccountId;
+type TestDelegationNodeId = pid_primitives::Hash;
 type TestDelegatorId = TestCtypeOwner;
 type TestDelegateSignature = (TestDelegatorId, Vec<u8>);
-type TestBalance = kilt_primitives::Balance;
+type TestBalance = pid_primitives::Balance;
 type TestCtypeHash = ctype_mock::TestCtypeHash;
 
 frame_support::construct_runtime!(
@@ -75,9 +75,9 @@ impl frame_system::Config for Test {
 	type Call = Call;
 	type Index = u64;
 	type BlockNumber = u64;
-	type Hash = kilt_primitives::Hash;
+	type Hash = pid_primitives::Hash;
 	type Hashing = BlakeTwo256;
-	type AccountId = <<kilt_primitives::Signature as Verify>::Signer as IdentifyAccount>::AccountId;
+	type AccountId = <<pid_primitives::Signature as Verify>::Signer as IdentifyAccount>::AccountId;
 	type Lookup = IdentityLookup<Self::AccountId>;
 	type Header = Header;
 	type Event = ();

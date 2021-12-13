@@ -25,7 +25,7 @@ use codec::Encode;
 use frame_benchmarking::{account, benchmarks, impl_benchmark_test_suite};
 use frame_support::traits::{Currency, Get};
 use frame_system::RawOrigin;
-use kilt_support::traits::GenerateBenchmarkOrigin;
+use pid_support::traits::GenerateBenchmarkOrigin;
 use sp_io::crypto::sr25519_generate;
 use sp_runtime::{app_crypto::sr25519, KeyTypeId};
 

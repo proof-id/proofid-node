@@ -19,7 +19,7 @@
 use super::*;
 
 #[allow(unused)]
-use crate::{BalanceLocks, BalanceOf, LockedBalance, Pallet as KiltLaunch, UnownedAccount, KILT_LAUNCH_ID};
+use crate::{BalanceLocks, BalanceOf, LockedBalance, Pallet as KiltLaunch, UnownedAccount, pid_launch_ID};
 use frame_benchmarking::{account, benchmarks, impl_benchmark_test_suite, vec, whitelist_account, Zero};
 use frame_support::{
 	assert_ok,
@@ -27,7 +27,7 @@ use frame_support::{
 	traits::{Currency, Get, Hooks},
 };
 use frame_system::{Pallet as System, RawOrigin};
-use kilt_primitives::{constants::KILT, Balance};
+use pid_primitives::{constants::KILT, Balance};
 use pallet_balances::Locks;
 use pallet_vesting::{Vesting, VestingInfo};
 use sp_runtime::traits::StaticLookup;

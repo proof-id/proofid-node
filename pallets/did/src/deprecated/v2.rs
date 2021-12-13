@@ -19,7 +19,7 @@
 use codec::{Decode, Encode};
 
 use crate::*;
-use kilt_primitives::Hash;
+use pid_primitives::Hash;
 
 use scale_info::TypeInfo;
 use sp_std::vec::Vec;

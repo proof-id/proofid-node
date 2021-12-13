@@ -17,7 +17,7 @@
 // If you feel like getting in touch with us, you can do so at info@botlabs.org
 
 use frame_support::dispatch;
-use kilt_support::signature::{SignatureVerificationError, SignatureVerificationResult, VerifySignature};
+use pid_support::signature::{SignatureVerificationError, SignatureVerificationResult, VerifySignature};
 use sp_runtime::SaturatedConversion;
 use sp_std::{marker::PhantomData, vec::Vec};
 

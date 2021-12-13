@@ -140,7 +140,7 @@ pub mod pallet {
 		vec,
 	};
 
-	pub const KILT_LAUNCH_ID: LockIdentifier = *b"kiltlnch";
+	pub const pid_launch_ID: LockIdentifier = *b"pidlnch";
 	pub const VESTING_ID: LockIdentifier = *b"vesting ";
 
 	#[derive(Debug, Encode, Decode, PartialEq, Eq, Clone, TypeInfo)]
@@ -554,7 +554,7 @@ pub mod pallet {
 		///
 		/// Expects the source to have a KILT balance lock and at least the
 		/// specified amount available as balance locked with LockId
-		/// `KILT_LAUNCH_ID`.
+		/// `pid_launch_ID`.
 		///
 		/// Calls `migrate_kilt_balance_lock` internally.
 		///
@@ -596,7 +596,7 @@ pub mod pallet {
 
 			if let Some(lock) = locks
 				.iter()
-				.find(|BalanceLock::<<T as pallet_balances::Config>::Balance> { id, .. }| id == &KILT_LAUNCH_ID)
+				.find(|BalanceLock::<<T as pallet_balances::Config>::Balance> { id, .. }| id == &pid_launch_ID)
 			{
 				ensure!(lock.amount >= amount, Error::<T>::InsufficientLockedBalance);
 
@@ -606,7 +606,7 @@ pub mod pallet {
 				if amount_new <= T::ExistentialDeposit::get() {
 					// If the lock equals the ExistentialDeposit, we want to remove the lock because
 					// if amount_new == 0, `set_lock` would be no-op
-					<pallet_balances::Pallet<T>>::remove_lock(KILT_LAUNCH_ID, &source);
+					<pallet_balances::Pallet<T>>::remove_lock(pid_launch_ID, &source);
 
 					// Transfer amount + dust to target
 					<pallet_balances::Pallet<T> as Currency<T::AccountId>>::transfer(
@@ -617,7 +617,7 @@ pub mod pallet {
 					)?;
 				} else {
 					// Reduce source's lock amount to enable token transfer
-					<pallet_balances::Pallet<T>>::set_lock(KILT_LAUNCH_ID, &source, amount_new, WithdrawReasons::all());
+					<pallet_balances::Pallet<T>>::set_lock(pid_launch_ID, &source, amount_new, WithdrawReasons::all());
 
 					// Transfer amount to target
 					<pallet_balances::Pallet<T> as Currency<T::AccountId>>::transfer(
@@ -641,7 +641,7 @@ pub mod pallet {
 			if let Some(unlocking_balance) = <UnlockingAt<T>>::take(block) {
 				// Remove locks for all accounts
 				for account in unlocking_balance.iter() {
-					<pallet_balances::Pallet<T>>::remove_lock(KILT_LAUNCH_ID, account);
+					<pallet_balances::Pallet<T>>::remove_lock(pid_launch_ID, account);
 					<BalanceLocks<T>>::remove(account);
 				}
 
@@ -823,7 +823,7 @@ pub mod pallet {
 				},
 			);
 			// Disallow anything from being paid by custom lock
-			<pallet_balances::Pallet<T>>::set_lock(KILT_LAUNCH_ID, target, target_amount, WithdrawReasons::all());
+			<pallet_balances::Pallet<T>>::set_lock(pid_launch_ID, target, target_amount, WithdrawReasons::all());
 
 			// Update or remove lock storage items corresponding to the source address
 			if max_add_amount == source_amount {
@@ -850,7 +850,7 @@ pub mod pallet {
 			} else {
 				// Reduce the locked amount
 				//
-				// Note: The update of the real balance lock with id `KILT_LAUNCH_ID` already
+				// Note: The update of the real balance lock with id `pid_launch_ID` already
 				// happens in `locked_transfer` because it is required for the token transfer
 				<BalanceLocks<T>>::insert(
 					&source,

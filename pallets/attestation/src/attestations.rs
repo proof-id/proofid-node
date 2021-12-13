@@ -19,7 +19,7 @@
 use codec::{Decode, Encode};
 use ctype::CtypeHashOf;
 use delegation::DelegationNodeIdOf;
-use kilt_support::deposit::Deposit;
+use pid_support::deposit::Deposit;
 use scale_info::TypeInfo;
 
 use crate::{AccountIdOf, AttesterOf, BalanceOf, Config};

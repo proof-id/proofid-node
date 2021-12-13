@@ -2,7 +2,7 @@
 authors = ["KILT <info@kilt.io>"]
 description = "Shared traits and structs used across the KILT pallets"
 edition = "2018"
-name = "kilt-support"
+name = "pid-support"
 repository = "https://github.com/KILTprotocol/mashnet-node"
 version = "1.2.0"
 

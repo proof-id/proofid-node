@@ -1,12 +1,12 @@
 [package]
-authors = ["KILT <info@kilt.io>"]
+authors = ["ProofID <info@proofid.me>"]
 build = "build.rs"
-edition = "2018"
-name = "mashnet-node"
-version = "1.2.0"
+edition = "2021"
+name = "proofid-node"
+version = "0.0.1"
 
 [[bin]]
-name = "mashnet-node"
+name = "proofid-node"
 path = "src/main.rs"
 
 [build-dependencies]
@@ -16,8 +16,8 @@ vergen = "3.1.0"
 [dependencies]
 
 # Internal dependencies
-kilt-primitives = {path = "../../primitives"}
-mashnet-node-runtime = {path = "../../runtimes/standalone"}
+pid-primitives = {path = "../../primitives"}
+proofid-node-runtime = {path = "../../runtimes/standalone"}
 
 # External dependencies
 futures = "0.3"
@@ -71,10 +71,10 @@ try-runtime-cli = {git = "https://github.com/paritytech/substrate", branch = "po
 [features]
 default = []
 runtime-benchmarks = [
-  "mashnet-node-runtime/runtime-benchmarks",
+  "proofid-node-runtime/runtime-benchmarks",
 ]
 try-runtime = [
-  "mashnet-node-runtime/try-runtime",
+  "proofid-node-runtime/try-runtime",
   "node-executor",
   "try-runtime-cli",
 ]

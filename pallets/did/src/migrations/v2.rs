@@ -18,7 +18,7 @@
 
 use crate::*;
 
-use kilt_support::deposit::Deposit;
+use pid_support::deposit::Deposit;
 use sp_runtime::traits::Zero;
 
 // Added for consistency even if not (yet) unused.

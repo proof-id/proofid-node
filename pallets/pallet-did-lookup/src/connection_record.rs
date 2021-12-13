@@ -17,7 +17,7 @@
 // If you feel like getting in touch with us, you can do so at info@botlabs.org
 
 use codec::{Decode, Encode};
-use kilt_support::deposit::Deposit;
+use pid_support::deposit::Deposit;
 use scale_info::TypeInfo;
 
 /// A record in the ConnectedDid map.
