@@ -1,10 +1,10 @@
 [profile.release]
-panic = "unwind"
+panic = 'unwind'
 
 [workspace]
 members = [
-  "nodes/*",
-  "pallets/*",
-  "runtimes/*",
-  "support",
+    'node',
+    'pallets/template',
+    'primitives/common',
+    'runtime',
 ]
