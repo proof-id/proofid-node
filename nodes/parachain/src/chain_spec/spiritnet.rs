@@ -77,12 +77,12 @@ pub fn get_chain_spec_dev(id: ParaId) -> Result<ChainSpec, String> {
 					),
 				],
 				vec![
-					(get_account_id_from_seed::<sr25519::Public>("Alice"), 10000000 * KILT),
-					(get_account_id_from_seed::<sr25519::Public>("Bob"), 10000000 * KILT),
-					(get_account_id_from_seed::<sr25519::Public>("Charlie"), 10000000 * KILT),
-					(get_account_id_from_seed::<sr25519::Public>("Dave"), 10000000 * KILT),
-					(get_account_id_from_seed::<sr25519::Public>("Eve"), 10000000 * KILT),
-					(get_account_id_from_seed::<sr25519::Public>("Ferdie"), 10000000 * KILT),
+					(get_account_id_from_seed::<sr25519::Public>("Alice"), 10000000 * PID),
+					(get_account_id_from_seed::<sr25519::Public>("Bob"), 10000000 * PID),
+					(get_account_id_from_seed::<sr25519::Public>("Charlie"), 10000000 * PID),
+					(get_account_id_from_seed::<sr25519::Public>("Dave"), 10000000 * PID),
+					(get_account_id_from_seed::<sr25519::Public>("Eve"), 10000000 * PID),
+					(get_account_id_from_seed::<sr25519::Public>("Ferdie"), 10000000 * PID),
 					(
 						get_account_id_from_seed::<sr25519::Public>("Alice//stash"),
 						10000000 * PID,
@@ -142,8 +142,8 @@ pub fn get_chain_spec_wilt() -> Result<ChainSpec, String> {
 			testnet_genesis(
 				wasm,
 				vec![
-					(WILT_COL_ACC_1.into(), None, 30000 * KILT),
-					(WILT_COL_ACC_2.into(), None, 30000 * KILT),
+					(WILT_COL_ACC_1.into(), None, 30000 * PID),
+					(WILT_COL_ACC_2.into(), None, 30000 * PID),
 				],
 				kilt_inflation_config(),
 				MAX_COLLATOR_STAKE,
@@ -152,9 +152,9 @@ pub fn get_chain_spec_wilt() -> Result<ChainSpec, String> {
 					(WILT_COL_ACC_2.into(), WILT_COL_SESSION_2.unchecked_into()),
 				],
 				vec![
-					(WILT_COL_ACC_1.into(), 40000 * KILT),
-					(WILT_COL_ACC_2.into(), 40000 * KILT),
-					(WILT_TRANS_ACC.into(), 10000 * KILT),
+					(WILT_COL_ACC_1.into(), 40000 * PID),
+					(WILT_COL_ACC_2.into(), 40000 * PID),
+					(WILT_TRANS_ACC.into(), 10000 * PID),
 				],
 				WILT_TRANS_ACC.into(),
 				id,

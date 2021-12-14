@@ -123,8 +123,8 @@ pub(crate) const ACCOUNT_02: TestAccountId = AccountId::new([2u8; 32]);
 pub(crate) const ACCOUNT_03: TestAccountId = AccountId::new([3u8; 32]);
 pub(crate) const ACCOUNT_04: TestAccountId = AccountId::new([4u8; 32]);
 #[allow(clippy::identity_op)]
-pub(crate) const BALANCE_01: TestBalance = 1 * KILT;
-pub(crate) const BALANCE_02: TestBalance = 2 * KILT;
+pub(crate) const BALANCE_01: TestBalance = 1 * PID;
+pub(crate) const BALANCE_02: TestBalance = 2 * PID;
 pub(crate) const GRATITUDE_CONFIG: GratitudeConfig<BlockNumber> = GratitudeConfig {
 	vested_share: Permill::from_percent(50),
 	start_block: 1,
