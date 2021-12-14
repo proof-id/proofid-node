@@ -115,14 +115,14 @@ pub type NegativeImbalanceOf<T> =
 pub enum CurrencyId {
 	Dot = 0_isize,
 	Ksm,
-	PID,
+	Pid,
 }
 
 impl TryFrom<Vec<u8>> for CurrencyId {
 	type Error = ();
 	fn try_from(v: Vec<u8>) -> Result<CurrencyId, ()> {
 		match v.as_slice() {
-			b"KILT" => Ok(CurrencyId::Kilt),
+			b"PID" => Ok(CurrencyId::Pid),
 			b"DOT" => Ok(CurrencyId::Dot),
 			b"KSM" => Ok(CurrencyId::Ksm),
 			_ => Err(()),
