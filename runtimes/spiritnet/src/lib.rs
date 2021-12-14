@@ -402,7 +402,7 @@ impl pallet_democracy::Config for Runtime {
 
 parameter_types! {
 	pub const ProposalBond: Permill = Permill::from_percent(5);
-	pub const ProposalBondMinimum: Balance = 20 * KILT; // TODO: how much?
+	pub const ProposalBondMinimum: Balance = 20 * PID; // TODO: how much?
 	pub const SpendPeriod: BlockNumber = SPEND_PERIOD;
 	pub const Burn: Permill = Permill::zero();
 	pub const MaxApprovals: u32 = 100;
@@ -694,7 +694,7 @@ parameter_types! {
 	#[derive(Debug, PartialEq)]
 	pub const MaxCollatorsPerDelegator: u32 = 1;
 	/// Minimum stake required to be reserved to be a collator is 10_000
-	pub const MinCollatorStake: Balance = 10_000 * KILT;
+	pub const MinCollatorStake: Balance = 10_000 * PID;
 	/// Minimum stake required to be reserved to be a delegator is 1000
 	pub const MinDelegatorStake: Balance = constants::staking::MIN_DELEGATOR_STAKE;
 	/// Maximum number of collator candidates
