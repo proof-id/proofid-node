@@ -18,7 +18,7 @@
 
 use codec::{Decode, Encode, WrapperTypeEncode};
 use frame_support::storage::{bounded_btree_map::BoundedBTreeMap, bounded_btree_set::BoundedBTreeSet};
-use kilt_support::deposit::Deposit;
+use pid_support::deposit::Deposit;
 use scale_info::TypeInfo;
 use sp_core::{ecdsa, ed25519, sr25519};
 use sp_runtime::{traits::Verify, MultiSignature};
@@ -169,7 +169,7 @@ pub trait DidVerifiableIdentifier {
 	) -> Result<DidVerificationKey, SignatureError>;
 }
 
-impl DidVerifiableIdentifier for kilt_primitives::DidIdentifier {
+impl DidVerifiableIdentifier for pid_primitives::DidIdentifier {
 	fn verify_and_recover_signature(
 		&self,
 		payload: &Payload,

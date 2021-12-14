@@ -47,7 +47,7 @@ pub mod pallet {
 		traits::{Currency, ReservableCurrency, StorageVersion},
 	};
 	use frame_system::pallet_prelude::*;
-	use kilt_support::{deposit::Deposit, traits::CallSources};
+	use pid_support::{deposit::Deposit, traits::CallSources};
 	use sp_runtime::traits::{BlockNumberProvider, IdentifyAccount, Verify};
 
 	pub use crate::connection_record::ConnectionRecord;
@@ -295,7 +295,7 @@ pub mod pallet {
 			ConnectedDids::<T>::mutate(&account, |did_entry| {
 				if let Some(old_did) = did_entry.replace(record) {
 					Self::deposit_event(Event::<T>::AssociationRemoved(account.clone(), old_did.did));
-					kilt_support::free_deposit::<AccountIdOf<T>, CurrencyOf<T>>(&old_did.deposit);
+					pid_support::free_deposit::<AccountIdOf<T>, CurrencyOf<T>>(&old_did.deposit);
 				}
 			});
 			Self::deposit_event(Event::AssociationEstablished(account, did_identifier));
@@ -305,7 +305,7 @@ pub mod pallet {
 
 		pub(crate) fn remove_association(account: AccountIdOf<T>) -> DispatchResult {
 			if let Some(connection) = ConnectedDids::<T>::take(&account) {
-				kilt_support::free_deposit::<AccountIdOf<T>, CurrencyOf<T>>(&connection.deposit);
+				pid_support::free_deposit::<AccountIdOf<T>, CurrencyOf<T>>(&connection.deposit);
 				Self::deposit_event(Event::AssociationRemoved(account, connection.did));
 
 				Ok(())

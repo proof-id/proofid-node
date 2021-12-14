@@ -161,16 +161,16 @@ if __name__ == "__main__":
         logging.getLogger().setLevel(logging.INFO)
 
     if args.wilt:
-        make_native(args.image, WILT_KILT, "wilt-new", "spiritnet")
+        make_native(args.image, WILT_PID, "wilt-new", "spiritnet")
 
     if args.spiritnet:
-        make_native(args.image, SPIRITNET_KILT, "spiritnet-new", "spiritnet")
+        make_native(args.image, SPIRITNET_PID, "spiritnet-new", "spiritnet")
 
     if args.peregrine:
         with tempfile.TemporaryDirectory() as tmpdirname:
             make_custom_spec(
                 tmpdirname, args.image, "peregrine_dev_kilt.plain.json",
-                PERE_KILT, peregrine_kilt.update_spec, "dev", "peregrine"
+                PERE_PID, peregrine_kilt.update_spec, "dev", "peregrine"
             )
 
     if args.peregrine_relay:
@@ -184,7 +184,7 @@ if __name__ == "__main__":
         with tempfile.TemporaryDirectory() as tmpdirname:
             make_custom_spec(
                 tmpdirname, args.image, "peregrine_dev_kilt.plain.json",
-                PERE_DEV_KILT, peregrine_dev_kilt.update_spec, "dev", "peregrine"
+                PERE_DEV_PID, peregrine_dev_kilt.update_spec, "dev", "peregrine"
             )
 
     if args.peregrine_relay_dev:
@@ -198,7 +198,7 @@ if __name__ == "__main__":
         with tempfile.TemporaryDirectory() as tmpdirname:
             make_custom_spec(
                 tmpdirname, args.image, "peregrine_stg.plain.json",
-                PERE_STG_KILT, peregrine_stg_kilt.update_spec, "dev", "peregrine"
+                PERE_STG_PID, peregrine_stg_kilt.update_spec, "dev", "peregrine"
             )
 
     if args.peregrine_relay_stg:

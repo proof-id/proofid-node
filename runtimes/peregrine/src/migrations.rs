@@ -24,7 +24,7 @@ pub struct RemoveCrowdloanContributors;
 impl OnRuntimeUpgrade for RemoveCrowdloanContributors {
 	#[cfg(feature = "try-runtime")]
 	fn pre_upgrade() -> Result<(), &'static str> {
-		use kilt_primitives::AccountId;
+		use pid_primitives::AccountId;
 
 		log::info!("Pre check CrowdloanContributors-Removal.");
 		let res = frame_support::storage::migration::get_storage_value::<AccountId>(

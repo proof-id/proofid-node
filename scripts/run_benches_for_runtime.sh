@@ -13,7 +13,7 @@ pallets=(
     ctype
     delegation
     did
-    kilt_launch
+    pid_launch
     parachain_staking
     frame_system
     pallet_balances

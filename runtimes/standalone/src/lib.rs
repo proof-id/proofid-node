@@ -31,7 +31,7 @@ use frame_system::EnsureRoot;
 #[cfg(feature = "runtime-benchmarks")]
 use frame_system::EnsureSigned;
 
-use kilt_primitives::{
+use pid_primitives::{
 	constants::{
 		attestation::ATTESTATION_DEPOSIT,
 		delegation::{
@@ -45,7 +45,7 @@ use kilt_primitives::{
 			MAX_TOTAL_KEY_AGREEMENT_KEYS, MAX_URL_LENGTH,
 		},
 		staking::MAX_CANDIDATES,
-		KILT, MICRO_KILT, MILLI_KILT, MIN_VESTED_TRANSFER_AMOUNT, SLOT_DURATION,
+		PID, MICRO_PID, MILLI_PID, MIN_VESTED_TRANSFER_AMOUNT, SLOT_DURATION,
 	},
 	fees::ToAuthor,
 	AccountId, Balance, BlockNumber, DidIdentifier, Hash, Index, Signature, SlowAdjustingFeeUpdate,
@@ -262,7 +262,7 @@ impl pallet_indices::Config for Runtime {
 }
 
 parameter_types! {
-	pub const ExistentialDeposit: Balance = 10 * MILLI_KILT;
+	pub const ExistentialDeposit: Balance = 10 * MILLI_PID;
 	pub const MaxLocks: u32 = 50;
 	pub const MaxReserves: u32 = 50;
 }
@@ -287,7 +287,7 @@ parameter_types! {
 	pub const UsableBalance: Balance = KILT;
 }
 
-impl kilt_launch::Config for Runtime {
+impl pid_launch::Config for Runtime {
 	type Event = Event;
 	type MaxClaims = MaxClaims;
 	type UsableBalance = UsableBalance;
@@ -303,7 +303,7 @@ parameter_types! {
 }
 
 impl pallet_transaction_payment::Config for Runtime {
-	type OnChargeTransaction = CurrencyAdapter<Balances, kilt_primitives::fees::ToAuthor<Runtime>>;
+	type OnChargeTransaction = CurrencyAdapter<Balances, pid_primitives::fees::ToAuthor<Runtime>>;
 	type TransactionByteFee = TransactionByteFee;
 	type OperationalFeeMultiplier = OperationalFeeMultiplier;
 	type WeightToFee = IdentityFee<Balance>;
@@ -347,9 +347,9 @@ impl delegation::Config for Runtime {
 	type DelegationSignatureVerification = did::DidSignatureVerify<Self>;
 
 	#[cfg(feature = "runtime-benchmarks")]
-	type Signature = kilt_primitives::benchmarks::DummySignature;
+	type Signature = pid_primitives::benchmarks::DummySignature;
 	#[cfg(feature = "runtime-benchmarks")]
-	type DelegationSignatureVerification = kilt_support::signature::AlwaysVerify<AccountId, Vec<u8>, Self::Signature>;
+	type DelegationSignatureVerification = pid_support::signature::AlwaysVerify<AccountId, Vec<u8>, Self::Signature>;
 
 	type DelegationEntityId = DidIdentifier;
 	type DelegationNodeId = Hash;
@@ -373,7 +373,7 @@ parameter_types! {
 impl ctype::Config for Runtime {
 	type Currency = Balances;
 	type Fee = Fee;
-	type FeeCollector = kilt_primitives::fees::ToAuthor<Runtime>;
+	type FeeCollector = pid_primitives::fees::ToAuthor<Runtime>;
 
 	type CtypeCreatorId = DidIdentifier;
 	type EnsureOrigin = did::EnsureDidOrigin<DidIdentifier, AccountId>;
@@ -502,7 +502,7 @@ impl pallet_vesting::Config for Runtime {
 	type BlockNumberToBalance = ConvertInto;
 	// disable vested transfers by setting min amount to max balance
 	type MinVestedTransfer = MinVestedTransfer;
-	const MAX_VESTING_SCHEDULES: u32 = kilt_primitives::constants::MAX_VESTING_SCHEDULES;
+	const MAX_VESTING_SCHEDULES: u32 = pid_primitives::constants::MAX_VESTING_SCHEDULES;
 	type WeightInfo = ();
 }
 
@@ -553,7 +553,7 @@ construct_runtime!(
 
 		// Vesting. Usable initially, but removed once all vesting is finished.
 		Vesting: pallet_vesting::{Pallet, Call, Storage, Event<T>, Config<T>} = 33,
-		KiltLaunch: kilt_launch::{Pallet, Call, Storage, Event<T>, Config<T>} = 34,
+		KiltLaunch: pid_launch::{Pallet, Call, Storage, Event<T>, Config<T>} = 34,
 		Utility: pallet_utility::{Pallet, Call, Storage, Event} = 35,
 		CrowdloanContributors: crowdloan::{Pallet, Call, Storage, Event<T>, Config<T>, ValidateUnsigned} = 36,
 	}
@@ -777,7 +777,7 @@ impl_runtime_apis! {
 			list_benchmark!(list, extra, frame_system, SystemBench::<Runtime>);
 			list_benchmark!(list, extra, pallet_balances, Balances);
 			list_benchmark!(list, extra, pallet_timestamp, Timestamp);
-			list_benchmark!(list, extra, kilt_launch, KiltLaunch);
+			list_benchmark!(list, extra, pid_launch, KiltLaunch);
 			list_benchmark!(list, extra, pallet_vesting, Vesting);
 
 			list_benchmark!(list, extra, did, Did);
@@ -825,7 +825,7 @@ impl_runtime_apis! {
 			add_benchmark!(params, batches, frame_system, SystemBench::<Runtime>);
 			add_benchmark!(params, batches, pallet_balances, Balances);
 			add_benchmark!(params, batches, pallet_timestamp, Timestamp);
-			add_benchmark!(params, batches, kilt_launch, KiltLaunch);
+			add_benchmark!(params, batches, pid_launch, KiltLaunch);
 			add_benchmark!(params, batches, pallet_vesting, Vesting);
 
 			add_benchmark!(params, batches, did, Did);

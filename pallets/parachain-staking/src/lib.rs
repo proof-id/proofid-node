@@ -190,7 +190,7 @@ pub mod pallet {
 		BoundedVec,
 	};
 	use frame_system::pallet_prelude::*;
-	use kilt_primitives::constants::BLOCKS_PER_YEAR;
+	use pid_primitives::constants::BLOCKS_PER_YEAR;
 	use pallet_balances::{BalanceLock, Locks};
 	use pallet_session::ShouldEndSession;
 	use scale_info::TypeInfo;

@@ -2,7 +2,7 @@
 authors = ["KILT <info@kilt.io>"]
 description = "Enables automatic unlocking of balance from genesis block"
 edition = "2018"
-name = "kilt-launch"
+name = "pid-launch"
 repository = "https://github.com/KILTprotocol/mashnet-node"
 version = "1.2.0"
 
@@ -24,10 +24,10 @@ sp-runtime = {git = "https://github.com/paritytech/substrate", default-features 
 sp-std = {git = "https://github.com/paritytech/substrate", default-features = false, branch = "polkadot-v0.9.12"}
 
 # benchmarking
-kilt-primitives = {path = "../../primitives", default-features = false, optional = true}
+pid-primitives = {path = "../../primitives", default-features = false, optional = true}
 
 [dev-dependencies]
-kilt-primitives = {path = "../../primitives", default-features = false}
+pid-primitives = {path = "../../primitives", default-features = false}
 sp-core = {git = "https://github.com/paritytech/substrate", default-features = false, branch = "polkadot-v0.9.12"}
 sp-io = {git = "https://github.com/paritytech/substrate", default-features = false, branch = "polkadot-v0.9.12"}
 
@@ -38,14 +38,14 @@ runtime-benchmarks = [
   "frame-benchmarking",
   "frame-support/runtime-benchmarks",
   "frame-system/runtime-benchmarks",
-  "kilt-primitives",
+  "pid-primitives",
 ]
 std = [
   "codec/std",
   "frame-benchmarking/std",
   "frame-support/std",
   "frame-system/std",
-  "kilt-primitives/std",
+  "pid-primitives/std",
   "log/std",
   "pallet-balances/std",
   "pallet-vesting/std",

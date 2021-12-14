@@ -71,7 +71,7 @@ pub mod pallet {
 		traits::{Currency, ExistenceRequirement, OnUnbalanced, WithdrawReasons},
 	};
 	use frame_system::pallet_prelude::*;
-	use kilt_support::traits::CallSources;
+	use pid_support::traits::CallSources;
 	use sp_runtime::{traits::Saturating, SaturatedConversion};
 	use sp_std::vec::Vec;
 

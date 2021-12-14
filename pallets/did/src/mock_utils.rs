@@ -19,7 +19,7 @@
 use crate::*;
 use did_details::*;
 use frame_support::storage::bounded_btree_set::BoundedBTreeSet;
-use kilt_support::deposit::Deposit;
+use pid_support::deposit::Deposit;
 use sp_runtime::traits::Zero;
 use sp_std::{
 	collections::btree_set::BTreeSet,

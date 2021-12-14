@@ -20,8 +20,8 @@
 
 use cumulus_primitives_core::ParaId;
 use hex_literal::hex;
-use kilt_primitives::{
-	constants::{INFLATION_CONFIG, KILT, MAX_COLLATOR_STAKE},
+use pid_primitives::{
+	constants::{INFLATION_CONFIG, PID, MAX_COLLATOR_STAKE},
 	AccountId, AuthorityId, Balance, BlockNumber,
 };
 use sc_service::ChainType;
@@ -29,7 +29,7 @@ use sc_telemetry::TelemetryEndpoints;
 use sp_core::{crypto::UncheckedInto, sr25519};
 use sp_runtime::traits::Zero;
 use spiritnet_runtime::{
-	BalancesConfig, CouncilConfig, CrowdloanContributorsConfig, GenesisConfig, InflationInfo, KiltLaunchConfig,
+	BalancesConfig, CouncilConfig, CrowdloanContributorsConfig, GenesisConfig, InflationInfo, PidLaunchConfig,
 	MinCollatorStake, ParachainInfoConfig, ParachainStakingConfig, SessionConfig, SystemConfig,
 	TechnicalCommitteeConfig, VestingConfig, WASM_BINARY,
 };
@@ -85,27 +85,27 @@ pub fn get_chain_spec_dev(id: ParaId) -> Result<ChainSpec, String> {
 					(get_account_id_from_seed::<sr25519::Public>("Ferdie"), 10000000 * KILT),
 					(
 						get_account_id_from_seed::<sr25519::Public>("Alice//stash"),
-						10000000 * KILT,
+						10000000 * PID,
 					),
 					(
 						get_account_id_from_seed::<sr25519::Public>("Bob//stash"),
-						10000000 * KILT,
+						10000000 * PID,
 					),
 					(
 						get_account_id_from_seed::<sr25519::Public>("Charlie//stash"),
-						10000000 * KILT,
+						10000000 * PID,
 					),
 					(
 						get_account_id_from_seed::<sr25519::Public>("Dave//stash"),
-						10000000 * KILT,
+						10000000 * PID,
 					),
 					(
 						get_account_id_from_seed::<sr25519::Public>("Eve//stash"),
-						10000000 * KILT,
+						10000000 * PID,
 					),
 					(
 						get_account_id_from_seed::<sr25519::Public>("Ferdie//stash"),
-						10000000 * KILT,
+						10000000 * PID,
 					),
 				],
 				hex!["6a3c793cec9dbe330b349dc4eea6801090f5e71f53b1b41ad11afb4a313a282c"].into(),
@@ -233,7 +233,7 @@ fn testnet_genesis(
 			registrar_account: transfer_account.clone(),
 		},
 		parachain_info: ParachainInfoConfig { parachain_id: id },
-		kilt_launch: KiltLaunchConfig {
+		pid_launch: PidLaunchConfig {
 			vesting: claimable_accounts
 				.iter()
 				.cloned()

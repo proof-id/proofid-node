@@ -20,7 +20,7 @@ use bitflags::bitflags;
 use codec::{Decode, Encode};
 use ctype::CtypeHashOf;
 use frame_support::{dispatch::DispatchResult, storage::bounded_btree_set::BoundedBTreeSet};
-use kilt_support::deposit::Deposit;
+use pid_support::deposit::Deposit;
 use scale_info::TypeInfo;
 
 use crate::*;

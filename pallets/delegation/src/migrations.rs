@@ -17,7 +17,7 @@
 // If you feel like getting in touch with us, you can do so at info@botlabs.org
 
 use codec::{Decode, Encode};
-use kilt_support::traits::VersionMigratorTrait;
+use pid_support::traits::VersionMigratorTrait;
 use scale_info::TypeInfo;
 use sp_std::marker::PhantomData;
 

@@ -18,7 +18,7 @@
 
 //! Helper methods for computing issuance based on inflation
 use crate::{pallet::Config, types::BalanceOf};
-use kilt_primitives::constants::BLOCKS_PER_YEAR;
+use pid_primitives::constants::BLOCKS_PER_YEAR;
 use parity_scale_codec::{Decode, Encode};
 use scale_info::TypeInfo;
 use sp_runtime::{traits::Saturating, Perquintill, RuntimeDebug};
@@ -144,7 +144,7 @@ mod tests {
 
 	use super::*;
 	use crate::mock::{almost_equal, ExtBuilder, Test, DECIMALS};
-	use kilt_primitives::constants::{BLOCKS_PER_YEAR, MAX_COLLATOR_STAKE};
+	use pid_primitives::constants::{BLOCKS_PER_YEAR, MAX_COLLATOR_STAKE};
 
 	#[test]
 	fn perquintill() {

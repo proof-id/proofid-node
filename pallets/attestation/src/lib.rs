@@ -98,7 +98,7 @@ pub mod pallet {
 		BoundedVec,
 	};
 	use frame_system::pallet_prelude::*;
-	use kilt_support::{deposit::Deposit, traits::CallSources};
+	use pid_support::{deposit::Deposit, traits::CallSources};
 
 	/// Type of a claim hash.
 	pub(crate) type ClaimHashOf<T> = <T as frame_system::Config>::Hash;
@@ -474,7 +474,7 @@ pub mod pallet {
 		}
 
 		fn remove_attestation(attestation: AttestationDetails<T>, claim_hash: ClaimHashOf<T>) {
-			kilt_support::free_deposit::<AccountIdOf<T>, CurrencyOf<T>>(&attestation.deposit);
+			pid_support::free_deposit::<AccountIdOf<T>, CurrencyOf<T>>(&attestation.deposit);
 			Attestations::<T>::remove(&claim_hash);
 			if let Some(delegation_id) = attestation.delegation_id {
 				DelegatedAttestations::<T>::mutate(&delegation_id, |maybe_attestations| {

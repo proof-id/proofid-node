@@ -135,7 +135,7 @@ pub mod pallet {
 		traits::{Currency, ExistenceRequirement, Imbalance, ReservableCurrency},
 	};
 	use frame_system::pallet_prelude::*;
-	use kilt_support::traits::CallSources;
+	use pid_support::traits::CallSources;
 	use sp_runtime::traits::BadOrigin;
 
 	/// Reference to a payload of data of variable size.
@@ -1190,7 +1190,7 @@ impl<T: Config> Pallet<T> {
 		let did_entry = Did::<T>::take(&did_subject).ok_or(Error::<T>::DidNotPresent)?;
 
 		DidEndpointsCount::<T>::remove(&did_subject);
-		kilt_support::free_deposit::<AccountIdOf<T>, CurrencyOf<T>>(&did_entry.deposit);
+		pid_support::free_deposit::<AccountIdOf<T>, CurrencyOf<T>>(&did_entry.deposit);
 		// Mark as deleted to prevent potential replay-attacks of re-adding a previously
 		// deleted DID.
 		DidBlacklist::<T>::insert(&did_subject, ());

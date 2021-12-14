@@ -45,7 +45,7 @@ use sp_runtime::{
 use sp_std::prelude::*;
 use sp_version::RuntimeVersion;
 
-use kilt_primitives::{
+use pid_primitives::{
 	constants::{
 		self,
 		attestation::ATTESTATION_DEPOSIT,
@@ -64,7 +64,7 @@ use kilt_primitives::{
 			SPEND_PERIOD, TECHNICAL_MOTION_DURATION, VOTING_PERIOD,
 		},
 		treasury::{INITIAL_PERIOD_LENGTH, INITIAL_PERIOD_REWARD_PER_BLOCK, TREASURY_PALLET_ID},
-		KILT, MAXIMUM_BLOCK_WEIGHT, MICRO_KILT, MILLI_KILT, MIN_VESTED_TRANSFER_AMOUNT, SLOT_DURATION,
+		PID, MAXIMUM_BLOCK_WEIGHT, MICRO_PID, MILLI_PID, MIN_VESTED_TRANSFER_AMOUNT, SLOT_DURATION,
 	},
 	fees::{ToAuthor, WeightToFee},
 	AccountId, AuthorityId, Balance, BlockHashCount, BlockLength, BlockNumber, BlockWeights, DidIdentifier, FeeSplit,
@@ -75,7 +75,7 @@ use kilt_primitives::{
 use sp_version::NativeVersion;
 
 #[cfg(feature = "runtime-benchmarks")]
-use {frame_system::EnsureSigned, kilt_primitives::benchmarks::DummySignature, kilt_support::signature::AlwaysVerify};
+use {frame_system::EnsureSigned, pid_primitives::benchmarks::DummySignature, pid_support::signature::AlwaysVerify};
 
 mod migrations;
 #[cfg(test)]
@@ -142,7 +142,7 @@ impl frame_system::Config for Runtime {
 	/// The hashing algorithm used.
 	type Hashing = BlakeTwo256;
 	/// The header type.
-	type Header = kilt_primitives::Header;
+	type Header = pid_primitives::Header;
 	/// The ubiquitous event type.
 	type Event = Event;
 	/// The ubiquitous origin type.
@@ -180,7 +180,7 @@ impl pallet_timestamp::Config for Runtime {
 }
 
 parameter_types! {
-	pub const ExistentialDeposit: u128 = 10 * MILLI_KILT;
+	pub const ExistentialDeposit: u128 = 10 * MILLI_PID;
 	pub const TransactionByteFee: u128 = MICRO_KILT;
 	pub const MaxLocks: u32 = 50;
 	pub const MaxReserves: u32 = 50;
@@ -293,7 +293,7 @@ impl pallet_vesting::Config for Runtime {
 	// disable vested transfers by setting min amount to max balance
 	type MinVestedTransfer = MinVestedTransfer;
 	type WeightInfo = weights::pallet_vesting::WeightInfo<Runtime>;
-	const MAX_VESTING_SCHEDULES: u32 = kilt_primitives::constants::MAX_VESTING_SCHEDULES;
+	const MAX_VESTING_SCHEDULES: u32 = pid_primitives::constants::MAX_VESTING_SCHEDULES;
 }
 
 parameter_types! {
@@ -302,12 +302,12 @@ parameter_types! {
 	pub const AutoUnlockBound: u32 = 100;
 }
 
-impl kilt_launch::Config for Runtime {
+impl pid_launch::Config for Runtime {
 	type Event = Event;
 	type MaxClaims = MaxClaims;
 	type UsableBalance = UsableBalance;
 	type AutoUnlockBound = AutoUnlockBound;
-	type WeightInfo = weights::kilt_launch::WeightInfo<Runtime>;
+	type WeightInfo = weights::pid_launch::WeightInfo<Runtime>;
 }
 
 parameter_types! {
@@ -334,7 +334,7 @@ parameter_types! {
 	pub const EnactmentPeriod: BlockNumber = ENACTMENT_PERIOD;
 	pub const CooloffPeriod: BlockNumber = COOLOFF_PERIOD;
 	// One cent: $10,000 / MB
-	pub const PreimageByteDeposit: Balance = 10 * MILLI_KILT;
+	pub const PreimageByteDeposit: Balance = 10 * MILLI_PID;
 	pub const InstantAllowed: bool = true;
 	pub const MaxVotes: u32 = 100;
 	pub const MaxProposals: u32 = 100;
@@ -548,7 +548,7 @@ impl delegation::Config for Runtime {
 }
 
 parameter_types! {
-	pub const Fee: Balance = MILLI_KILT;
+	pub const Fee: Balance = MILLI_PID;
 }
 
 impl ctype::Config for Runtime {
@@ -738,7 +738,7 @@ impl pallet_randomness_collective_flip::Config for Runtime {}
 construct_runtime! {
 	pub enum Runtime where
 		Block = Block,
-		NodeBlock = kilt_primitives::Block,
+		NodeBlock = pid_primitives::Block,
 		UncheckedExtrinsic = UncheckedExtrinsic,
 	{
 		// Basic stuff; balances is uncallable initially.
@@ -777,7 +777,7 @@ construct_runtime! {
 		Scheduler: pallet_scheduler::{Pallet, Call, Storage, Event<T>} = 42,
 
 		// KILT Pallets. Start indices 60 to leave room
-		KiltLaunch: kilt_launch::{Pallet, Call, Storage, Event<T>, Config<T>} = 60,
+		KiltLaunch: pid_launch::{Pallet, Call, Storage, Event<T>, Config<T>} = 60,
 		Ctype: ctype::{Pallet, Call, Storage, Event<T>} = 61,
 		Attestation: attestation::{Pallet, Call, Storage, Event<T>} = 62,
 		Delegation: delegation::{Pallet, Call, Storage, Event<T>} = 63,
@@ -1009,7 +1009,7 @@ impl_runtime_apis! {
 			list_benchmark!(list, extra, delegation, Delegation);
 			list_benchmark!(list, extra, did, Did);
 			list_benchmark!(list, extra, pallet_did_lookup, DidLookup);
-			list_benchmark!(list, extra, kilt_launch, KiltLaunch);
+			list_benchmark!(list, extra, pid_launch, KiltLaunch);
 			list_benchmark!(list, extra, pallet_inflation, Inflation);
 			list_benchmark!(list, extra, parachain_staking, ParachainStaking);
 
@@ -1072,7 +1072,7 @@ impl_runtime_apis! {
 			add_benchmark!(params, batches, delegation, Delegation);
 			add_benchmark!(params, batches, did, Did);
 			add_benchmark!(params, batches, pallet_did_lookup, DidLookup);
-			add_benchmark!(params, batches, kilt_launch, KiltLaunch);
+			add_benchmark!(params, batches, pid_launch, KiltLaunch);
 			add_benchmark!(params, batches, pallet_inflation, Inflation);
 			add_benchmark!(params, batches, parachain_staking, ParachainStaking);
 

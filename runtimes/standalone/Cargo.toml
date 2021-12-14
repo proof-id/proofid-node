@@ -1,8 +1,8 @@
 [package]
-authors = ["KILT <info@kilt.io>"]
-edition = "2018"
-name = "mashnet-node-runtime"
-version = "1.2.0"
+authors = ["ProofID <info@proofid.me>"]
+edition = "2021"
+name = "proofid-node-runtime"
+version = "0.0.1"
 
 [build-dependencies]
 substrate-wasm-builder = {git = "https://github.com/paritytech/substrate", branch = "polkadot-v0.9.12"}
@@ -14,15 +14,15 @@ log = {default-features = false, version = "0.4.14"}
 scale-info = {version = "1.0", default-features = false, features = ["derive"]}
 serde = {features = ["derive"], optional = true, version = "1.0"}
 
-# kilt functionality
+# proofid functionality
 attestation = {default-features = false, path = "../../pallets/attestation"}
 crowdloan = {default-features = false, path = "../../pallets/crowdloan"}
 ctype = {default-features = false, path = "../../pallets/ctype"}
 delegation = {default-features = false, path = "../../pallets/delegation"}
 did = {default-features = false, path = "../../pallets/did"}
-kilt-launch = {default-features = false, path = "../../pallets/kilt-launch"}
-kilt-primitives = {path = "../../primitives", default-features = false}
-kilt-support = {path = "../../support", default-features = false, optional = true}
+pid-launch = {default-features = false, path = "../../pallets/pid-launch"}
+pid-primitives = {path = "../../primitives", default-features = false}
+pid-support = {path = "../../support", default-features = false, optional = true}
 pallet-did-lookup = {default-features = false, path = "../../pallets/pallet-did-lookup"}
 
 # kilt specific
@@ -79,10 +79,10 @@ runtime-benchmarks = [
   "frame-support/runtime-benchmarks",
   "frame-system/runtime-benchmarks",
   "frame-system-benchmarking",
-  "kilt-launch/runtime-benchmarks",
-  "kilt-primitives/runtime-benchmarks",
-  "kilt-support",
-  "kilt-support/runtime-benchmarks",
+  "pid-launch/runtime-benchmarks",
+  "pid-primitives/runtime-benchmarks",
+  "pid-support",
+  "pid-support/runtime-benchmarks",
   "pallet-balances/runtime-benchmarks",
   "pallet-did-lookup/runtime-benchmarks",
   "pallet-indices/runtime-benchmarks",
@@ -102,8 +102,8 @@ std = [
   "frame-system/std",
   "frame-system-rpc-runtime-api/std",
   "frame-try-runtime/std",
-  "kilt-launch/std",
-  "kilt-primitives/std",
+  "pid-launch/std",
+  "pid-primitives/std",
   "log/std",
   "pallet-aura/std",
   "pallet-authorship/std",
@@ -144,7 +144,7 @@ try-runtime = [
   "frame-support/try-runtime",
   "frame-system/try-runtime",
   "frame-try-runtime",
-  "kilt-launch/try-runtime",
+  "pid-launch/try-runtime",
   "pallet-aura/try-runtime",
   "pallet-authorship/try-runtime",
   "pallet-balances/try-runtime",

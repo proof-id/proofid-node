@@ -24,7 +24,7 @@ use pallet_balances::WeightInfo;
 use smallvec::smallvec;
 use sp_runtime::Perbill;
 
-use crate::{constants::MILLI_KILT, AccountId, Balance, NegativeImbalanceOf};
+use crate::{constants::MILLI_PID, AccountId, Balance, NegativeImbalanceOf};
 
 /// Split two Imbalances between two unbalanced handlers.
 /// The first Imbalance will be split according to the given ratio. The second
@@ -96,7 +96,7 @@ where
 	type Balance = Balance;
 	fn polynomial() -> WeightToFeeCoefficients<Self::Balance> {
 		// The should be fee
-		let wanted_fee: Balance = 10 * MILLI_KILT;
+		let wanted_fee: Balance = 10 * MILLI_PID;
 
 		let per_byte_fee: u128 = <R as pallet_transaction_payment::Config>::TransactionByteFee::get();
 		// TODO: transfer_keep_alive is 288 byte long?

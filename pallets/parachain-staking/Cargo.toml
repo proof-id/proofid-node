@@ -7,8 +7,8 @@ version = "1.2.0"
 
 [dependencies]
 hex-literal = "0.2.1"
-kilt-primitives = {path = "../../primitives", default-features = false}
-kilt-support = {default-features = false, path = "../../support"}
+pid-primitives = {path = "../../primitives", default-features = false}
+pid-support = {default-features = false, path = "../../support"}
 log = "*"
 parity-scale-codec = {version = "2.3.1", default-features = false, features = ["derive"]}
 
@@ -43,8 +43,8 @@ runtime-benchmarks = [
 std = [
   "frame-support/std",
   "frame-system/std",
-  "kilt-primitives/std",
-  "kilt-support/std",
+  "pid-primitives/std",
+  "pid-support/std",
   "log/std",
   "pallet-authorship/std",
   "pallet-balances/std",
@@ -58,5 +58,5 @@ std = [
 ]
 try-runtime = [
   "frame-support/try-runtime",
-  "kilt-support/try-runtime",
+  "pid-support/try-runtime",
 ]

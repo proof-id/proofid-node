@@ -23,9 +23,9 @@ crowdloan = {path = "../../pallets/crowdloan", default-features = false}
 ctype = {default-features = false, path = "../../pallets/ctype"}
 delegation = {default-features = false, path = "../../pallets/delegation"}
 did = {default-features = false, path = "../../pallets/did"}
-kilt-launch = {path = "../../pallets/kilt-launch", default-features = false}
-kilt-primitives = {path = "../../primitives", default-features = false}
-kilt-support = {path = "../../support", default-features = false, optional = true}
+pid-launch = {path = "../../pallets/pid-launch", default-features = false}
+pid-primitives = {path = "../../primitives", default-features = false}
+pid-support = {path = "../../support", default-features = false, optional = true}
 pallet-did-lookup = {default-features = false, path = "../../pallets/pallet-did-lookup"}
 pallet-inflation = {path = "../../pallets/pallet-inflation", default-features = false}
 parachain-staking = {default-features = false, path = "../../pallets/parachain-staking"}
@@ -92,7 +92,7 @@ substrate-wasm-builder = {git = "https://github.com/paritytech/substrate", branc
 
 [features]
 default = ["std"]
-fast-gov = ["kilt-primitives/fast-gov"]
+fast-gov = ["pid-primitives/fast-gov"]
 runtime-benchmarks = [
   "attestation/runtime-benchmarks",
   "crowdloan/runtime-benchmarks",
@@ -105,10 +105,10 @@ runtime-benchmarks = [
   "frame-support/runtime-benchmarks",
   "frame-system-benchmarking",
   "frame-system/runtime-benchmarks",
-  "kilt-launch/runtime-benchmarks",
-  "kilt-primitives/runtime-benchmarks",
-  "kilt-support",
-  "kilt-support/runtime-benchmarks",
+  "pid-launch/runtime-benchmarks",
+  "pid-primitives/runtime-benchmarks",
+  "pid-support",
+  "pid-support/runtime-benchmarks",
   "pallet-balances/runtime-benchmarks",
   "pallet-collective/runtime-benchmarks",
   "pallet-democracy/runtime-benchmarks",
@@ -144,8 +144,8 @@ std = [
   "frame-system-rpc-runtime-api/std",
   "frame-system/std",
   "frame-try-runtime/std",
-  "kilt-launch/std",
-  "kilt-primitives/std",
+  "pid-launch/std",
+  "pid-primitives/std",
   "log/std",
   "pallet-aura/std",
   "pallet-authorship/std",
@@ -197,7 +197,7 @@ try-runtime = [
   "frame-support/try-runtime",
   "frame-system/try-runtime",
   "frame-try-runtime",
-  "kilt-launch/try-runtime",
+  "pid-launch/try-runtime",
   "pallet-aura/try-runtime",
   "pallet-authorship/try-runtime",
   "pallet-balances/try-runtime",

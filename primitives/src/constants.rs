@@ -38,14 +38,14 @@ pub const DAYS: BlockNumber = HOURS * 24;
 // Julian year as Substrate handles it
 pub const BLOCKS_PER_YEAR: BlockNumber = DAYS * 36525 / 100;
 
-pub const MIN_VESTED_TRANSFER_AMOUNT: Balance = 100 * MILLI_KILT;
-pub const MAX_COLLATOR_STAKE: Balance = 200_000 * KILT;
+pub const MIN_VESTED_TRANSFER_AMOUNT: Balance = 100 * MILLI_PID;
+pub const MAX_COLLATOR_STAKE: Balance = 200_000 * PID;
 
 /// One KILT
 pub const KILT: Balance = 10u128.pow(15);
 
 /// 0.001 KILT
-pub const MILLI_KILT: Balance = 10u128.pow(12);
+pub const MILLI_PID: Balance = 10u128.pow(12);
 
 /// 0.000_001 KILT
 pub const MICRO_KILT: Balance = 10u128.pow(9);
@@ -81,13 +81,13 @@ pub const MAX_VESTING_SCHEDULES: u32 = 28;
 pub mod attestation {
 	use super::*;
 
-	pub const ATTESTATION_DEPOSIT: Balance = KILT;
+	pub const ATTESTATION_DEPOSIT: Balance = PID;
 }
 
 pub mod delegation {
 	use super::*;
 
-	pub const DELEGATION_DEPOSIT: Balance = KILT;
+	pub const DELEGATION_DEPOSIT: Balance = PID;
 	pub const MAX_SIGNATURE_BYTE_LENGTH: u16 = 64;
 	pub const MAX_PARENT_CHECKS: u32 = 5;
 	pub const MAX_REVOCATIONS: u32 = 5;
@@ -98,7 +98,7 @@ pub mod delegation {
 pub mod staking {
 	use sp_runtime::Perquintill;
 
-	use super::KILT;
+	use super::PID;
 	#[cfg(not(feature = "fast-gov"))]
 	use super::{DAYS, HOURS};
 	use crate::{Balance, BlockNumber};
@@ -129,7 +129,7 @@ pub mod staking {
 	#[cfg(not(feature = "fast-gov"))]
 	pub const MAX_CANDIDATES: u32 = 75;
 
-	pub const MIN_DELEGATOR_STAKE: Balance = 20 * KILT;
+	pub const MIN_DELEGATOR_STAKE: Balance = 20 * PID;
 
 	pub const NETWORK_REWARD_RATE: Perquintill = Perquintill::from_percent(10);
 }
@@ -195,10 +195,10 @@ pub mod governance {
 pub mod did {
 	use crate::BlockNumber;
 
-	use super::{Balance, HOURS, KILT, MILLI_KILT};
+	use super::{Balance, HOURS, PID, MILLI_PID};
 
-	pub const DID_DEPOSIT: Balance = 2 * KILT;
-	pub const DID_FEE: Balance = 50 * MILLI_KILT;
+	pub const DID_DEPOSIT: Balance = 2 * PID;
+	pub const DID_FEE: Balance = 50 * MILLI_PID;
 	pub const MAX_KEY_AGREEMENT_KEYS: u32 = 10;
 	pub const MAX_URL_LENGTH: u32 = 200;
 	// This has been reduced from the previous 100, but it might still need
@@ -224,7 +224,7 @@ pub mod treasury {
 	use super::{BLOCKS_PER_YEAR, KILT};
 
 	pub const INITIAL_PERIOD_LENGTH: BlockNumber = BLOCKS_PER_YEAR.saturating_mul(5);
-	const YEARLY_REWARD: Balance = 2_000_000u128 * KILT;
+	const YEARLY_REWARD: Balance = 2_000_000u128 * PID;
 	pub const INITIAL_PERIOD_REWARD_PER_BLOCK: Balance = YEARLY_REWARD / (BLOCKS_PER_YEAR as Balance);
 	pub const TREASURY_PALLET_ID: PalletId = PalletId(*b"kilt/tsy");
 }
