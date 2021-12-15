@@ -1,6 +1,6 @@
 {
-  "name": "Peregrine Westend-Relay Stagenet",
-  "id": "westend_peregrine_relay_stagenet",
+  "name": "alfheim Westend-Relay Stagenet",
+  "id": "westend_alfheim_relay_stagenet",
   "chainType": "Live",
   "bootNodes": [
     "/dns4/bootnodes.kilt.io/tcp/30380/p2p/12D3KooWDRzUz3SenRC737aFrY1aPAVbiioqVMUL7otbupWtuk3B",

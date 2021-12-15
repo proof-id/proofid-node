@@ -1,6 +1,6 @@
 {
-  "name": "KILT Peregrine Stagenet",
-  "id": "peregrine_stg_kilt",
+  "name": "PID alfheim Stagenet",
+  "id": "alfheim_stg_kilt",
   "chainType": "Live",
   "bootNodes": [
     "/dns4/bootnodes.kilt.io/tcp/30370/p2p/12D3KooWCAK9CjW1abcSx1UwVRSoyAYTR3AzS6qHnG9pddeU2Sra",

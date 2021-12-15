@@ -1,12 +1,12 @@
-// KILT Blockchain – https://botlabs.org
+// PID Blockchain – https://botlabs.org
 // Copyright (C) 2019-2021 BOTLabs GmbH
 
-// The KILT Blockchain is free software: you can redistribute it and/or modify
+// The PID Blockchain is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 
-// The KILT Blockchain is distributed in the hope that it will be useful,
+// The PID Blockchain is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
@@ -16,7 +16,7 @@
 
 // If you feel like getting in touch with us, you can do so at info@botlabs.org
 
-//! KILT chain specification
+//! PID chain specification
 
 use cumulus_primitives_core::ParaId;
 use hex_literal::hex;
@@ -28,7 +28,7 @@ use sc_service::ChainType;
 use sc_telemetry::TelemetryEndpoints;
 use sp_core::{crypto::UncheckedInto, sr25519};
 use sp_runtime::traits::Zero;
-use spiritnet_runtime::{
+use midgard_runtime::{
 	BalancesConfig, CouncilConfig, CrowdloanContributorsConfig, GenesisConfig, InflationInfo, PidLaunchConfig,
 	MinCollatorStake, ParachainInfoConfig, ParachainStakingConfig, SessionConfig, SystemConfig,
 	TechnicalCommitteeConfig, VestingConfig, WASM_BINARY,
@@ -42,11 +42,11 @@ use super::{get_properties, Extensions};
 pub type ChainSpec = sc_service::GenericChainSpec<GenesisConfig, Extensions>;
 
 pub fn get_chain_spec_dev(id: ParaId) -> Result<ChainSpec, String> {
-	let properties = get_properties("KILT", 15, 38);
+	let properties = get_properties("PID", 15, 38);
 	let wasm = WASM_BINARY.ok_or("No WASM")?;
 
 	Ok(ChainSpec::from_genesis(
-		"KILT Local",
+		"PID Local",
 		"kilt_parachain_local_testnet",
 		ChainType::Local,
 		move || {
@@ -168,7 +168,7 @@ pub fn get_chain_spec_wilt() -> Result<ChainSpec, String> {
 				.parse()
 				.expect("bootnode address is formatted correctly; qed"),
 		],
-		Some(TelemetryEndpoints::new(vec![(TELEMETRY_URL.to_string(), 0)]).expect("KILT telemetry url is valid; qed")),
+		Some(TelemetryEndpoints::new(vec![(TELEMETRY_URL.to_string(), 0)]).expect("PID telemetry url is valid; qed")),
 		None,
 		Some(properties),
 		Extensions {
@@ -178,8 +178,8 @@ pub fn get_chain_spec_wilt() -> Result<ChainSpec, String> {
 	))
 }
 
-pub fn load_spiritnet_spec() -> Result<ChainSpec, String> {
-	ChainSpec::from_json_bytes(&include_bytes!("../../res/spiritnet.json")[..])
+pub fn load_midgard_spec() -> Result<ChainSpec, String> {
+	ChainSpec::from_json_bytes(&include_bytes!("../../res/midgard.json")[..])
 }
 
 pub fn kilt_inflation_config() -> InflationInfo {
@@ -269,7 +269,7 @@ fn testnet_genesis(
 					(
 						acc.clone(),
 						acc.clone(),
-						spiritnet_runtime::SessionKeys { aura: key.clone() },
+						midgard_runtime::SessionKeys { aura: key.clone() },
 					)
 				})
 				.collect::<Vec<_>>(),

@@ -1,12 +1,12 @@
-// KILT Blockchain – https://botlabs.org
+// PID Blockchain – https://botlabs.org
 // Copyright (C) 2019-2021 BOTLabs GmbH
 
-// The KILT Blockchain is free software: you can redistribute it and/or modify
+// The PID Blockchain is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 
-// The KILT Blockchain is distributed in the hope that it will be useful,
+// The PID Blockchain is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
@@ -104,8 +104,8 @@ parameter_types! {
 	#[derive(Debug, Clone)]
 	pub const MaxPublicKeysPerDid: u32 = 13u32;
 	pub const MaxBlocksTxValidity: u64 = 300u64;
-	pub const Deposit: Balance = 10 * MICRO_KILT;
-	pub const DidFee: Balance = MICRO_KILT;
+	pub const Deposit: Balance = 10 * MICRO_PID;
+	pub const DidFee: Balance = MICRO_PID;
 	pub const MaxNumberOfServicesPerDid: u32 = 25u32;
 	pub const MaxServiceIdLength: u32 = 50u32;
 	pub const MaxServiceTypeLength: u32 = 50u32;

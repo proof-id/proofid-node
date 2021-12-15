@@ -1,9 +1,9 @@
 [package]
-authors = ["KILT <info@kilt.io>"]
+authors = ["PID <info@kilt.io>"]
 description = "Enables automatic unlocking of balance from genesis block"
 edition = "2018"
 name = "pid-launch"
-repository = "https://github.com/KILTprotocol/mashnet-node"
+repository = "https://github.com/PIDprotocol/mashnet-node"
 version = "1.2.0"
 
 [package.metadata.docs.rs]

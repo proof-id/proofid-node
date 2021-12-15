@@ -1,7 +1,7 @@
 [package]
-authors = ["KILT <info@kilt.io>"]
+authors = ["PID <info@kilt.io>"]
 build = "build.rs"
-description = "KILT parachain"
+description = "PID parachain"
 edition = "2018"
 name = "kilt-parachain"
 version = "1.2.0"
@@ -14,8 +14,8 @@ path = "src/main.rs"
 
 # Internal dependencies
 pid-primitives = {path = "../../primitives"}
-peregrine-runtime = {path = "../../runtimes/peregrine"}
-spiritnet-runtime = {path = "../../runtimes/spiritnet"}
+alfheim-runtime = {path = "../../runtimes/alfheim"}
+midgard-runtime = {path = "../../runtimes/midgard"}
 
 # External dependencies
 codec = {package = "parity-scale-codec", version = "2.3.1"}
@@ -99,7 +99,7 @@ substrate-build-script-utils = {git = "https://github.com/paritytech/substrate",
 [features]
 default = []
 fast-gov = [
-  "peregrine-runtime/fast-gov",
+  "alfheim-runtime/fast-gov",
   "pid-primitives/fast-gov",
 ]
 rococo-native = [
@@ -108,13 +108,13 @@ rococo-native = [
 ]
 runtime-benchmarks = [
   "polkadot-service/runtime-benchmarks",
-  "peregrine-runtime/runtime-benchmarks",
-  "spiritnet-runtime/runtime-benchmarks",
+  "alfheim-runtime/runtime-benchmarks",
+  "midgard-runtime/runtime-benchmarks",
 ]
 try-runtime = [
-  "peregrine-runtime/try-runtime",
+  "alfheim-runtime/try-runtime",
   "node-executor",
-  "spiritnet-runtime/try-runtime",
+  "midgard-runtime/try-runtime",
   "try-runtime-cli",
 ]
 westend-native = [

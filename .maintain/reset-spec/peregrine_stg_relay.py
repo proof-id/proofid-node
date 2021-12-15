@@ -15,8 +15,8 @@ def update_spec(input: typing.Dict):
             "/dns4/bootnodes.kilt.io/tcp/30383/p2p/12D3KooWRnGvdAf6xiGTQMdzHSrSXR5GWzc6JWvfUcACjGTpbzeq",
         ],
         "chainType": "Live",
-        "name": "Peregrine Westend-Relay Stagenet",
-        "id": "westend_peregrine_relay_stagenet",
+        "name": "alfheim Westend-Relay Stagenet",
+        "id": "westend_alfheim_relay_stagenet",
         "telemetryEndpoints": [
             [
                 "/dns/telemetry-backend.kilt.io/tcp/8080/x-parity-wss/%2Fsubmit",

@@ -1,5 +1,5 @@
 {
-  "name": "KILT Devnet",
+  "name": "PID Devnet",
   "id": "kilt_devnet",
   "chainType": "Live",
   "bootNodes": [],
@@ -7,7 +7,7 @@
   "protocolId": null,
   "properties": {
     "tokenDecimals": 15,
-    "tokenSymbol": "KILT"
+    "tokenSymbol": "PID"
   },
   "consensusEngine": null,
   "lightSyncState": null,

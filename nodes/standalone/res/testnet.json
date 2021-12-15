@@ -1,5 +1,5 @@
 {
-  "name": "KILT Testnet",
+  "name": "PID Testnet",
   "id": "kilt_testnet",
   "chainType": "Live",
   "bootNodes": [
@@ -11,7 +11,7 @@
   "protocolId": null,
   "properties": {
     "tokenDecimals": 15,
-    "tokenSymbol": "KILT"
+    "tokenSymbol": "PID"
   },
   "consensusEngine": null,
   "genesis": {

@@ -1,12 +1,12 @@
-// KILT Blockchain – https://botlabs.org
+// PID Blockchain – https://botlabs.org
 // Copyright (C) 2019-2021 BOTLabs GmbH
 
-// The KILT Blockchain is free software: you can redistribute it and/or modify
+// The PID Blockchain is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 
-// The KILT Blockchain is distributed in the hope that it will be useful,
+// The PID Blockchain is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
@@ -19,7 +19,7 @@
 //! # DID Pallet
 //!
 //! Provides W3C-compliant DID functionalities. A DID identifier is derived from
-//! a KILT address and must be verifiable, i.e., must be able to generate
+//! a PID address and must be verifiable, i.e., must be able to generate
 //! digital signatures that can be verified starting from a raw payload, its
 //! signature, and the signer identifier. Currently, the DID pallet supports the
 //! following types of keys: Ed25519, Sr25519, and Ecdsa for signing keys, and
@@ -32,7 +32,7 @@
 //!
 //! ### Terminology
 //!
-//! Each DID identifier is mapped to a set of keys, which in KILT are used for
+//! Each DID identifier is mapped to a set of keys, which in PID are used for
 //! different purposes.
 //!
 //! - One **authentication key**: used to sign and authorise DID-management
@@ -45,14 +45,14 @@
 //!   addressed to the DID subject.
 //!
 //! - Zero or one **delegation key**: used to sign and authorise the creation of
-//!   new delegation nodes on the KILT blockchain. In case no delegation key is
-//!   present, the DID subject cannot write new delegations on the KILT
+//!   new delegation nodes on the PID blockchain. In case no delegation key is
+//!   present, the DID subject cannot write new delegations on the PID
 //!   blockchain. For more info, check the [delegation
 //!   pallet](../../delegation/).
 //!
 //! - Zero or one **attestation key**: used to sign and authorise the creation
-//!   of new attested claims on the KILT blockchain. In case no attestation key
-//!   is present, the DID subject cannot write new attested claims on the KILT
+//!   of new attested claims on the PID blockchain. In case no attestation key
+//!   is present, the DID subject cannot write new attested claims on the PID
 //!   blockchain. For more info, check the [attestation
 //!   pallet](../../attestation/).
 //!
@@ -467,7 +467,7 @@ pub mod pallet {
 	#[pallet::call]
 	impl<T: Config> Pallet<T> {
 		/// Store a new DID on chain, after verifying that the creation
-		/// operation has been signed by the KILT account associated with the
+		/// operation has been signed by the PID account associated with the
 		/// identifier of the DID being created and that a DID with the same
 		/// identifier has not previously existed on (and then deleted from) the
 		/// chain.
@@ -479,9 +479,9 @@ pub mod pallet {
 		/// identifier along with the block number in which the operation was
 		/// executed.
 		///
-		/// The dispatch origin can be any KILT account with enough funds to
+		/// The dispatch origin can be any PID account with enough funds to
 		/// execute the extrinsic and it does not have to be tied in any way to
-		/// the KILT account identifying the DID subject.
+		/// the PID account identifying the DID subject.
 		///
 		/// Emits `DidCreated`.
 		///
@@ -1002,9 +1002,9 @@ pub mod pallet {
 		/// A successful dispatch operation results in the tx counter associated
 		/// with the given DID to be incremented, to mitigate replay attacks.
 		///
-		/// The dispatch origin can be any KILT account with enough funds to
+		/// The dispatch origin can be any PID account with enough funds to
 		/// execute the extrinsic and it does not have to be tied in any way to
-		/// the KILT account identifying the DID subject.
+		/// the PID account identifying the DID subject.
 		///
 		/// Emits `DidCallDispatched`.
 		///

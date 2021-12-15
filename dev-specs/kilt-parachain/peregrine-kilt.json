@@ -1,6 +1,6 @@
 {
-  "name": "KILT Peregrine",
-  "id": "peregrine_kilt",
+  "name": "PID alfheim",
+  "id": "alfheim_kilt",
   "chainType": "Live",
   "bootNodes": [
     "/dns4/bootnode.kilt.io/tcp/30340/p2p/12D3KooWALJtiCZzcUPVsCa5f5egGfQyFhPY67kKosDw95bJqK7M",

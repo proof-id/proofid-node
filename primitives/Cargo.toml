@@ -1,5 +1,5 @@
 [package]
-authors = ["KILT <info@kilt.io>"]
+authors = ["PID <info@kilt.io>"]
 edition = "2018"
 name = "pid-primitives"
 version = "0.1.0"

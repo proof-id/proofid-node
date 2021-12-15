@@ -1,12 +1,12 @@
-// KILT Blockchain – https://botlabs.org
+// PID Blockchain – https://botlabs.org
 // Copyright (C) 2019-2021 BOTLabs GmbH
 
-// The KILT Blockchain is free software: you can redistribute it and/or modify
+// The PID Blockchain is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 
-// The KILT Blockchain is distributed in the hope that it will be useful,
+// The PID Blockchain is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
@@ -16,7 +16,7 @@
 
 // If you feel like getting in touch with us, you can do so at info@botlabs.org
 
-//! KILT chain specification
+//! PID chain specification
 
 use cumulus_primitives_core::ParaId;
 use hex_literal::hex;
@@ -24,7 +24,7 @@ use pid_primitives::{
 	constants::{INFLATION_CONFIG, PID, MAX_COLLATOR_STAKE},
 	AccountId, AuthorityId, Balance, BlockNumber,
 };
-use peregrine_runtime::{
+use alfheim_runtime::{
 	BalancesConfig, CouncilConfig, CrowdloanContributorsConfig, GenesisConfig, InflationInfo, PidLaunchConfig,
 	MinCollatorStake, ParachainInfoConfig, ParachainStakingConfig, SessionConfig, SudoConfig, SystemConfig,
 	TechnicalCommitteeConfig, VestingConfig, WASM_BINARY,
@@ -45,8 +45,8 @@ pub fn make_dev_spec(id: ParaId) -> Result<ChainSpec, String> {
 	let wasm = WASM_BINARY.ok_or("No WASM")?;
 
 	Ok(ChainSpec::from_genesis(
-		"KILT Peregrine Local",
-		"peregrine_local_testnet",
+		"PID alfheim Local",
+		"alfheim_local_testnet",
 		ChainType::Local,
 		move || {
 			testnet_genesis(
@@ -109,7 +109,7 @@ pub fn make_new_spec(id: ParaId) -> Result<ChainSpec, String> {
 	let wasm = WASM_BINARY.ok_or("No WASM")?;
 
 	Ok(ChainSpec::from_genesis(
-		"KILT Peregrine Testnet",
+		"PID alfheim Testnet",
 		"kilt_parachain_testnet",
 		ChainType::Live,
 		move || {
@@ -252,7 +252,7 @@ fn testnet_genesis(
 					(
 						acc.clone(),
 						acc.clone(),
-						peregrine_runtime::SessionKeys { aura: key.clone() },
+						alfheim_runtime::SessionKeys { aura: key.clone() },
 					)
 				})
 				.collect::<Vec<_>>(),

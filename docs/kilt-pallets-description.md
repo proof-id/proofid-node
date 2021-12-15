@@ -1,14 +1,14 @@
-# Description of KILT Pallets
+# Description of PID Pallets
 
-Currently, the KILT runtime uses the following four custom pallets for handling the underlying KILT data structures: 
+Currently, the PID runtime uses the following four custom pallets for handling the underlying PID data structures: 
 * [`did`](../pallets/did)
 * [`attestation`](../pallets/attestation)
 * [`delegation`](../pallets/delegation)
 * [`ctype`](../pallets/ctype)
 
-## The KILT DID Pallet
+## The PID DID Pallet
 
-The KILT blockchain node runtime defines a DID module exposing:
+The PID blockchain node runtime defines a DID module exposing:
 
 ### Add a DID
 
@@ -44,9 +44,9 @@ fn remove(origin) -> DispatchResult
 This function takes the owner as a single parameter removes the DID from the storage map.
 Thus, any any later read operation call does not return the data of a removed DID.
 
-## The KILT CType Pallet
+## The PID CType Pallet
 
-The KILT blockchain node runtime defines a CType module exposing
+The PID blockchain node runtime defines a CType module exposing
 
 ```rust
 fn add(origin, hash: T::Hash) -> DispatchResult
@@ -64,9 +64,9 @@ inserts it to the blockchain storage by using a map (done by the substrate frame
 type CTypeStorage<T> = StorageMap<T::Hash, Option<T::AccountId>>
 ```
 
-## The KILT Attestation Pallet
+## The PID Attestation Pallet
 
-The KILT blockchain node runtime defines an Attestation module exposing functions to 
+The PID blockchain node runtime defines an Attestation module exposing functions to 
 
 - add a (delegated) attestation `add`
 - revoke a (delegated) attestation `revoke`
@@ -122,9 +122,9 @@ fn revoke(origin, claim_hash: T::Hash, max_depth: u32) -> DispatchResult
 The `revoke` function takes the claim hash (which is the key to lookup an attestation) as argument.
 After looking up the attestation and checking the invoker's permissions, the revoked flag is set to true and the updated attestation is stored on chain.
 
-## The KILT Delegation Pallet
+## The PID Delegation Pallet
 
-The KILT blockchain node runtime defines a Delegation module exposing functions to
+The PID blockchain node runtime defines a Delegation module exposing functions to
 
 - create a root delegation `create_root`
 - add a delegation `add_delegation`

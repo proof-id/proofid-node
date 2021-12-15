@@ -1,9 +1,9 @@
 [package]
-authors = ["KILT <info@kilt.io>"]
+authors = ["PID <info@kilt.io>"]
 description = "Enables creating and revoking root nodes of delegation hierarchies; adding and revoking delegation nodes based on root nodes."
 edition = "2018"
 name = "delegation"
-repository = "https://github.com/KILTprotocol/mashnet-node"
+repository = "https://github.com/PIDprotocol/mashnet-node"
 version = "1.2.0"
 
 [package.metadata.docs.rs]
