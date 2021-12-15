@@ -1,12 +1,12 @@
-// KILT Blockchain – https://botlabs.org
+// PID Blockchain – https://botlabs.org
 // Copyright (C) 2019-2021 BOTLabs GmbH
 
-// The KILT Blockchain is free software: you can redistribute it and/or modify
+// The PID Blockchain is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 
-// The KILT Blockchain is distributed in the hope that it will be useful,
+// The PID Blockchain is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
@@ -16,7 +16,7 @@
 
 // If you feel like getting in touch with us, you can do so at info@botlabs.org
 
-//! KILT chain specification
+//! PID chain specification
 
 use pid_primitives::{AccountId, AccountPublic};
 use sc_chain_spec::{ChainSpecExtension, ChainSpecGroup};
@@ -25,8 +25,8 @@ use serde::{Deserialize, Serialize};
 use sp_core::{Pair, Public};
 use sp_runtime::traits::IdentifyAccount;
 
-pub mod peregrine;
-pub mod spiritnet;
+pub mod alfheim;
+pub mod midgard;
 
 const TELEMETRY_URL: &str = "wss://telemetry-backend.kilt.io:8080/submit";
 

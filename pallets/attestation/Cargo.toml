@@ -1,9 +1,9 @@
 [package]
-authors = ["KILT <info@kilt.io>"]
+authors = ["PID <info@kilt.io>"]
 description = "Enables adding and revoking attestations."
 edition = "2018"
 name = "attestation"
-repository = "https://github.com/KILTprotocol/mashnet-node"
+repository = "https://github.com/PIDprotocol/mashnet-node"
 version = "1.2.0"
 
 [package.metadata.docs.rs]

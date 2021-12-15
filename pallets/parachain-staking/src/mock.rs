@@ -1,12 +1,12 @@
-// KILT Blockchain – https://botlabs.org
+// PID Blockchain – https://botlabs.org
 // Copyright (C) 2019-2021 BOTLabs GmbH
 
-// The KILT Blockchain is free software: you can redistribute it and/or modify
+// The PID Blockchain is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 
-// The KILT Blockchain is distributed in the hope that it will be useful,
+// The PID Blockchain is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
@@ -26,7 +26,7 @@ use frame_support::{
 	traits::{Currency, GenesisBuild, OnFinalize, OnInitialize, OnUnbalanced},
 	weights::Weight,
 };
-use pid_primitives::constants::{staking::NETWORK_REWARD_RATE, treasury::INITIAL_PERIOD_LENGTH, KILT};
+use pid_primitives::constants::{staking::NETWORK_REWARD_RATE, treasury::INITIAL_PERIOD_LENGTH, PID};
 use pallet_authorship::EventHandler;
 use sp_consensus_aura::sr25519::AuthorityId;
 use sp_core::H256;
@@ -43,7 +43,7 @@ pub use pid_primitives::BlockNumber;
 pub type AccountId = u64;
 pub type Balance = u128;
 pub const BLOCKS_PER_ROUND: BlockNumber = 5;
-pub const DECIMALS: Balance = KILT;
+pub const DECIMALS: Balance = PID;
 
 type UncheckedExtrinsic = frame_system::mocking::MockUncheckedExtrinsic<Test>;
 type Block = frame_system::mocking::MockBlock<Test>;

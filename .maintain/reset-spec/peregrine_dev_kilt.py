@@ -7,8 +7,8 @@ def update_spec(input: typing.Dict):
     input.update({
         "bootNodes": [],
         "chainType": "Local",
-        "name": "KILT Peregrine Testnet",
-        "id": "peregrine_kilt",
+        "name": "PID alfheim Testnet",
+        "id": "alfheim_kilt",
         "para_id": para_id,
     })
     input["properties"]["tokenSymbol"] = "PILT"
@@ -60,7 +60,7 @@ if __name__ == "__main__":
     out_file = sys.argv[2]
 
     process = subprocess.run(["docker", "run", docker_img, "build-spec", "--runtime",
-                              "peregrine", "--chain", "dev", "--disable-default-bootnode"], capture=True)
+                              "alfheim", "--chain", "dev", "--disable-default-bootnode"], capture=True)
 
     in_json = json.load(process.stdout)
     update_spec(in_json)

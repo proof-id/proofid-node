@@ -1,6 +1,6 @@
 {
-  "name": "KILT Peregrine Testnet",
-  "id": "peregrine_kilt",
+  "name": "PID alfheim Testnet",
+  "id": "alfheim_kilt",
   "chainType": "Live",
   "bootNodes": [],
   "telemetryEndpoints": null,

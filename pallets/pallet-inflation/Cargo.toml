@@ -1,9 +1,9 @@
 [package]
-authors = ["KILT <info@kilt.io>"]
+authors = ["PID <info@kilt.io>"]
 description = "Substrate pallet issueing a pre-configured amount of tokens to the treasury."
 edition = "2018"
 name = "pallet-inflation"
-repository = "https://github.com/KILTprotocol/mashnet-node"
+repository = "https://github.com/PIDprotocol/mashnet-node"
 version = "1.2.0"
 
 [package.metadata.docs.rs]

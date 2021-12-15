@@ -1,12 +1,12 @@
-// KILT Blockchain – https://botlabs.org
+// PID Blockchain – https://botlabs.org
 // Copyright (C) 2019-2021 BOTLabs GmbH
 
-// The KILT Blockchain is free software: you can redistribute it and/or modify
+// The PID Blockchain is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 
-// The KILT Blockchain is distributed in the hope that it will be useful,
+// The PID Blockchain is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
@@ -16,7 +16,7 @@
 
 // If you feel like getting in touch with us, you can do so at info@botlabs.org
 
-//! KILT chain specification
+//! PID chain specification
 
 use pid_primitives::{constants::BLOCKS_PER_YEAR, AccountId, AccountPublic, Balance, BlockNumber};
 use mashnet_node_runtime::{
@@ -100,7 +100,7 @@ impl Alternative {
 		let wasm_binary = WASM_BINARY.ok_or_else(|| "Development wasm binary not available".to_string())?;
 
 		let mut properties = Properties::new();
-		properties.insert("tokenSymbol".into(), "KILT".into());
+		properties.insert("tokenSymbol".into(), "PID".into());
 		properties.insert("tokenDecimals".into(), 15.into());
 
 		Ok(match self {
@@ -134,7 +134,7 @@ impl Alternative {
 			Alternative::KiltTestnet => ChainSpec::from_json_bytes(&include_bytes!("../res/testnet.json")[..])?,
 			Alternative::KiltDevnet => {
 				ChainSpec::from_genesis(
-					"KILT Devnet",
+					"PID Devnet",
 					"kilt_devnet",
 					ChainType::Live,
 					move || {

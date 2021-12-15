@@ -1,9 +1,9 @@
 # Building on the Parity Substrate Blockchain Framework
 
-During our first whiteboard phase, we were thinking about developing the KILT Protocol on
+During our first whiteboard phase, we were thinking about developing the PID Protocol on
 Ethereum smart-contracts, but we realized that we would have less **freedom of setting transaction costs**, while incurring a high level of overhead. 
 Instead, we started our
-development on [Parity Substrate](https://www.parity.io/substrate/), a general blockchain framework, and built up the KILT blockchain from scratch based on its module library and core functionality.
+development on [Parity Substrate](https://www.parity.io/substrate/), a general blockchain framework, and built up the PID blockchain from scratch based on its module library and core functionality.
 
 Building our blockchain on Parity Substrate has multiple advantages. Substrate has a very
 good fundamental [architecture](https://substrate.dev/docs/en/knowledgebase/runtime/) and [codebase](https://github.com/paritytech/substrate) created by blockchain experts.
@@ -40,14 +40,14 @@ The [Polkadot API](https://polkadot.js.org/api/) helps with communicating with t
 ## Blocktime
 
 The blocktime is currently set to [10 seconds](../runtimes/parachain/lib.rs#82), but this setting is subject to change based on further research.
-We will consider what is affected by this parameter, and in the long term it will be fine-tuned to a setting that provides the best performance and user experience for the participants of the KILT network.
+We will consider what is affected by this parameter, and in the long term it will be fine-tuned to a setting that provides the best performance and user experience for the participants of the PID network.
 
 ## Extrinsics and Block Storage
 
 In Substrate, the blockchain transactions are abstracted away and are generalized as[extrinsics](https://docs.substrate.dev/docs/extrinsics) in the system.
 They are called extrinsics since they can represent any piece of information that is regarded as input from “the outside world” (i.e. from users of the network) to the blockchain logic.
-The blockchain transactions in KILT are implemented through these general extrinsics, that are signed by the originator of the transaction.
-We use this framework to write the KILT Protocol specific data entries on the Substrate based KILT blockchain: DIDs, CTypes, Attestations and Delegations.
+The blockchain transactions in PID are implemented through these general extrinsics, that are signed by the originator of the transaction.
+We use this framework to write the PID Protocol specific data entries on the Substrate based PID blockchain: DIDs, CTypes, Attestations and Delegations.
 The processing of each of these entry types is handled by our custom Substrate modules called pallets.
 
 Under the current consensus algorithm, authority validator nodes (whose addresses are listed in the genesis block) can create new blocks.
@@ -69,17 +69,17 @@ At a later stage, we most likely will change to a different consensus algorithm 
 ## Polkadot Integration
 
 As a further great advantage, by basing ourselves on Substrate we can easily connect to the Polkadot ecosystem.
-This could provide security for the KILT network by leveraging the global
+This could provide security for the PID network by leveraging the global
 consensus in the Polkadot network.
-We are planning to integrate KILT into the [Polkadot](https://polkadot.network/) network.
-It is fairly straightforward to achieve this by simply including specific Substrate modules into the KILT Collator node implementation.
-The exact details of this integration is subject to future agreements between Polkadot and KILT and the technological development of Polkadot, Substrate and KILT.
+We are planning to integrate PID into the [Polkadot](https://polkadot.network/) network.
+It is fairly straightforward to achieve this by simply including specific Substrate modules into the PID Collator node implementation.
+The exact details of this integration is subject to future agreements between Polkadot and PID and the technological development of Polkadot, Substrate and PID.
 
-## KILT Tokens
+## PID Tokens
 
 Coin transfers are implemented as a balance-based mechanism in Substrate. 
-In our testnet, every new identity gets 1000 KILT Tokens from a root entity in the system who is wired into the genesis block.
-At a later stage, we are proposing to provide KILT Tokens for new developers wanting to join our test networks (testnet and Spirit-Net testnet) on a simple request-provide based mechanism.
-Preferably, developers will be able to register on our website, and we manually transfer KILT tokens to the registered developers after vetting them.
+In our testnet, every new identity gets 1000 PID Tokens from a root entity in the system who is wired into the genesis block.
+At a later stage, we are proposing to provide PID Tokens for new developers wanting to join our test networks (testnet and Spirit-Net testnet) on a simple request-provide based mechanism.
+Preferably, developers will be able to register on our website, and we manually transfer PID tokens to the registered developers after vetting them.
 Importantly, these test tokens will not be usable on our mainnet.
-After the launch of the mainnet (Spirit-Net) and the public KILT Token sale, the tokens will be available on cryptocurrency exchanges.
+After the launch of the mainnet (Spirit-Net) and the public PID Token sale, the tokens will be available on cryptocurrency exchanges.

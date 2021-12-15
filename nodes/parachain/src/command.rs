@@ -1,12 +1,12 @@
-// KILT Blockchain – https://botlabs.org
+// PID Blockchain – https://botlabs.org
 // Copyright (C) 2019-2021 BOTLabs GmbH
 
-// The KILT Blockchain is free software: you can redistribute it and/or modify
+// The PID Blockchain is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 
-// The KILT Blockchain is distributed in the hope that it will be useful,
+// The PID Blockchain is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
@@ -40,19 +40,19 @@ use std::{io::Write, net::SocketAddr};
 
 fn load_spec(id: &str, runtime: &str, para_id: ParaId) -> std::result::Result<Box<dyn sc_service::ChainSpec>, String> {
 	match id {
-		"dev" => Ok(Box::new(chain_spec::peregrine::make_dev_spec(para_id)?)),
-		"peregrine-new" => Ok(Box::new(chain_spec::peregrine::make_new_spec(para_id)?)),
-		"spiritnet-dev" => Ok(Box::new(chain_spec::spiritnet::get_chain_spec_dev(para_id)?)),
-		"wilt-new" => Ok(Box::new(chain_spec::spiritnet::get_chain_spec_wilt()?)),
-		"spiritnet" => Ok(Box::new(chain_spec::spiritnet::load_spiritnet_spec()?)),
+		"dev" => Ok(Box::new(chain_spec::alfheim::make_dev_spec(para_id)?)),
+		"alfheim-new" => Ok(Box::new(chain_spec::alfheim::make_new_spec(para_id)?)),
+		"midgard-dev" => Ok(Box::new(chain_spec::midgard::get_chain_spec_dev(para_id)?)),
+		"wilt-new" => Ok(Box::new(chain_spec::midgard::get_chain_spec_wilt()?)),
+		"midgard" => Ok(Box::new(chain_spec::midgard::load_midgard_spec()?)),
 		"" => match runtime {
-			"spiritnet" => Ok(Box::new(chain_spec::spiritnet::get_chain_spec_dev(para_id)?)),
-			"peregrine" => Ok(Box::new(chain_spec::peregrine::make_dev_spec(para_id)?)),
+			"midgard" => Ok(Box::new(chain_spec::midgard::get_chain_spec_dev(para_id)?)),
+			"alfheim" => Ok(Box::new(chain_spec::alfheim::make_dev_spec(para_id)?)),
 			_ => Err("Unknown runtime".to_owned()),
 		},
 		path => match runtime {
-			"spiritnet" => Ok(Box::new(chain_spec::spiritnet::ChainSpec::from_json_file(path.into())?)),
-			"peregrine" => Ok(Box::new(chain_spec::peregrine::ChainSpec::from_json_file(path.into())?)),
+			"midgard" => Ok(Box::new(chain_spec::midgard::ChainSpec::from_json_file(path.into())?)),
+			"alfheim" => Ok(Box::new(chain_spec::alfheim::ChainSpec::from_json_file(path.into())?)),
 			_ => Err("Unknown runtime".to_owned()),
 		},
 	}
@@ -60,7 +60,7 @@ fn load_spec(id: &str, runtime: &str, para_id: ParaId) -> std::result::Result<Bo
 
 impl SubstrateCli for Cli {
 	fn impl_name() -> String {
-		"KILT".into()
+		"PID".into()
 	}
 
 	fn impl_version() -> String {
@@ -69,7 +69,7 @@ impl SubstrateCli for Cli {
 
 	fn description() -> String {
 		format!(
-			"KILT\n\nThe command-line arguments provided first will be \
+			"PID\n\nThe command-line arguments provided first will be \
 		passed to the parachain node, while the arguments provided after -- will be passed \
 		to the relaychain node.\n\n\
 		{} [parachain-args] -- [relaychain-args]",
@@ -101,17 +101,17 @@ impl SubstrateCli for Cli {
 	}
 
 	fn native_runtime_version(spec: &Box<dyn ChainSpec>) -> &'static RuntimeVersion {
-		if spec.id().starts_with("spiritnet") {
-			&spiritnet_runtime::VERSION
+		if spec.id().starts_with("midgard") {
+			&midgard_runtime::VERSION
 		} else {
-			&peregrine_runtime::VERSION
+			&alfheim_runtime::VERSION
 		}
 	}
 }
 
 impl SubstrateCli for RelayChainCli {
 	fn impl_name() -> String {
-		"KILT".into()
+		"PID".into()
 	}
 
 	fn impl_version() -> String {
@@ -119,7 +119,7 @@ impl SubstrateCli for RelayChainCli {
 	}
 
 	fn description() -> String {
-		"KILT\n\nThe command-line arguments provided first will be \
+		"PID\n\nThe command-line arguments provided first will be \
 		passed to the parachain node, while the arguments provided after -- will be passed \
 		to the relaychain node.\n\n\
 		kilt-parachain [parachain-args] -- [relaychain-args]"
@@ -161,21 +161,21 @@ macro_rules! construct_async_run {
 	(|$components:ident, $cli:ident, $cmd:ident, $config:ident| $( $code:tt )* ) => {{
 		let runner = $cli.create_runner($cmd)?;
 		match $cli.runtime.as_str() {
-			"spiritnet" => {
+			"midgard" => {
 					runner.async_run(|$config| {
-						let $components = new_partial::<spiritnet_runtime::RuntimeApi, SpiritRuntimeExecutor, _>(
+						let $components = new_partial::<midgard_runtime::RuntimeApi, SpiritRuntimeExecutor, _>(
 							&$config,
-							crate::service::build_import_queue::<SpiritRuntimeExecutor, spiritnet_runtime::RuntimeApi>,
+							crate::service::build_import_queue::<SpiritRuntimeExecutor, midgard_runtime::RuntimeApi>,
 						)?;
 						let task_manager = $components.task_manager;
 						{ $( $code )* }.map(|v| (v, task_manager))
 					})
 				},
-			"peregrine" => {
+			"alfheim" => {
 					runner.async_run(|$config| {
-						let $components = new_partial::<peregrine_runtime::RuntimeApi, MashRuntimeExecutor, _>(
+						let $components = new_partial::<alfheim_runtime::RuntimeApi, MashRuntimeExecutor, _>(
 							&$config,
-							crate::service::build_import_queue::<MashRuntimeExecutor, peregrine_runtime::RuntimeApi>,
+							crate::service::build_import_queue::<MashRuntimeExecutor, alfheim_runtime::RuntimeApi>,
 						)?;
 						let task_manager = $components.task_manager;
 						{ $( $code )* }.map(|v| (v, task_manager))
@@ -249,8 +249,8 @@ pub fn run() -> Result<()> {
 			if cfg!(feature = "runtime-benchmarks") {
 				let runner = cli.create_runner(cmd)?;
 				match cli.runtime.as_str() {
-					"peregrine" => runner.sync_run(|config| cmd.run::<Block, MashRuntimeExecutor>(config)),
-					"spiritnet" => runner.sync_run(|config| cmd.run::<Block, SpiritRuntimeExecutor>(config)),
+					"alfheim" => runner.sync_run(|config| cmd.run::<Block, MashRuntimeExecutor>(config)),
+					"midgard" => runner.sync_run(|config| cmd.run::<Block, SpiritRuntimeExecutor>(config)),
 					_ => Err("Unknown runtime".into()),
 				}
 			} else {
@@ -354,7 +354,7 @@ pub fn run() -> Result<()> {
 				);
 
 				match cli.runtime.as_str() {
-					"peregrine" => crate::service::start_node::<MashRuntimeExecutor, peregrine_runtime::RuntimeApi>(
+					"alfheim" => crate::service::start_node::<MashRuntimeExecutor, alfheim_runtime::RuntimeApi>(
 						config,
 						polkadot_config,
 						id,
@@ -362,7 +362,7 @@ pub fn run() -> Result<()> {
 					.await
 					.map(|r| r.0)
 					.map_err(Into::into),
-					"spiritnet" => crate::service::start_node::<SpiritRuntimeExecutor, spiritnet_runtime::RuntimeApi>(
+					"midgard" => crate::service::start_node::<SpiritRuntimeExecutor, midgard_runtime::RuntimeApi>(
 						config,
 						polkadot_config,
 						id,

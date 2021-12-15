@@ -15,8 +15,8 @@ def update_spec(input: typing.Dict, base_chain="westend"):
             "/dns4/bootnode.kilt.io/tcp/30353/p2p/12D3KooWNWNptEoH443LVUgwC5kd7DBVoNYwQtJh6dp4TQxUsAST",
         ],
         "chainType": "Live",
-        "name": "Peregrine Relay",
-        "id": f"{base_chain}_peregrine_relay",
+        "name": "alfheim Relay",
+        "id": f"{base_chain}_alfheim_relay",
         "telemetryEndpoints": [
             [
                 "/dns/telemetry-backend.kilt.io/tcp/8080/x-parity-wss/%2Fsubmit",

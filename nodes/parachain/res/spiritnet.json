@@ -1,5 +1,5 @@
 {
-  "name": "KILT Spiritnet",
+  "name": "PID midgard",
   "id": "kilt",
   "chainType": "Live",
   "bootNodes": [
@@ -22,7 +22,7 @@
   "properties": {
     "ss58Format": 38,
     "tokenDecimals": 15,
-    "tokenSymbol": "KILT"
+    "tokenSymbol": "PID"
   },
   "relay_chain": "kusama",
   "para_id": 2086,

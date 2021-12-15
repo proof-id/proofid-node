@@ -1,12 +1,12 @@
-// KILT Blockchain – https://botlabs.org
+// PID Blockchain – https://botlabs.org
 // Copyright (C) 2019-2021 BOTLabs GmbH
 
-// The KILT Blockchain is free software: you can redistribute it and/or modify
+// The PID Blockchain is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 
-// The KILT Blockchain is distributed in the hope that it will be useful,
+// The PID Blockchain is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
@@ -41,14 +41,14 @@ pub const BLOCKS_PER_YEAR: BlockNumber = DAYS * 36525 / 100;
 pub const MIN_VESTED_TRANSFER_AMOUNT: Balance = 100 * MILLI_PID;
 pub const MAX_COLLATOR_STAKE: Balance = 200_000 * PID;
 
-/// One KILT
-pub const KILT: Balance = 10u128.pow(15);
+/// One PID
+pub const PID: Balance = 10u128.pow(15);
 
-/// 0.001 KILT
+/// 0.001 PID
 pub const MILLI_PID: Balance = 10u128.pow(12);
 
-/// 0.000_001 KILT
-pub const MICRO_KILT: Balance = 10u128.pow(9);
+/// 0.000_001 PID
+pub const MICRO_PID: Balance = 10u128.pow(9);
 
 // 1 in 4 blocks (on average, not counting collisions) will be primary babe
 // blocks.
@@ -221,7 +221,7 @@ pub mod treasury {
 	use crate::{Balance, BlockNumber};
 	use frame_support::PalletId;
 
-	use super::{BLOCKS_PER_YEAR, KILT};
+	use super::{BLOCKS_PER_YEAR, PID};
 
 	pub const INITIAL_PERIOD_LENGTH: BlockNumber = BLOCKS_PER_YEAR.saturating_mul(5);
 	const YEARLY_REWARD: Balance = 2_000_000u128 * PID;

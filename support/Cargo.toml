@@ -1,9 +1,9 @@
 [package]
-authors = ["KILT <info@kilt.io>"]
-description = "Shared traits and structs used across the KILT pallets"
+authors = ["PID <info@kilt.io>"]
+description = "Shared traits and structs used across the PID pallets"
 edition = "2018"
 name = "pid-support"
-repository = "https://github.com/KILTprotocol/mashnet-node"
+repository = "https://github.com/PIDprotocol/mashnet-node"
 version = "1.2.0"
 
 [dependencies]

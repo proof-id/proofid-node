@@ -1,12 +1,12 @@
-// KILT Blockchain – https://botlabs.org
+// PID Blockchain – https://botlabs.org
 // Copyright (C) 2019-2021 BOTLabs GmbH
 
-// The KILT Blockchain is free software: you can redistribute it and/or modify
+// The PID Blockchain is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 
-// The KILT Blockchain is distributed in the hope that it will be useful,
+// The PID Blockchain is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
@@ -52,22 +52,22 @@ type PartialComponents<Block, RuntimeApi, Executor, Telemetry, TelemetryWorkerHa
 	(Option<Telemetry>, Option<TelemetryWorkerHandle>),
 >;
 
-/// Native Spiritnet executor instance.
+/// Native midgard executor instance.
 pub struct SpiritRuntimeExecutor;
 
 impl sc_executor::NativeExecutionDispatch for SpiritRuntimeExecutor {
 	type ExtendHostFunctions = frame_benchmarking::benchmarking::HostFunctions;
 
 	fn dispatch(method: &str, data: &[u8]) -> Option<Vec<u8>> {
-		spiritnet_runtime::api::dispatch(method, data)
+		midgard_runtime::api::dispatch(method, data)
 	}
 
 	fn native_version() -> sc_executor::NativeVersion {
-		spiritnet_runtime::native_version()
+		midgard_runtime::native_version()
 	}
 }
 
-/// Native Peregrine executor instance.
+/// Native alfheim executor instance.
 
 pub struct MashRuntimeExecutor;
 
@@ -75,11 +75,11 @@ impl sc_executor::NativeExecutionDispatch for MashRuntimeExecutor {
 	type ExtendHostFunctions = frame_benchmarking::benchmarking::HostFunctions;
 
 	fn dispatch(method: &str, data: &[u8]) -> Option<Vec<u8>> {
-		peregrine_runtime::api::dispatch(method, data)
+		alfheim_runtime::api::dispatch(method, data)
 	}
 
 	fn native_version() -> sc_executor::NativeVersion {
-		peregrine_runtime::native_version()
+		alfheim_runtime::native_version()
 	}
 }
 

@@ -12,8 +12,8 @@ def update_spec(input: typing.Dict):
     input.update({
         "bootNodes": [],
         "chainType": "Local",
-        "name": "Peregrine Relay Devnet",
-        "id": "westend_peregrine_relay_devnet",
+        "name": "alfheim Relay Devnet",
+        "id": "westend_alfheim_relay_devnet",
     })
     input["genesis"]["runtime"]["balances"]["balances"] += [
     ]

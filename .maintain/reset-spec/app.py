@@ -12,17 +12,17 @@ import tempfile
 
 logger = logging.getLogger(__name__)
 
-WILT_KILT = "dev-specs/kilt-parachain/kilt-westend.json"
-SPIRITNET_KILT = "nodes/parachain/res/spiritnet.json"
+WILT_PID = "dev-specs/kilt-parachain/kilt-westend.json"
+midgard_PID = "nodes/parachain/res/midgard.json"
 
-PERE_DEV_KILT = "dev-specs/kilt-parachain/peregrine-dev-kilt.json"
-PERE_DEV_RELAY = "dev-specs/kilt-parachain/peregrine-dev-relay.json"
+ALF_DEV_PID = "dev-specs/kilt-parachain/alfheim-dev-kilt.json"
+ALF_DEV_RELAY = "dev-specs/kilt-parachain/alfheim-dev-relay.json"
 
-PERE_STG_KILT = "dev-specs/kilt-parachain/peregrine-stg-kilt.json"
-PERE_STG_RELAY = "dev-specs/kilt-parachain/peregrine-stg-relay.json"
+ALF_STG_PID = "dev-specs/kilt-parachain/alfheim-stg-kilt.json"
+ALF_STG_RELAY = "dev-specs/kilt-parachain/alfheim-stg-relay.json"
 
-PERE_KILT = "dev-specs/kilt-parachain/peregrine-kilt.json"
-PERE_RELAY = "dev-specs/kilt-parachain/peregrine-relay.json"
+ALF_PID = "dev-specs/kilt-parachain/alfheim-kilt.json"
+ALF_RELAY = "dev-specs/kilt-parachain/alfheim-relay.json"
 
 
 def base_docker_run_cmd():
@@ -110,12 +110,12 @@ def make_native(docker_img, out_file, chain, runtime):
 
 
 if __name__ == "__main__":
-    import peregrine_kilt
-    import peregrine_relay
-    import peregrine_dev_kilt
-    import peregrine_dev_relay
-    import peregrine_stg_kilt
-    import peregrine_stg_relay
+    import alfheim_kilt
+    import alfheim_relay
+    import alfheim_dev_kilt
+    import alfheim_dev_relay
+    import alfheim_stg_kilt
+    import alfheim_stg_relay
 
     logging.basicConfig(format='%(asctime)s:%(levelname)s: %(message)s',
                         datefmt='%m-%d-%Y %H:%M:%S', level=logging.DEBUG)
@@ -135,23 +135,23 @@ if __name__ == "__main__":
     parser.add_argument("--wilt", "-w", action="store_true", dest="wilt",
                         help="reset the wilt (westend) chainspec")
 
-    parser.add_argument("--spiritnet", "-s", action="store_true", dest="spiritnet",
-                        help="reset the spiritnet chainspec")
+    parser.add_argument("--midgard", "-s", action="store_true", dest="midgard",
+                        help="reset the midgard chainspec")
 
-    parser.add_argument("--peregrine", "-p", action="store_true", dest="peregrine",
-                        help="reset the peregrine chainspec")
-    parser.add_argument("--peregrine-relay", "-r", action="store_true", dest="peregrine_relay",
-                        help="reset the peregrine relaychain chainspec")
+    parser.add_argument("--alfheim", "-p", action="store_true", dest="alfheim",
+                        help="reset the alfheim chainspec")
+    parser.add_argument("--alfheim-relay", "-r", action="store_true", dest="alfheim_relay",
+                        help="reset the alfheim relaychain chainspec")
 
-    parser.add_argument("--peregrine-stg", action="store_true", dest="peregrine_stg",
-                        help="reset the peregrine staging chainspec")
-    parser.add_argument("--peregrine-relay-stg", action="store_true", dest="peregrine_relay_stg",
-                        help="reset the peregrine staging chainspec")
+    parser.add_argument("--alfheim-stg", action="store_true", dest="alfheim_stg",
+                        help="reset the alfheim staging chainspec")
+    parser.add_argument("--alfheim-relay-stg", action="store_true", dest="alfheim_relay_stg",
+                        help="reset the alfheim staging chainspec")
 
-    parser.add_argument("--peregrine-dev", action="store_true", dest="peregrine_dev",
-                        help="reset the peregrine staging chainspec")
-    parser.add_argument("--peregrine-relay-dev", action="store_true", dest="peregrine_relay_dev",
-                        help="reset the peregrine staging chainspec")
+    parser.add_argument("--alfheim-dev", action="store_true", dest="alfheim_dev",
+                        help="reset the alfheim staging chainspec")
+    parser.add_argument("--alfheim-relay-dev", action="store_true", dest="alfheim_relay_dev",
+                        help="reset the alfheim staging chainspec")
 
     args = parser.parse_args()
 
@@ -161,49 +161,49 @@ if __name__ == "__main__":
         logging.getLogger().setLevel(logging.INFO)
 
     if args.wilt:
-        make_native(args.image, WILT_PID, "wilt-new", "spiritnet")
+        make_native(args.image, WILT_PID, "wilt-new", "midgard")
 
-    if args.spiritnet:
-        make_native(args.image, SPIRITNET_PID, "spiritnet-new", "spiritnet")
+    if args.midgard:
+        make_native(args.image, midgard_PID, "midgard-new", "midgard")
 
-    if args.peregrine:
+    if args.alfheim:
         with tempfile.TemporaryDirectory() as tmpdirname:
             make_custom_spec(
-                tmpdirname, args.image, "peregrine_dev_kilt.plain.json",
-                PERE_PID, peregrine_kilt.update_spec, "dev", "peregrine"
+                tmpdirname, args.image, "alfheim_dev_kilt.plain.json",
+                ALF_PID, alfheim_kilt.update_spec, "dev", "alfheim"
             )
 
-    if args.peregrine_relay:
+    if args.alfheim_relay:
         with tempfile.TemporaryDirectory() as tmpdirname:
             make_custom_spec(
-                tmpdirname, args.image, "peregrine_relay.plain.json",
-                PERE_RELAY, peregrine_relay.update_spec, "westend-local"
+                tmpdirname, args.image, "alfheim_relay.plain.json",
+                ALF_RELAY, alfheim_relay.update_spec, "westend-local"
             )
 
-    if args.peregrine_dev:
+    if args.alfheim_dev:
         with tempfile.TemporaryDirectory() as tmpdirname:
             make_custom_spec(
-                tmpdirname, args.image, "peregrine_dev_kilt.plain.json",
-                PERE_DEV_PID, peregrine_dev_kilt.update_spec, "dev", "peregrine"
+                tmpdirname, args.image, "alfheim_dev_kilt.plain.json",
+                ALF_DEV_PID, alfheim_dev_kilt.update_spec, "dev", "alfheim"
             )
 
-    if args.peregrine_relay_dev:
+    if args.alfheim_relay_dev:
         with tempfile.TemporaryDirectory() as tmpdirname:
             make_custom_spec(
-                tmpdirname, args.image, "peregrine_dev_relay.plain.json",
-                PERE_DEV_RELAY, peregrine_dev_relay.update_spec, "westend-local"
+                tmpdirname, args.image, "alfheim_dev_relay.plain.json",
+                ALF_DEV_RELAY, alfheim_dev_relay.update_spec, "westend-local"
             )
 
-    if args.peregrine_stg:
+    if args.alfheim_stg:
         with tempfile.TemporaryDirectory() as tmpdirname:
             make_custom_spec(
-                tmpdirname, args.image, "peregrine_stg.plain.json",
-                PERE_STG_PID, peregrine_stg_kilt.update_spec, "dev", "peregrine"
+                tmpdirname, args.image, "alfheim_stg.plain.json",
+                ALF_STG_PID, alfheim_stg_kilt.update_spec, "dev", "alfheim"
             )
 
-    if args.peregrine_relay_stg:
+    if args.alfheim_relay_stg:
         with tempfile.TemporaryDirectory() as tmpdirname:
             make_custom_spec(
-                tmpdirname, args.image, "peregrine_stg_relay.plain.json",
-                PERE_STG_RELAY, peregrine_stg_relay.update_spec, "westend-local"
+                tmpdirname, args.image, "alfheim_stg_relay.plain.json",
+                ALF_STG_RELAY, alfheim_stg_relay.update_spec, "westend-local"
             )

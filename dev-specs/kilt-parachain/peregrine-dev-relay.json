@@ -1,6 +1,6 @@
 {
-  "name": "Peregrine Relay Devnet",
-  "id": "westend_peregrine_relay_devnet",
+  "name": "alfheim Relay Devnet",
+  "id": "westend_alfheim_relay_devnet",
   "chainType": "Local",
   "bootNodes": [],
   "telemetryEndpoints": null,

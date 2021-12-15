@@ -14,8 +14,8 @@ def update_spec(input: typing.Dict):
             "/dns4/bootnode.kilt.io/tcp/30341/p2p/12D3KooWCRgcGtFRsvqxqgysiR6Ah9SAzUNkM12Ef9sy59ZEspSQ",
         ],
         "chainType": "Live",
-        "name": "KILT Peregrine",
-        "id": "peregrine_kilt",
+        "name": "PID alfheim",
+        "id": "alfheim_kilt",
         "para_id": para_id,
         "telemetryEndpoints": [
             [
