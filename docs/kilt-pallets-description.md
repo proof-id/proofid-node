@@ -1,10 +1,10 @@
 # Description of KILT Pallets
 
 Currently, the KILT runtime uses the following four custom pallets for handling the underlying KILT data structures: 
-* [`did`](../pallets/did)
-* [`attestation`](../pallets/attestation)
-* [`delegation`](../pallets/delegation)
-* [`ctype`](../pallets/ctype)
+* [`did`](../pallets/pallet-did)
+* [`attestation`](../pallets/pallet-attestation)
+* [`delegation`](../pallets/pallet-delegation)
+* [`ctype`](../pallets/pallet-ctype)
 
 ## The KILT DID Pallet
 

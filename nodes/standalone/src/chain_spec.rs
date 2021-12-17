@@ -19,7 +19,7 @@
 //! KILT chain specification
 
 use pid_primitives::{constants::BLOCKS_PER_YEAR, AccountId, AccountPublic, Balance, BlockNumber};
-use mashnet_node_runtime::{
+use proofid_node_runtime::{
 	BalancesConfig, CrowdloanContributorsConfig, GenesisConfig, PidLaunchConfig, SessionConfig, SudoConfig,
 	SystemConfig, VestingConfig, WASM_BINARY,
 };
@@ -47,9 +47,9 @@ pub enum Alternative {
 	/// Whatever the current runtime is, with just Alice as an auth.
 	Development,
 	/// Whatever the current runtime is, with simple Alice/Bob auths.
-	KiltTestnet,
-	KiltDevnet,
-	MashnetStaging,
+	PidTestnet,
+	PidDevnet,
+	ProofIdStaging,
 }
 
 /// Helper function to generate a crypto pair from seed
@@ -88,11 +88,11 @@ fn as_authority_key(public_key: [u8; 32]) -> (AccountId, AuraId, GrandpaId) {
 	)
 }
 
-const DEV_AUTH_ALICE: [u8; 32] = hex!("d44da634611d9c26837e3b5114a7d460a4cb7d688119739000632ed2d3794ae9");
-const DEV_AUTH_BOB: [u8; 32] = hex!("06815321f16a5ae0fe246ee19285f8d8858fe60d5c025e060922153fcf8e54f9");
-const DEV_AUTH_CHARLIE: [u8; 32] = hex!("6d2d775fdc628134e3613a766459ccc57a29fd380cd410c91c6c79bc9c03b344");
-const DEV_FAUCET: [u8; 32] = hex!("2c9e9c40e15a2767e2d04dc1f05d824dd76d1d37bada3d7bb1d40eca29f3a4ff");
-const TRANSFER_ACCOUNT: [u8; 32] = hex!("6a3c793cec9dbe330b349dc4eea6801090f5e71f53b1b41ad11afb4a313a282c");
+const DEV_AUTH_ALICE: [u8; 32] = hex!("58d9ad62396e73018d42812f2d19d17dea37c4051bdd5b9117885388cc90f444");
+const DEV_AUTH_BOB: [u8; 32] = hex!("9621f07f9388294bb3cb66c45ef5e7ba43d92ab602f9ee1c579222c28d91d651");
+const DEV_AUTH_CHARLIE: [u8; 32] = hex!("726291f609915e542ab022f0fdd61cb87cbd99990d0e3697a6c59dded9568a4e");
+const DEV_FAUCET: [u8; 32] = hex!("82980dceaed6127d0113ca75fad8bd925c48583e467d33a6a17aedb1844c6934");
+const TRANSFER_ACCOUNT: [u8; 32] = hex!("82980dceaed6127d0113ca75fad8bd925c48583e467d33a6a17aedb1844c6934");
 
 impl Alternative {
 	/// Get an actual chain config from one of the alternatives.
@@ -100,8 +100,9 @@ impl Alternative {
 		let wasm_binary = WASM_BINARY.ok_or_else(|| "Development wasm binary not available".to_string())?;
 
 		let mut properties = Properties::new();
-		properties.insert("tokenSymbol".into(), "KILT".into());
-		properties.insert("tokenDecimals".into(), 15.into());
+		properties.insert("ss58Format".into(), 42.into());
+		properties.insert("tokenDecimals".into(), 6.into());
+		properties.insert("tokenSymbol".into(), "PID".into());
 
 		Ok(match self {
 			Alternative::Development => {
@@ -131,11 +132,11 @@ impl Alternative {
 					None,
 				)
 			}
-			Alternative::KiltTestnet => ChainSpec::from_json_bytes(&include_bytes!("../res/testnet.json")[..])?,
-			Alternative::KiltDevnet => {
+			Alternative::PidTestnet => ChainSpec::from_json_bytes(&include_bytes!("../res/testnet.json")[..])?,
+			Alternative::PidDevnet => {
 				ChainSpec::from_genesis(
-					"KILT Devnet",
-					"kilt_devnet",
+					"ProofId Devnet",
+					"proofid_devnet",
 					ChainType::Live,
 					move || {
 						testnet_genesis(
@@ -162,10 +163,10 @@ impl Alternative {
 					None,
 				)
 			}
-			Alternative::MashnetStaging => {
+			Alternative::ProofIdStaging => {
 				ChainSpec::from_genesis(
-					"Mashnet Staging",
-					"mashnet_staging",
+					"ProofId Staging",
+					"proofid_staging",
 					ChainType::Live,
 					move || {
 						testnet_genesis(
@@ -198,9 +199,9 @@ impl Alternative {
 	pub(crate) fn from(s: &str) -> Option<Self> {
 		match s {
 			"dev" => Some(Alternative::Development),
-			"kilt-testnet" => Some(Alternative::KiltTestnet),
-			"kilt-devnet" => Some(Alternative::KiltDevnet),
-			"mashnet-staging" => Some(Alternative::MashnetStaging),
+			"testnet" => Some(Alternative::PidTestnet),
+			"devnet" => Some(Alternative::PidDevnet),
+			"staging" => Some(Alternative::ProofIdStaging),
 			_ => None,
 		}
 	}
@@ -226,10 +227,11 @@ fn testnet_genesis(
 			changes_trie_config: Default::default(),
 		},
 		balances: BalancesConfig {
+			// balances: airdrop_accounts.iter().cloned().map(|(who, total, _, _)| (who, total)).collect(),
 			balances: endowed_accounts
 				.iter()
 				.cloned()
-				.map(|a| (a, 1u128 << 90))
+				.map(|a| (a, 62_500_000_000_000))
 				.chain(airdrop_accounts.iter().cloned().map(|(who, total, _, _)| (who, total)))
 				.collect(),
 		},
@@ -240,7 +242,7 @@ fn testnet_genesis(
 					(
 						x.0.clone(),
 						x.0.clone(),
-						mashnet_node_runtime::opaque::SessionKeys {
+						proofid_node_runtime::opaque::SessionKeys {
 							aura: x.1.clone(),
 							grandpa: x.2.clone(),
 						},
