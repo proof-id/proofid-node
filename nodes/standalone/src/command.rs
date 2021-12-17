@@ -21,7 +21,7 @@ use crate::{
 	cli::{Cli, Subcommand},
 	service,
 };
-use mashnet_node_runtime::opaque::Block;
+use proofid_node_runtime::opaque::Block;
 use sc_cli::{ChainSpec, Role, RuntimeVersion, SubstrateCli};
 use sc_service::PartialComponents;
 
@@ -30,11 +30,15 @@ use node_executor::ExecutorDispatch;
 
 impl SubstrateCli for Cli {
 	fn impl_name() -> String {
-		"KILT Node".to_string()
+		"ProofId Node".to_string()
 	}
 
 	fn impl_version() -> String {
 		env!("CARGO_PKG_VERSION").to_string()
+	}
+
+	fn executable_name() -> String {
+		env!("CARGO_PKG_NAME").to_string()
 	}
 
 	fn description() -> String {
@@ -46,15 +50,11 @@ impl SubstrateCli for Cli {
 	}
 
 	fn support_url() -> String {
-		"https://github.com/KILTprotocol/mashnet-node/issues/new".to_string()
+		"https://github.com/proof-id/proofid-node/issues/new".to_string()
 	}
 
 	fn copyright_start_year() -> i32 {
-		2019
-	}
-
-	fn executable_name() -> String {
-		env!("CARGO_PKG_NAME").to_string()
+		2021
 	}
 
 	fn load_spec(&self, id: &str) -> Result<Box<dyn sc_service::ChainSpec>, String> {
@@ -62,7 +62,7 @@ impl SubstrateCli for Cli {
 	}
 
 	fn native_runtime_version(_: &Box<dyn ChainSpec>) -> &'static RuntimeVersion {
-		&mashnet_node_runtime::VERSION
+		&proofid_node_runtime::VERSION
 	}
 }
 

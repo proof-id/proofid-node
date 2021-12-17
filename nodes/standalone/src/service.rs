@@ -19,7 +19,7 @@
 //! Service and ServiceFactory implementation. Specialized wrapper over
 //! substrate service.
 
-use mashnet_node_runtime::{self, opaque::Block, RuntimeApi};
+use proofid_node_runtime::{self, opaque::Block, RuntimeApi};
 use sc_client_api::{ExecutorProvider, RemoteBackend};
 use sc_consensus_aura::{ImportQueueParams, SlotProportion, StartAuraParams};
 pub use sc_executor::NativeElseWasmExecutor;
@@ -38,11 +38,11 @@ impl sc_executor::NativeExecutionDispatch for ExecutorDispatch {
 	type ExtendHostFunctions = frame_benchmarking::benchmarking::HostFunctions;
 
 	fn dispatch(method: &str, data: &[u8]) -> Option<Vec<u8>> {
-		mashnet_node_runtime::api::dispatch(method, data)
+		proofid_node_runtime::api::dispatch(method, data)
 	}
 
 	fn native_version() -> sc_executor::NativeVersion {
-		mashnet_node_runtime::native_version()
+		proofid_node_runtime::native_version()
 	}
 }
 

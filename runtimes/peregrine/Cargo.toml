@@ -18,12 +18,12 @@ frame-system-rpc-runtime-api = {git = "https://github.com/paritytech/substrate",
 pallet-transaction-payment-rpc-runtime-api = {git = "https://github.com/paritytech/substrate", default-features = false, branch = "polkadot-v0.9.12"}
 
 # PID pallets & primitives
-attestation = {default-features = false, path = "../../pallets/attestation"}
-crowdloan = {path = "../../pallets/crowdloan", default-features = false}
-ctype = {default-features = false, path = "../../pallets/ctype"}
-delegation = {default-features = false, path = "../../pallets/delegation"}
-did = {default-features = false, path = "../../pallets/did"}
-pid-launch = {path = "../../pallets/pid-launch", default-features = false}
+attestation = {default-features = false, path = "../../pallets/pallet-attestation" }
+crowdloan = {path = "../../pallets/pallet-crowdloan", default-features = false}
+ctype = {default-features = false, path = "../../pallets/pallet-ctype" }
+delegation = {default-features = false, path = "../../pallets/pallet-delegation" }
+did = {default-features = false, path = "../../pallets/pallet-did" }
+pid-launch = {path = "../../pallets/pallet-pid-launch", default-features = false}
 pid-primitives = {path = "../../primitives", default-features = false}
 pid-support = {path = "../../support", default-features = false, optional = true}
 pallet-did-lookup = {default-features = false, path = "../../pallets/pallet-did-lookup"}

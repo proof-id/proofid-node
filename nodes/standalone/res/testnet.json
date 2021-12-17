@@ -1,17 +1,14 @@
 {
-  "name": "KILT Testnet",
-  "id": "kilt_testnet",
+  "name": "ProofId Staging",
+  "id": "proofid_staging",
   "chainType": "Live",
-  "bootNodes": [
-    "/dns4/bootnode-alice.kilt.io/tcp/30333/p2p/12D3KooWPuXafPUY8E8zo7m4GuWkgj9ByfsanrNUznZShBgJrW4A",
-    "/dns4/bootnode-bob.kilt.io/tcp/30334/p2p/12D3KooWPVLgaJoD4CdGzAFzaZSgiDSBM4jqt34LjH1XdtGnVsss",
-    "/dns4/bootnode-charlie.kilt.io/tcp/30335/p2p/12D3KooWKBLU9T9MTxLJuy6hddPChRdnw91TBk3wYJzDyBQH9dXx"
-  ],
+  "bootNodes": null,
   "telemetryEndpoints": null,
   "protocolId": null,
   "properties": {
-    "tokenDecimals": 15,
-    "tokenSymbol": "KILT"
+    "ss58Format": 42,
+    "tokenDecimals": 6,
+    "tokenSymbol": "PID"
   },
   "consensusEngine": null,
   "genesis": {

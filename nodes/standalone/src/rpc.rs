@@ -26,7 +26,7 @@
 use std::sync::Arc;
 
 use pid_primitives::{AccountId, Balance, Index};
-use mashnet_node_runtime::opaque::Block;
+use proofid_node_runtime::opaque::Block;
 pub use sc_rpc_api::DenyUnsafe;
 use sc_transaction_pool_api::TransactionPool;
 use sp_api::ProvideRuntimeApi;

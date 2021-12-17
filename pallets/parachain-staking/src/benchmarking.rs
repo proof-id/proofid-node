@@ -628,8 +628,8 @@ benchmarks! {
 impl_benchmark_test_suite!(
 	Pallet,
 	crate::mock::ExtBuilder::default()
-		.with_balances(vec![(u64::MAX, pid_primitives::constants::KILT)])
-		.with_collators(vec![(u64::MAX, pid_primitives::constants::KILT)])
+		.with_balances(vec![(u64::MAX, pid_primitives::constants::PID)])
+		.with_collators(vec![(u64::MAX, pid_primitives::constants::PID)])
 		.build(),
 	crate::mock::Test,
 );
