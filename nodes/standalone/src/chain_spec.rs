@@ -88,11 +88,11 @@ fn as_authority_key(public_key: [u8; 32]) -> (AccountId, AuraId, GrandpaId) {
 	)
 }
 
-const DEV_AUTH_ALICE: [u8; 32] = hex!("58d9ad62396e73018d42812f2d19d17dea37c4051bdd5b9117885388cc90f444");
-const DEV_AUTH_BOB: [u8; 32] = hex!("9621f07f9388294bb3cb66c45ef5e7ba43d92ab602f9ee1c579222c28d91d651");
-const DEV_AUTH_CHARLIE: [u8; 32] = hex!("726291f609915e542ab022f0fdd61cb87cbd99990d0e3697a6c59dded9568a4e");
-const DEV_FAUCET: [u8; 32] = hex!("82980dceaed6127d0113ca75fad8bd925c48583e467d33a6a17aedb1844c6934");
-const TRANSFER_ACCOUNT: [u8; 32] = hex!("82980dceaed6127d0113ca75fad8bd925c48583e467d33a6a17aedb1844c6934");
+const DEV_AUTH_ALICE: [u8; 32] = hex!("36190a8cfcb7a8f688bf7bc5fbb469a1b64e44a7cf371aa16f82ea0f6436775c");
+const DEV_AUTH_BOB: [u8; 32] = hex!("b05835638c0fea2b7b47153cba12e54ac10e156288199ce4408548a5de324d72");
+const DEV_AUTH_CHARLIE: [u8; 32] = hex!("8619527b85e20b79f2fb383f6bbeabfdd83f521486610101bfb0e2df66bc755f");
+const DEV_FAUCET: [u8; 32] = hex!("406790ed60ef6b9c1eacaf63bad3b26a2004cead7c136f6963bd2b17ed166251");
+const TRANSFER_ACCOUNT: [u8; 32] = hex!("0e20827e8cd530ed1a20155e98176292ce343c49af30d2e3d904f8a9b57dd91b");
 
 impl Alternative {
 	/// Get an actual chain config from one of the alternatives.

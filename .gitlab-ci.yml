@@ -43,7 +43,7 @@ build:
     - tags
   variables:
     DOCKER_HUB_PARACHAIN: "kiltprotocol/kilt-node"
-    DOCKER_HUB_STANDALONE: "kiltprotocol/mashnet-node"
+    DOCKER_HUB_STANDALONE: "kiltprotocol/proofid-node"
   before_script:
     - amazon-linux-extras install docker
     - aws --version
@@ -58,7 +58,7 @@ build:
 
     - docker build --target builder --cache-from $AWS_REGISTRY/kilt-parachain/collator:builder-develop -t $AWS_REGISTRY/kilt-parachain/collator:builder-develop .
     - docker build --cache-from $AWS_REGISTRY/kilt-parachain/collator:builder-develop --cache-from $AWS_REGISTRY/kilt-parachain/collator:develop --build-arg NODE_TYPE=kilt-parachain -t kiltprotocol/kilt-node:develop .
-    - docker build --cache-from $AWS_REGISTRY/kilt-parachain/collator:builder-develop --cache-from $AWS_REGISTRY/kilt/prototype-chain:latest-develop --build-arg NODE_TYPE=mashnet-node -t kiltprotocol/mashnet-node:develop .
+    - docker build --cache-from $AWS_REGISTRY/kilt-parachain/collator:builder-develop --cache-from $AWS_REGISTRY/kilt/prototype-chain:latest-develop --build-arg NODE_TYPE=proofid-node -t kiltprotocol/proofid-node:develop .
 
     - docker tag ${DOCKER_HUB_STANDALONE}:develop ${DOCKER_HUB_STANDALONE}:${CI_COMMIT_TAG:-$CI_COMMIT_SHORT_SHA}
     - docker tag ${DOCKER_HUB_PARACHAIN}:develop ${DOCKER_HUB_PARACHAIN}:${CI_COMMIT_TAG:-$CI_COMMIT_SHORT_SHA}

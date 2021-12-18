@@ -19,7 +19,7 @@ jobs:
 
     - name: Build image
       run: |
-        docker build -t kilt/mashnet-node --build-arg NODE_TYPE=mashnet-node .
+        docker build -t kilt/proofid-node --build-arg NODE_TYPE=proofid-node .
 
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v1
@@ -38,8 +38,8 @@ jobs:
         ECR_REPOSITORY: kilt/prototype-chain
         IMAGE_TAG: ${{ github.sha }}
       run: |
-        docker tag kilt/mashnet-node $ECR_REGISTRY/$ECR_REPOSITORY:latest-rc
-        docker tag kilt/mashnet-node $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+        docker tag kilt/proofid-node $ECR_REGISTRY/$ECR_REPOSITORY:latest-rc
+        docker tag kilt/proofid-node $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
         docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
         docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest-rc
 
@@ -54,7 +54,7 @@ jobs:
 
     - name: Build image
       run: |
-        docker build -t kilt/mashnet-node --build-arg NODE_TYPE=mashnet-node .
+        docker build -t kilt/proofid-node --build-arg NODE_TYPE=proofid-node .
 
     - name: Login to Docker Hub
       env:
@@ -65,10 +65,10 @@ jobs:
 
     - name: Tag, and push image to Docker Hub
       env:
-        DOCKER_REPOSITORY: kiltprotocol/mashnet-node
+        DOCKER_REPOSITORY: kiltprotocol/proofid-node
         IMAGE_TAG: ${{ github.sha }}
       run: |
-        docker tag kilt/mashnet-node $DOCKER_REPOSITORY:latest-rc
-        docker tag kilt/mashnet-node $DOCKER_REPOSITORY:$IMAGE_TAG
+        docker tag kilt/proofid-node $DOCKER_REPOSITORY:latest-rc
+        docker tag kilt/proofid-node $DOCKER_REPOSITORY:$IMAGE_TAG
         docker push $DOCKER_REPOSITORY:$IMAGE_TAG
         docker push $DOCKER_REPOSITORY:latest-rc
