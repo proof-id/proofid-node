@@ -88,6 +88,8 @@ fn as_authority_key(public_key: [u8; 32]) -> (AccountId, AuraId, GrandpaId) {
 	)
 }
 
+pub const SUPPLY: Balance = 1500000000_000000; // 300,000,000.000000 * 5 accounts.
+
 const DEV_AUTH_ALICE: [u8; 32] = hex!("9eadb73738c861ccf117e511cf131472d4925e6b95e38ac9faa21b5c08ca09c4");
 const DEV_AUTH_BOB: [u8; 32] = hex!("3ba64ead0167cd9b64029f9b5987b24a04c30c573259e3e498d4464d36d6e204");
 const TRANSFER_ACCOUNT: [u8; 32] = hex!("76d909437eaf36ce2d3f81cad105a67291c24239b1b698f67e3865b07e12641e");
@@ -199,15 +201,18 @@ fn testnet_genesis(
 	wasm_binary: &[u8],
 	initial_authorities: Vec<(AccountId, AuraId, GrandpaId)>,
 	root_key: AccountId,
-	endowed_accounts: Vec<AccountId>,
+	_endowed_accounts: Vec<AccountId>,
 ) -> GenesisConfig {
 	type VestingPeriod = BlockNumber;
 	type LockingPeriod = BlockNumber;
 
 	// vesting and locks as initially designed
 	let airdrop_accounts_json = &include_bytes!("../res/genesis-testing/genesis_accounts.json")[..];
-	let airdrop_accounts: Vec<(AccountId, Balance, VestingPeriod, LockingPeriod)> =
+	let airdrop_accounts: Vec<(AccountId, VestingPeriod, LockingPeriod)> =
 		serde_json::from_slice(airdrop_accounts_json).expect("Could not read from genesis_accounts.json");
+
+	let num_endowed_accounts = airdrop_accounts.len() as u128;
+	let amount: Balance = (SUPPLY / num_endowed_accounts) as Balance;
 
 	GenesisConfig {
 		system: SystemConfig {
@@ -215,12 +220,10 @@ fn testnet_genesis(
 			changes_trie_config: Default::default(),
 		},
 		balances: BalancesConfig {
-			// balances: airdrop_accounts.iter().cloned().map(|(who, total, _, _)| (who, total)).collect(),
-			balances: endowed_accounts
+			balances: airdrop_accounts
 				.iter()
 				.cloned()
-				.map(|a| (a, 187_500_000_000_000))
-				.chain(airdrop_accounts.iter().cloned().map(|(who, total, _, _)| (who, total)))
+				.map(|(who, _, _)| (who, amount))
 				.collect(),
 		},
 		session: SessionConfig {
@@ -245,12 +248,12 @@ fn testnet_genesis(
 			balance_locks: airdrop_accounts
 				.iter()
 				.cloned()
-				.map(|(who, amount, _, locking_length)| (who, locking_length * BLOCKS_PER_YEAR / 12, amount))
+				.map(|(who, _, locking_length)| (who, locking_length * BLOCKS_PER_YEAR / 12, amount))
 				.collect(),
 			vesting: airdrop_accounts
 				.iter()
 				.cloned()
-				.map(|(who, amount, vesting_length, _)| (who, vesting_length * BLOCKS_PER_YEAR / 12, amount))
+				.map(|(who, vesting_length, _)| (who, vesting_length * BLOCKS_PER_YEAR / 12, amount))
 				.collect(),
 			transfer_account: TRANSFER_ACCOUNT.into(),
 		},
