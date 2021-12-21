@@ -88,11 +88,9 @@ fn as_authority_key(public_key: [u8; 32]) -> (AccountId, AuraId, GrandpaId) {
 	)
 }
 
-const DEV_AUTH_ALICE: [u8; 32] = hex!("58d9ad62396e73018d42812f2d19d17dea37c4051bdd5b9117885388cc90f444");
-const DEV_AUTH_BOB: [u8; 32] = hex!("9621f07f9388294bb3cb66c45ef5e7ba43d92ab602f9ee1c579222c28d91d651");
-const DEV_AUTH_CHARLIE: [u8; 32] = hex!("726291f609915e542ab022f0fdd61cb87cbd99990d0e3697a6c59dded9568a4e");
-const DEV_FAUCET: [u8; 32] = hex!("82980dceaed6127d0113ca75fad8bd925c48583e467d33a6a17aedb1844c6934");
-const TRANSFER_ACCOUNT: [u8; 32] = hex!("82980dceaed6127d0113ca75fad8bd925c48583e467d33a6a17aedb1844c6934");
+const DEV_AUTH_ALICE: [u8; 32] = hex!("9eadb73738c861ccf117e511cf131472d4925e6b95e38ac9faa21b5c08ca09c4");
+const DEV_AUTH_BOB: [u8; 32] = hex!("3ba64ead0167cd9b64029f9b5987b24a04c30c573259e3e498d4464d36d6e204");
+const TRANSFER_ACCOUNT: [u8; 32] = hex!("76d909437eaf36ce2d3f81cad105a67291c24239b1b698f67e3865b07e12641e");
 
 impl Alternative {
 	/// Get an actual chain config from one of the alternatives.
@@ -122,7 +120,7 @@ impl Alternative {
 					get_account_id_from_secret::<ed25519::Public>("//Bob"),
 					get_account_id_from_secret::<sr25519::Public>("//Alice"),
 					get_account_id_from_secret::<sr25519::Public>("//Bob"),
-	],
+					],
 						)
 					},
 					vec![],
@@ -145,15 +143,10 @@ impl Alternative {
 							vec![
 								as_authority_key(DEV_AUTH_ALICE),
 								as_authority_key(DEV_AUTH_BOB),
-								as_authority_key(DEV_AUTH_CHARLIE),
+								// as_authority_key(DEV_AUTH_CHARLIE),
 							],
 							DEV_AUTH_ALICE.into(),
-							vec![
-								DEV_FAUCET.into(),
-								DEV_AUTH_ALICE.into(),
-								DEV_AUTH_BOB.into(),
-								DEV_AUTH_CHARLIE.into(),
-							],
+							vec![],
 						)
 					},
 					vec![],
@@ -175,15 +168,10 @@ impl Alternative {
 							vec![
 								as_authority_key(DEV_AUTH_ALICE),
 								as_authority_key(DEV_AUTH_BOB),
-								as_authority_key(DEV_AUTH_CHARLIE),
+								// as_authority_key(DEV_AUTH_CHARLIE),
 							],
 							DEV_AUTH_ALICE.into(),
-							vec![
-								DEV_FAUCET.into(),
-								DEV_AUTH_ALICE.into(),
-								DEV_AUTH_BOB.into(),
-								DEV_AUTH_CHARLIE.into(),
-							],
+							vec![],
 						)
 					},
 					vec![],
@@ -231,7 +219,7 @@ fn testnet_genesis(
 			balances: endowed_accounts
 				.iter()
 				.cloned()
-				.map(|a| (a, 62_500_000_000_000))
+				.map(|a| (a, 187_500_000_000_000))
 				.chain(airdrop_accounts.iter().cloned().map(|(who, total, _, _)| (who, total)))
 				.collect(),
 		},

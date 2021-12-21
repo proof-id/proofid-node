@@ -25,7 +25,7 @@
 //! Some("spiritnet-dev"), DB CACHE: 128
 
 // Executed Command:
-// /home/willi/mashnet-node/target/release/kilt-parachain
+// /home/willi/proofid-node/target/release/kilt-parachain
 // benchmark
 // --chain=spiritnet-dev
 // --execution=wasm

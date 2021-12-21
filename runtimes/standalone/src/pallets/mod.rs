@@ -32,12 +32,12 @@ mod grandpa;
 mod indices;
 mod pid_launch;
 mod randomness_collective_flip;
-mod session;
 mod sudo;
 mod system;
 mod timestamp;
 mod transaction_payment;
 mod utility;
 mod vesting;
+mod session;
 
 // pub use nicks::*;
