@@ -178,6 +178,7 @@ construct_runtime!(
 		PidLaunch: pallet_pid_launch::{Pallet, Call, Storage, Event<T>, Config<T>} = 34,
 		Utility: pallet_utility::{Pallet, Call, Storage, Event} = 35,
 		CrowdloanContributors: pallet_crowdloan::{Pallet, Call, Storage, Event<T>, Config<T>, ValidateUnsigned} = 36,
+		Assets: pallet_assets::{Pallet, Call, Storage, Event<T>} = 37,
 	}
 );
 
