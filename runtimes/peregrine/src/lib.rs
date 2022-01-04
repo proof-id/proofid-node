@@ -81,6 +81,7 @@ mod migrations;
 #[cfg(test)]
 mod tests;
 mod weights;
+mod pallets;
 
 #[cfg(any(feature = "std", test))]
 pub use sp_runtime::BuildStorage;
@@ -122,7 +123,7 @@ parameter_types! {
 
 parameter_types! {
 	pub const Version: RuntimeVersion = VERSION;
-	pub const SS58Prefix: u8 = 38;
+	pub const SS58Prefix: u8 = 42;
 }
 
 impl frame_system::Config for Runtime {
@@ -181,7 +182,7 @@ impl pallet_timestamp::Config for Runtime {
 
 parameter_types! {
 	pub const ExistentialDeposit: u128 = 10 * MILLI_PID;
-	pub const TransactionByteFee: u128 = MICRO_KILT;
+	pub const TransactionByteFee: u128 = MICRO_PID;
 	pub const MaxLocks: u32 = 50;
 	pub const MaxReserves: u32 = 50;
 }
@@ -298,11 +299,11 @@ impl pallet_vesting::Config for Runtime {
 
 parameter_types! {
 	pub const MaxClaims: u32 = 50;
-	pub const UsableBalance: Balance = KILT;
+	pub const UsableBalance: Balance = PID;
 	pub const AutoUnlockBound: u32 = 100;
 }
 
-impl pid_launch::Config for Runtime {
+impl pallet_pid_launch::Config for Runtime {
 	type Event = Event;
 	type MaxClaims = MaxClaims;
 	type UsableBalance = UsableBalance;
@@ -330,7 +331,7 @@ parameter_types! {
 	pub const LaunchPeriod: BlockNumber = LAUNCH_PERIOD;
 	pub const VotingPeriod: BlockNumber = VOTING_PERIOD;
 	pub const FastTrackVotingPeriod: BlockNumber = FAST_TRACK_VOTING_PERIOD;
-	pub const MinimumDeposit: Balance = KILT;
+	pub const MinimumDeposit: Balance = PID;
 	pub const EnactmentPeriod: BlockNumber = ENACTMENT_PERIOD;
 	pub const CooloffPeriod: BlockNumber = COOLOFF_PERIOD;
 	// One cent: $10,000 / MB
@@ -485,11 +486,11 @@ parameter_types! {
 	pub const AttestationDeposit: Balance = ATTESTATION_DEPOSIT;
 }
 
-impl attestation::Config for Runtime {
+impl pallet_attestation::Config for Runtime {
 	#[cfg(not(feature = "runtime-benchmarks"))]
-	type EnsureOrigin = did::EnsureDidOrigin<DidIdentifier, AccountId>;
+	type EnsureOrigin = pallet_did::EnsureDidOrigin<DidIdentifier, AccountId>;
 	#[cfg(not(feature = "runtime-benchmarks"))]
-	type OriginSuccess = did::DidRawOrigin<AccountId, DidIdentifier>;
+	type OriginSuccess = pallet_did::DidRawOrigin<AccountId, DidIdentifier>;
 
 	#[cfg(feature = "runtime-benchmarks")]
 	type EnsureOrigin = EnsureSigned<DidIdentifier>;
@@ -514,18 +515,18 @@ parameter_types! {
 	pub const DelegationDeposit: Balance = DELEGATION_DEPOSIT;
 }
 
-impl delegation::Config for Runtime {
+impl pallet_delegation::Config for Runtime {
 	type DelegationEntityId = DidIdentifier;
 	type DelegationNodeId = Hash;
 
 	#[cfg(not(feature = "runtime-benchmarks"))]
-	type EnsureOrigin = did::EnsureDidOrigin<DidIdentifier, AccountId>;
+	type EnsureOrigin = pallet_did::EnsureDidOrigin<DidIdentifier, AccountId>;
 	#[cfg(not(feature = "runtime-benchmarks"))]
-	type OriginSuccess = did::DidRawOrigin<AccountId, DidIdentifier>;
+	type OriginSuccess = pallet_did::DidRawOrigin<AccountId, DidIdentifier>;
 	#[cfg(not(feature = "runtime-benchmarks"))]
-	type DelegationSignatureVerification = did::DidSignatureVerify<Runtime>;
+	type DelegationSignatureVerification = pallet_did::DidSignatureVerify<Runtime>;
 	#[cfg(not(feature = "runtime-benchmarks"))]
-	type Signature = did::DidSignature;
+	type Signature = pallet_did::DidSignature;
 
 	#[cfg(feature = "runtime-benchmarks")]
 	type EnsureOrigin = EnsureSigned<DidIdentifier>;
@@ -551,16 +552,16 @@ parameter_types! {
 	pub const Fee: Balance = MILLI_PID;
 }
 
-impl ctype::Config for Runtime {
+impl pallet_ctype::Config for Runtime {
 	type CtypeCreatorId = AccountId;
 	type Currency = Balances;
 	type Fee = Fee;
 	type FeeCollector = Treasury;
 
 	#[cfg(not(feature = "runtime-benchmarks"))]
-	type EnsureOrigin = did::EnsureDidOrigin<DidIdentifier, AccountId>;
+	type EnsureOrigin = pallet_did::EnsureDidOrigin<DidIdentifier, AccountId>;
 	#[cfg(not(feature = "runtime-benchmarks"))]
-	type OriginSuccess = did::DidRawOrigin<AccountId, DidIdentifier>;
+	type OriginSuccess = pallet_did::DidRawOrigin<AccountId, DidIdentifier>;
 
 	#[cfg(feature = "runtime-benchmarks")]
 	type EnsureOrigin = EnsureSigned<DidIdentifier>;
@@ -592,7 +593,7 @@ parameter_types! {
 	pub const MaxNumberOfUrlsPerService: u32 = MAX_NUMBER_OF_URLS_PER_SERVICE;
 }
 
-impl did::Config for Runtime {
+impl pallet_did::Config for Runtime {
 	type DidIdentifier = DidIdentifier;
 	type Event = Event;
 	type Call = Call;
@@ -603,9 +604,9 @@ impl did::Config for Runtime {
 	type FeeCollector = Treasury;
 
 	#[cfg(not(feature = "runtime-benchmarks"))]
-	type EnsureOrigin = did::EnsureDidOrigin<DidIdentifier, AccountId>;
+	type EnsureOrigin = pallet_did::EnsureDidOrigin<DidIdentifier, AccountId>;
 	#[cfg(not(feature = "runtime-benchmarks"))]
-	type OriginSuccess = did::DidRawOrigin<AccountId, DidIdentifier>;
+	type OriginSuccess = pallet_did::DidRawOrigin<AccountId, DidIdentifier>;
 
 	#[cfg(feature = "runtime-benchmarks")]
 	type EnsureOrigin = EnsureSigned<DidIdentifier>;
@@ -626,7 +627,7 @@ impl did::Config for Runtime {
 }
 
 parameter_types! {
-	pub const DidLookupDeposit: Balance = KILT;
+	pub const DidLookupDeposit: Balance = PID;
 }
 
 impl pallet_did_lookup::Config for Runtime {
@@ -638,13 +639,13 @@ impl pallet_did_lookup::Config for Runtime {
 	type Currency = Balances;
 	type Deposit = DidLookupDeposit;
 
-	type EnsureOrigin = did::EnsureDidOrigin<DidIdentifier, AccountId>;
-	type OriginSuccess = did::DidRawOrigin<AccountId, DidIdentifier>;
+	type EnsureOrigin = pallet_did::EnsureDidOrigin<DidIdentifier, AccountId>;
+	type OriginSuccess = pallet_did::DidRawOrigin<AccountId, DidIdentifier>;
 
 	type WeightInfo = weights::pallet_did_lookup::WeightInfo<Runtime>;
 }
 
-impl crowdloan::Config for Runtime {
+impl pallet_crowdloan::Config for Runtime {
 	type Currency = Balances;
 	type Vesting = Vesting;
 	type Balance = Balance;
@@ -776,13 +777,13 @@ construct_runtime! {
 		// System scheduler.
 		Scheduler: pallet_scheduler::{Pallet, Call, Storage, Event<T>} = 42,
 
-		// KILT Pallets. Start indices 60 to leave room
-		KiltLaunch: pid_launch::{Pallet, Call, Storage, Event<T>, Config<T>} = 60,
-		Ctype: ctype::{Pallet, Call, Storage, Event<T>} = 61,
-		Attestation: attestation::{Pallet, Call, Storage, Event<T>} = 62,
-		Delegation: delegation::{Pallet, Call, Storage, Event<T>} = 63,
-		Did: did::{Pallet, Call, Storage, Event<T>, Origin<T>} = 64,
-		CrowdloanContributors: crowdloan::{Pallet, Call, Storage, Event<T>, Config<T>, ValidateUnsigned} = 65,
+		// PID Pallets. Start indices 60 to leave room
+		PidLaunch: pallet_pid_launch::{Pallet, Call, Storage, Event<T>, Config<T>} = 60,
+		Ctype: pallet_ctype::{Pallet, Call, Storage, Event<T>} = 61,
+		Attestation: pallet_attestation::{Pallet, Call, Storage, Event<T>} = 62,
+		Delegation: pallet_delegation::{Pallet, Call, Storage, Event<T>} = 63,
+		Did: pallet_did::{Pallet, Call, Storage, Event<T>, Origin<T>} = 64,
+		CrowdloanContributors: pallet_crowdloan::{Pallet, Call, Storage, Event<T>, Config<T>, ValidateUnsigned} = 65,
 		Inflation: pallet_inflation::{Pallet, Storage} = 66,
 		DidLookup: pallet_did_lookup::{Pallet, Call, Storage, Event<T>} = 67,
 
@@ -792,13 +793,13 @@ construct_runtime! {
 	}
 }
 
-impl did::DeriveDidCallAuthorizationVerificationKeyRelationship for Call {
-	fn derive_verification_key_relationship(&self) -> did::DeriveDidCallKeyRelationshipResult {
+impl pallet_did::DeriveDidCallAuthorizationVerificationKeyRelationship for Call {
+	fn derive_verification_key_relationship(&self) -> pallet_did::DeriveDidCallKeyRelationshipResult {
 		/// ensure that all calls have the same VerificationKeyRelationship
-		fn single_key_relationship(calls: &[Call]) -> did::DeriveDidCallKeyRelationshipResult {
+		fn single_key_relationship(calls: &[Call]) -> pallet_did::DeriveDidCallKeyRelationshipResult {
 			let init = calls
 				.get(0)
-				.ok_or(did::RelationshipDeriveError::InvalidCallParameter)?
+				.ok_or(pallet_did::RelationshipDeriveError::InvalidCallParameter)?
 				.derive_verification_key_relationship()?;
 			calls
 				.iter()
@@ -810,24 +811,24 @@ impl did::DeriveDidCallAuthorizationVerificationKeyRelationship for Call {
 					} else if Ok(acc) == next {
 						Ok(acc)
 					} else {
-						Err(did::RelationshipDeriveError::InvalidCallParameter)
+						Err(pallet_did::RelationshipDeriveError::InvalidCallParameter)
 					}
 				})
 		}
 		match self {
-			Call::Attestation { .. } => Ok(did::DidVerificationKeyRelationship::AssertionMethod),
-			Call::Ctype { .. } => Ok(did::DidVerificationKeyRelationship::AssertionMethod),
-			Call::Delegation { .. } => Ok(did::DidVerificationKeyRelationship::CapabilityDelegation),
+			Call::Attestation { .. } => Ok(pallet_did::DidVerificationKeyRelationship::AssertionMethod),
+			Call::Ctype { .. } => Ok(pallet_did::DidVerificationKeyRelationship::AssertionMethod),
+			Call::Delegation { .. } => Ok(pallet_did::DidVerificationKeyRelationship::CapabilityDelegation),
 			// DID creation is not allowed through the DID proxy.
-			Call::Did(did::Call::create { .. }) => Err(did::RelationshipDeriveError::NotCallableByDid),
-			Call::Did { .. } => Ok(did::DidVerificationKeyRelationship::Authentication),
+			Call::Did(pallet_did::Call::create { .. }) => Err(pallet_did::RelationshipDeriveError::NotCallableByDid),
+			Call::Did { .. } => Ok(pallet_did::DidVerificationKeyRelationship::Authentication),
 			Call::Utility(pallet_utility::Call::batch { calls }) => single_key_relationship(&calls[..]),
 			Call::Utility(pallet_utility::Call::batch_all { calls }) => single_key_relationship(&calls[..]),
 			#[cfg(not(feature = "runtime-benchmarks"))]
-			_ => Err(did::RelationshipDeriveError::NotCallableByDid),
+			_ => Err(pallet_did::RelationshipDeriveError::NotCallableByDid),
 			// By default, returns the authentication key
 			#[cfg(feature = "runtime-benchmarks")]
-			_ => Ok(did::DidVerificationKeyRelationship::Authentication),
+			_ => Ok(pallet_did::DidVerificationKeyRelationship::Authentication),
 		}
 	}
 
@@ -1002,14 +1003,14 @@ impl_runtime_apis! {
 			list_benchmark!(list, extra, pallet_utility, Utility);
 			list_benchmark!(list, extra, pallet_vesting, Vesting);
 
-			// KILT
-			list_benchmark!(list, extra, attestation, Attestation);
-			list_benchmark!(list, extra, crowdloan, CrowdloanContributors);
-			list_benchmark!(list, extra, ctype, Ctype);
-			list_benchmark!(list, extra, delegation, Delegation);
-			list_benchmark!(list, extra, did, Did);
+			// PID
+			list_benchmark!(list, extra, pallet_attestation, Attestation);
+			list_benchmark!(list, extra, pallet_crowdloan, CrowdloanContributors);
+			list_benchmark!(list, extra, pallet_ctype, Ctype);
+			list_benchmark!(list, extra, pallet_delegation, Delegation);
+			list_benchmark!(list, extra, pallet_did, Did);
 			list_benchmark!(list, extra, pallet_did_lookup, DidLookup);
-			list_benchmark!(list, extra, pid_launch, KiltLaunch);
+			list_benchmark!(list, extra, pallet_pid_launch, PidLaunch);
 			list_benchmark!(list, extra, pallet_inflation, Inflation);
 			list_benchmark!(list, extra, parachain_staking, ParachainStaking);
 
@@ -1044,7 +1045,7 @@ impl_runtime_apis! {
 				// System Events
 				hex_literal::hex!("26aa394eea5630e07c48ae0c9558cef780d41e5e16056765bc8461851072c9d7")
 					.to_vec().into(),
-				// KiltLaunch transfer account
+				// PidLaunch transfer account
 				hex_literal::hex!("6a3c793cec9dbe330b349dc4eea6801090f5e71f53b1b41ad11afb4a313a282c").to_vec().into(),
 			];
 
@@ -1065,14 +1066,14 @@ impl_runtime_apis! {
 			add_benchmark!(params, batches, pallet_utility, Utility);
 			add_benchmark!(params, batches, pallet_vesting, Vesting);
 
-			// KILT
-			add_benchmark!(params, batches, attestation, Attestation);
-			add_benchmark!(params, batches, ctype, Ctype);
-			add_benchmark!(params, batches, crowdloan, CrowdloanContributors);
-			add_benchmark!(params, batches, delegation, Delegation);
-			add_benchmark!(params, batches, did, Did);
+			// PID
+			add_benchmark!(params, batches, pallet_attestation, Attestation);
+			add_benchmark!(params, batches, pallet_ctype, Ctype);
+			add_benchmark!(params, batches, pallet_crowdloan, CrowdloanContributors);
+			add_benchmark!(params, batches, pallet_delegation, Delegation);
+			add_benchmark!(params, batches, pallet_did, Did);
 			add_benchmark!(params, batches, pallet_did_lookup, DidLookup);
-			add_benchmark!(params, batches, pid_launch, KiltLaunch);
+			add_benchmark!(params, batches, pallet_pid_launch, PidLaunch);
 			add_benchmark!(params, batches, pallet_inflation, Inflation);
 			add_benchmark!(params, batches, parachain_staking, ParachainStaking);
 

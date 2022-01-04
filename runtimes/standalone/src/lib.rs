@@ -72,7 +72,7 @@ use pid_primitives::{
 			MAX_PUBLIC_KEYS_PER_DID, MAX_SERVICE_ID_LENGTH, MAX_SERVICE_TYPE_LENGTH, MAX_SERVICE_URL_LENGTH,
 			MAX_TOTAL_KEY_AGREEMENT_KEYS, MAX_URL_LENGTH,
         },
-		MICRO_PID, MILLI_PID, MIN_VESTED_TRANSFER_AMOUNT, PID,
+		MILLI_PID, MIN_VESTED_TRANSFER_AMOUNT, PID,
     }, DidIdentifier, fees::ToAuthor, Hash, Index, Signature, SlowAdjustingFeeUpdate,
 };
 
@@ -399,7 +399,7 @@ impl_runtime_apis! {
 			list_benchmark!(list, extra, frame_system, SystemBench::<Runtime>);
 			list_benchmark!(list, extra, pallet_balances, Balances);
 			list_benchmark!(list, extra, pallet_timestamp, Timestamp);
-			list_benchmark!(list, extra, pid_launch, KiltLaunch);
+			list_benchmark!(list, extra, pid_launch, PidLaunch);
 			list_benchmark!(list, extra, pallet_vesting, Vesting);
 
 			list_benchmark!(list, extra, pallet_did, Did);
@@ -437,7 +437,7 @@ impl_runtime_apis! {
 				// System Events
 				hex_literal::hex!("26aa394eea5630e07c48ae0c9558cef780d41e5e16056765bc8461851072c9d7")
 					.to_vec().into(),
-				// KiltLaunch transfer account
+				// PidLaunch transfer account
 				hex_literal::hex!("6a3c793cec9dbe330b349dc4eea6801090f5e71f53b1b41ad11afb4a313a282c").to_vec().into(),
 			];
 
@@ -447,7 +447,7 @@ impl_runtime_apis! {
 			add_benchmark!(params, batches, frame_system, SystemBench::<Runtime>);
 			add_benchmark!(params, batches, pallet_balances, Balances);
 			add_benchmark!(params, batches, pallet_timestamp, Timestamp);
-			add_benchmark!(params, batches, pid_launch, KiltLaunch);
+			add_benchmark!(params, batches, pid_launch, PidLaunch);
 			add_benchmark!(params, batches, pallet_vesting, Vesting);
 
 			add_benchmark!(params, batches, pallet_did, Did);

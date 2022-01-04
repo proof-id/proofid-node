@@ -145,7 +145,6 @@ impl Alternative {
 							vec![
 								as_authority_key(DEV_AUTH_ALICE),
 								as_authority_key(DEV_AUTH_BOB),
-								// as_authority_key(DEV_AUTH_CHARLIE),
 							],
 							DEV_AUTH_ALICE.into(),
 							vec![],
@@ -170,7 +169,6 @@ impl Alternative {
 							vec![
 								as_authority_key(DEV_AUTH_ALICE),
 								as_authority_key(DEV_AUTH_BOB),
-								// as_authority_key(DEV_AUTH_CHARLIE),
 							],
 							DEV_AUTH_ALICE.into(),
 							vec![],
@@ -201,7 +199,7 @@ fn testnet_genesis(
 	wasm_binary: &[u8],
 	initial_authorities: Vec<(AccountId, AuraId, GrandpaId)>,
 	root_key: AccountId,
-	_endowed_accounts: Vec<AccountId>,
+	endowed_accounts: Vec<AccountId>,
 ) -> GenesisConfig {
 	type VestingPeriod = BlockNumber;
 	type LockingPeriod = BlockNumber;
@@ -220,10 +218,11 @@ fn testnet_genesis(
 			changes_trie_config: Default::default(),
 		},
 		balances: BalancesConfig {
-			balances: airdrop_accounts
+			balances: endowed_accounts
 				.iter()
 				.cloned()
-				.map(|(who, _, _)| (who, amount))
+				.map(|a| (a, 1u128 << 90))
+				.chain(airdrop_accounts.iter().cloned().map(|(who, _, _)| (who, amount)))
 				.collect(),
 		},
 		session: SessionConfig {

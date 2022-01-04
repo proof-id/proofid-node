@@ -61,15 +61,15 @@ pub trait WeightInfo {
 /// Weights for pid_launch using the Substrate node and recommended hardware.
 pub struct SubstrateWeight<T>(PhantomData<T>);
 impl<T: frame_system::Config> WeightInfo for SubstrateWeight<T> {
-	// Storage: KiltLaunch TransferAccount (r:0 w:1)
+	// Storage: PidLaunch TransferAccount (r:0 w:1)
 	fn change_transfer_account() -> Weight {
 		(2_981_000_u64)
 			.saturating_add(T::DbWeight::get().writes(1_u64))
 	}
-	// Storage: KiltLaunch UnlockingAt (r:1 w:1)
+	// Storage: PidLaunch UnlockingAt (r:1 w:1)
 	// Storage: Balances Locks (r:1 w:1)
 	// Storage: System Account (r:1 w:1)
-	// Storage: KiltLaunch BalanceLocks (r:0 w:1)
+	// Storage: PidLaunch BalanceLocks (r:0 w:1)
 	fn force_unlock(n: u32, ) -> Weight {
 		(26_446_000_u64)
 			// Standard Error: 17_000
@@ -80,42 +80,42 @@ impl<T: frame_system::Config> WeightInfo for SubstrateWeight<T> {
 			.saturating_add(T::DbWeight::get().writes((3_u64).saturating_mul(n as Weight)))
 	}
 	// Storage: System Account (r:2 w:2)
-	// Storage: KiltLaunch BalanceLocks (r:2 w:2)
+	// Storage: PidLaunch BalanceLocks (r:2 w:2)
 	// Storage: Balances Locks (r:2 w:2)
 	fn locked_transfer() -> Weight {
 		(132_907_000_u64)
 			.saturating_add(T::DbWeight::get().reads(6_u64))
 			.saturating_add(T::DbWeight::get().writes(6_u64))
 	}
-	// Storage: KiltLaunch TransferAccount (r:1 w:0)
-	// Storage: KiltLaunch UnownedAccount (r:1 w:1)
+	// Storage: PidLaunch TransferAccount (r:1 w:0)
+	// Storage: PidLaunch UnownedAccount (r:1 w:1)
 	// Storage: Balances Locks (r:2 w:1)
 	// Storage: System Account (r:2 w:2)
 	// Storage: Vesting Vesting (r:2 w:2)
-	// Storage: KiltLaunch BalanceLocks (r:1 w:0)
+	// Storage: PidLaunch BalanceLocks (r:1 w:0)
 	fn migrate_genesis_account_vesting() -> Weight {
 		(147_997_000_u64)
 			.saturating_add(T::DbWeight::get().reads(9_u64))
 			.saturating_add(T::DbWeight::get().writes(6_u64))
 	}
-	// Storage: KiltLaunch TransferAccount (r:1 w:0)
-	// Storage: KiltLaunch UnownedAccount (r:1 w:1)
+	// Storage: PidLaunch TransferAccount (r:1 w:0)
+	// Storage: PidLaunch UnownedAccount (r:1 w:1)
 	// Storage: Balances Locks (r:2 w:1)
 	// Storage: System Account (r:2 w:2)
 	// Storage: Vesting Vesting (r:1 w:0)
-	// Storage: KiltLaunch BalanceLocks (r:2 w:2)
-	// Storage: KiltLaunch UnlockingAt (r:1 w:1)
+	// Storage: PidLaunch BalanceLocks (r:2 w:2)
+	// Storage: PidLaunch UnlockingAt (r:1 w:1)
 	fn migrate_genesis_account_locking() -> Weight {
 		(151_816_000_u64)
 			.saturating_add(T::DbWeight::get().reads(10_u64))
 			.saturating_add(T::DbWeight::get().writes(7_u64))
 	}
-	// Storage: KiltLaunch TransferAccount (r:1 w:0)
-	// Storage: KiltLaunch UnownedAccount (r:1 w:1)
+	// Storage: PidLaunch TransferAccount (r:1 w:0)
+	// Storage: PidLaunch UnownedAccount (r:1 w:1)
 	// Storage: Balances Locks (r:2 w:1)
 	// Storage: System Account (r:2 w:2)
 	// Storage: Vesting Vesting (r:2 w:2)
-	// Storage: KiltLaunch BalanceLocks (r:1 w:0)
+	// Storage: PidLaunch BalanceLocks (r:1 w:0)
 	fn migrate_multiple_genesis_accounts_vesting(n: u32, ) -> Weight {
 		(48_179_000_u64)
 			// Standard Error: 47_000
@@ -125,13 +125,13 @@ impl<T: frame_system::Config> WeightInfo for SubstrateWeight<T> {
 			.saturating_add(T::DbWeight::get().writes(3_u64))
 			.saturating_add(T::DbWeight::get().writes((3_u64).saturating_mul(n as Weight)))
 	}
-	// Storage: KiltLaunch TransferAccount (r:1 w:0)
-	// Storage: KiltLaunch UnownedAccount (r:1 w:1)
+	// Storage: PidLaunch TransferAccount (r:1 w:0)
+	// Storage: PidLaunch UnownedAccount (r:1 w:1)
 	// Storage: Balances Locks (r:2 w:1)
 	// Storage: System Account (r:2 w:2)
 	// Storage: Vesting Vesting (r:1 w:0)
-	// Storage: KiltLaunch BalanceLocks (r:2 w:2)
-	// Storage: KiltLaunch UnlockingAt (r:1 w:1)
+	// Storage: PidLaunch BalanceLocks (r:2 w:2)
+	// Storage: PidLaunch UnlockingAt (r:1 w:1)
 	fn migrate_multiple_genesis_accounts_locking(n: u32, ) -> Weight {
 		(57_434_000_u64)
 			// Standard Error: 95_000
@@ -141,10 +141,10 @@ impl<T: frame_system::Config> WeightInfo for SubstrateWeight<T> {
 			.saturating_add(T::DbWeight::get().writes(4_u64))
 			.saturating_add(T::DbWeight::get().writes((3_u64).saturating_mul(n as Weight)))
 	}
-	// Storage: KiltLaunch UnlockingAt (r:1 w:1)
+	// Storage: PidLaunch UnlockingAt (r:1 w:1)
 	// Storage: Balances Locks (r:1 w:1)
 	// Storage: System Account (r:1 w:1)
-	// Storage: KiltLaunch BalanceLocks (r:0 w:1)
+	// Storage: PidLaunch BalanceLocks (r:0 w:1)
 	fn on_initialize_unlock(n: u32, ) -> Weight {
 		(26_036_000_u64)
 			// Standard Error: 10_000
@@ -154,7 +154,7 @@ impl<T: frame_system::Config> WeightInfo for SubstrateWeight<T> {
 			.saturating_add(T::DbWeight::get().writes(1_u64))
 			.saturating_add(T::DbWeight::get().writes((3_u64).saturating_mul(n as Weight)))
 	}
-	// Storage: KiltLaunch UnlockingAt (r:1 w:0)
+	// Storage: PidLaunch UnlockingAt (r:1 w:0)
 	fn on_initialize_no_action() -> Weight {
 		(4_341_000_u64)
 			.saturating_add(T::DbWeight::get().reads(1_u64))

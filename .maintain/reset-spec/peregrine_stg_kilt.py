@@ -29,7 +29,7 @@ def update_spec(input: typing.Dict):
     input["properties"]["tokenSymbol"] = "PILT"
     input["genesis"]["runtime"]["parachainInfo"]["parachainId"] = para_id
     input["genesis"]["runtime"]["sudo"]["key"] = acc_col_1
-    input["genesis"]["runtime"]["kiltLaunch"]["transferAccount"] = acc_col_2
+    input["genesis"]["runtime"]["PidLaunch"]["transferAccount"] = acc_col_2
     input["genesis"]["runtime"]["parachainStaking"]["stakers"] = [
         [
             acc_col_1,

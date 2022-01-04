@@ -1,12 +1,12 @@
-// KILT Blockchain – https://botlabs.org
+// PID Blockchain – https://botlabs.org
 // Copyright (C) 2019-2021 BOTLabs GmbH
 
-// The KILT Blockchain is free software: you can redistribute it and/or modify
+// The PID Blockchain is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
 
-// The KILT Blockchain is distributed in the hope that it will be useful,
+// The PID Blockchain is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
@@ -16,9 +16,9 @@
 
 // If you feel like getting in touch with us, you can do so at info@botlabs.org
 
-//! # KILT Launch Pallet
+//! # PID Launch Pallet
 //!
-//! A simple pallet providing means of setting up KILT balance locks and
+//! A simple pallet providing means of setting up PID balance locks and
 //! vesting schedules for unowned accounts in the genesis block. These should
 //! later be migrated to user-owned accounts via the extrinsic
 //! `migrate_genesis_account` which has to be signed by a specific account
@@ -31,16 +31,16 @@
 //!
 //! ## Overview
 //!
-//! The KILT Launch pallet provides functions for:
+//! The PID Launch pallet provides functions for:
 //!
-//! - Setting vesting information and KILT balance lock for unowned accounts in
+//! - Setting vesting information and PID balance lock for unowned accounts in
 //!   genesis block.
-//! - Migrating vesting/KILT balance lock from unowned accounts to user-owned
+//! - Migrating vesting/PID balance lock from unowned accounts to user-owned
 //!   accounts.
 //! - Transfer locked tokens from user-owned account to another. NOTE: This will
 //!   be made available shortly before we remove the sudo key.
 //! - Forcedly (requires sudo) changing the `TransferAccount`.
-//! - Forcedly (requires sudo) removing the KILT balance lock.
+//! - Forcedly (requires sudo) removing the PID balance lock.
 //!
 //! ### Terminology
 //!
@@ -48,25 +48,25 @@
 //!   until a specified block number. Multiple locks always operate over the
 //!   same funds, so they "overlay" rather than "stack".
 //!
-//! - **KILT balance lock:** A Lock with a KILT specific identifier which is
+//! - **PID balance lock:** A Lock with a PID specific identifier which is
 //!   automatically removed when reaching the specified block number.
 //!
 //! - **Unowned account:** An endowed account for which potentially vesting or
-//!   the KILT balance lock is set up in the genesis block.
+//!   the PID balance lock is set up in the genesis block.
 //!
 //! - **User-owned account:** A regular account which was created by an entity
-//!   which wants to claim their tokens (potentially with vesting/KILT balance
+//!   which wants to claim their tokens (potentially with vesting/PID balance
 //!   lock) from an unowned account.
 //!
 //! ## Interface
 //!
 //! ### Dispatchable Functions
 //!
-//! - `migrate_genesis_account` - Migrate vesting or the KILT balance lock from
+//! - `migrate_genesis_account` - Migrate vesting or the PID balance lock from
 //!   an unowned account to a user-owned account. Requires signature of a
 //!   special account `TransferAccount` which does not have any other super
 //!   powers.
-//! - `migrate_multiple_genesis_accounts` - Migrate vesting or the KILT balance
+//! - `migrate_multiple_genesis_accounts` - Migrate vesting or the PID balance
 //!   lock from a list of unowned accounts to the same target user-owned
 //!   account. Requires signature of a special account `TransferAccount` which
 //!   does not have any other super powers.
@@ -81,23 +81,23 @@
 //!
 //! ## Genesis config
 //!
-//! The KiltLaunch pallet depends on the [`GenesisConfig`].
+//! The PidLaunch pallet depends on the [`GenesisConfig`].
 //!
 //! ## Assumptions
 //!
-//! * All accounts provided with balance and potentially vesting or a KILT
+//! * All accounts provided with balance and potentially vesting or a PID
 //!   balance lock in the genesis block are not owned by anyone and have to be
 //!   migrated to accounts which are owned by users.
-//! * All unowned accounts have either vesting, the KILT balance lock or neither
+//! * All unowned accounts have either vesting, the PID balance lock or neither
 //!   of both. This assumption is neither checked, nor forced, nor does any code
 //!   break if it does not hold true.
 //! * Vesting starts at genesis block for all unowned addresses which should be
 //!   migrated to user-owned accounts. This assumption is checked during
 //!   migration.
-//! * All KILT balance locks end at the same block for all unowned addresses
+//! * All PID balance locks end at the same block for all unowned addresses
 //!   which should be migrated to user-owned accounts. This assumption is
 //!   checked during migration and locked transfer.
-//! * The total number of accounts for which a KILT balance lock is set up is at
+//! * The total number of accounts for which a PID balance lock is set up is at
 //!   most `MaxClaims`, for us it will be ~6. This assumption is not checked
 //!   when appending to `UnlockedAt`.
 
@@ -320,13 +320,13 @@ pub mod pallet {
 	#[pallet::event]
 	#[pallet::generate_deposit(pub fn deposit_event)]
 	pub enum Event<T: Config> {
-		/// A KILT balance lock has been removed in the corresponding block.
+		/// A PID balance lock has been removed in the corresponding block.
 		/// \[block, len\]
 		Unlocked(T::BlockNumber, u32),
 		/// An account transferred their locked balance to another account.
 		/// \[from, value, target\]
 		LockedTransfer(T::AccountId, T::Balance, T::AccountId),
-		/// A KILT balance lock has been set. \[who, value, until\]
+		/// A PID balance lock has been set. \[who, value, until\]
 		AddedKiltLock(T::AccountId, T::Balance, T::BlockNumber),
 		/// Vesting has been added to an account. \[who, per_block, total\]
 		AddedVesting(T::AccountId, BalanceOf<T>, BalanceOf<T>),
@@ -334,10 +334,10 @@ pub mod pallet {
 
 	#[pallet::error]
 	pub enum Error<T> {
-		/// The source address does not have KILT balance lock which is
+		/// The source address does not have PID balance lock which is
 		/// required for `locked_transfer`.
 		BalanceLockNotFound,
-		/// The source and destination address have limits for their custom KILT
+		/// The source and destination address have limits for their custom PID
 		/// balance lock and thus cannot be merged. Should never be thrown.
 		ConflictingLockingBlocks,
 		/// The source and destination address differ in their vesting starting
@@ -383,7 +383,7 @@ pub mod pallet {
 
 	#[pallet::call]
 	impl<T: Config> Pallet<T> {
-		/// Forcedly remove KILT balance locks via sudo for the specified block
+		/// Forcedly remove PID balance locks via sudo for the specified block
 		/// number.
 		///
 		/// The dispatch origin must be Root.
@@ -432,15 +432,15 @@ pub mod pallet {
 			Ok(())
 		}
 
-		/// Transfer tokens and vesting information or the KILT balance lock
+		/// Transfer tokens and vesting information or the PID balance lock
 		/// from an unowned source address to an account owned by the target.
 		///
-		/// If vesting info or a KILT balance lock has been set up for the
+		/// If vesting info or a PID balance lock has been set up for the
 		/// source account in the genesis block via `GenesisBuild`, then
 		/// the corresponding locked/vested information and balance is migrated
 		/// automatically. Please note that even though this extrinsic supports
-		/// migrating both the KILT balance lock as well as vesting in one call,
-		/// all source accounts should only contain either a KILT balance lock
+		/// migrating both the PID balance lock as well as vesting in one call,
+		/// all source accounts should only contain either a PID balance lock
 		/// or vesting.
 		///
 		/// Additionally, for vesting we already unlock the
@@ -449,7 +449,7 @@ pub mod pallet {
 		/// always required to be explicitly called in order to unlock (more)
 		/// balance from vesting.
 		///
-		/// NOTE: Setting the KILT balance lock actually only occurs in this
+		/// NOTE: Setting the PID balance lock actually only occurs in this
 		/// call (and not when building the genesis block in `GenesisBuild`) to
 		/// avoid overhead from handling locks when migrating. We can do so
 		/// because all target accounts are not owned by anyone and thus these
@@ -493,7 +493,7 @@ pub mod pallet {
 			Ok(Some(Self::migrate_user(&source, &target)?).into())
 		}
 
-		/// Transfer all balances, vesting information and KILT balance locks
+		/// Transfer all balances, vesting information and PID balance locks
 		/// from multiple source addresses to the same target address.
 		///
 		/// See `migrate_genesis_account` for details as we run the same logic
@@ -549,16 +549,16 @@ pub mod pallet {
 			Ok(Some(post_weight).into())
 		}
 
-		/// Transfer KILT locked tokens to another account similar to
+		/// Transfer PID locked tokens to another account similar to
 		/// `pallet_vesting::vested_transfer`.
 		///
-		/// Expects the source to have a KILT balance lock and at least the
+		/// Expects the source to have a PID balance lock and at least the
 		/// specified amount available as balance locked with LockId
 		/// `PID_LAUNCH_ID`.
 		///
-		/// Calls `migrate_kilt_balance_lock` internally.
+		/// Calls `migrate_pid_balance_lock` internally.
 		///
-		/// Emits `LockedTransfer` and if target does not have KILT balance
+		/// Emits `LockedTransfer` and if target does not have PID balance
 		/// lockup prior to transfer `AddedKiltLock`.
 		///
 		/// # <weight>
@@ -628,7 +628,7 @@ pub mod pallet {
 				Self::deposit_event(Event::LockedTransfer(source.clone(), amount, target.clone()));
 
 				// Set locks in target and remove/update storage entries for source
-				Ok(Some(Self::migrate_kilt_balance_lock(&source, &target, Some(amount))?).into())
+				Ok(Some(Self::migrate_pid_balance_lock(&source, &target, Some(amount))?).into())
 			} else {
 				Err(Error::<T>::BalanceLockNotFound.into())
 			}
@@ -636,7 +636,7 @@ pub mod pallet {
 	}
 
 	impl<T: Config> Pallet<T> {
-		/// Remove KILT balance locks for the specified block
+		/// Remove PID balance locks for the specified block
 		fn unlock_balance(block: T::BlockNumber) -> u32 {
 			if let Some(unlocking_balance) = <UnlockingAt<T>>::take(block) {
 				// Remove locks for all accounts
@@ -654,7 +654,7 @@ pub mod pallet {
 		}
 
 		/// Transfers all balance of the source to the target address and sets
-		/// up vesting or the KILT balance lock if any of the two were set up
+		/// up vesting or the PID balance lock if any of the two were set up
 		/// for the source address.
 		///
 		/// Note: Expects the source address to be an unowned address which was
@@ -671,8 +671,8 @@ pub mod pallet {
 			// Migrate vesting info and set the corresponding vesting lock if necessary
 			let mut post_weight: Weight = Self::migrate_vesting(source, target)?;
 
-			// Set the KILT custom lock if necessary
-			post_weight += Self::migrate_kilt_balance_lock(source, target, None)?;
+			// Set the PID custom lock if necessary
+			post_weight += Self::migrate_pid_balance_lock(source, target, None)?;
 
 			<UnownedAccount<T>>::remove(&source);
 			post_weight += T::DbWeight::get().writes(1);
@@ -749,14 +749,14 @@ pub mod pallet {
 			Ok(<T as pallet::Config>::WeightInfo::migrate_genesis_account_vesting())
 		}
 
-		/// Set the KILT balance lock for the target address which should
+		/// Set the PID balance lock for the target address which should
 		/// always be a user-owned account address.
 		///
 		/// Can be called during the migration of unowned "genesis" addresses to
 		/// user-owned account addresses in `migrate_user` as well when an
 		/// account wants to transfer their locked tokens to another account in
 		/// `locked_transfer`.
-		fn migrate_kilt_balance_lock(
+		fn migrate_pid_balance_lock(
 			source: &T::AccountId,
 			target: &T::AccountId,
 			// Only used for `locked_transfer`, e.g., it is `None` for migration
@@ -794,7 +794,7 @@ pub mod pallet {
 				return Ok(T::DbWeight::get().reads(1));
 			}
 
-			// Check for an already existing KILT balance lock on the target
+			// Check for an already existing PID balance lock on the target
 			// account which would be the case if the claimer requests migration from
 			// multiple source accounts to the same target
 			let target_amount = if let Some(target_lock) = <BalanceLocks<T>>::take(&target) {

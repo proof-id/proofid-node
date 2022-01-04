@@ -47,7 +47,7 @@ use sp_std::marker::PhantomData;
 
 /// Weight functions for `delegation`.
 pub struct WeightInfo<T>(PhantomData<T>);
-impl<T: frame_system::Config> delegation::WeightInfo for WeightInfo<T> {
+impl<T: frame_system::Config> pallet_delegation::WeightInfo for WeightInfo<T> {
 	// Storage: Delegation DelegationHierarchies (r:1 w:1)
 	// Storage: Ctype Ctypes (r:1 w:0)
 	// Storage: System Account (r:1 w:1)

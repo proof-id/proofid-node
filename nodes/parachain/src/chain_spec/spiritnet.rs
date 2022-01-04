@@ -42,12 +42,12 @@ use super::{get_properties, Extensions};
 pub type ChainSpec = sc_service::GenericChainSpec<GenesisConfig, Extensions>;
 
 pub fn get_chain_spec_dev(id: ParaId) -> Result<ChainSpec, String> {
-	let properties = get_properties("KILT", 15, 38);
+	let properties = get_properties("PID", 6, 42);
 	let wasm = WASM_BINARY.ok_or("No WASM")?;
 
 	Ok(ChainSpec::from_genesis(
-		"KILT Local",
-		"kilt_parachain_local_testnet",
+		"PID Local",
+		"pid_parachain_local_testnet",
 		ChainType::Local,
 		move || {
 			testnet_genesis(
@@ -178,8 +178,8 @@ pub fn get_chain_spec_wilt() -> Result<ChainSpec, String> {
 	))
 }
 
-pub fn load_spiritnet_spec() -> Result<ChainSpec, String> {
-	ChainSpec::from_json_bytes(&include_bytes!("../../res/spiritnet.json")[..])
+pub fn load_pidnet_spec() -> Result<ChainSpec, String> {
+	ChainSpec::from_json_bytes(&include_bytes!("../../res/pidnet.json")[..])
 }
 
 pub fn kilt_inflation_config() -> InflationInfo {

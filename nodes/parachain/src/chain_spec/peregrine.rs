@@ -41,7 +41,7 @@ pub type ChainSpec = sc_service::GenericChainSpec<GenesisConfig, Extensions>;
 const TRANSFER_ACCOUNT: [u8; 32] = hex!["6a3c793cec9dbe330b349dc4eea6801090f5e71f53b1b41ad11afb4a313a282c"];
 
 pub fn make_dev_spec(id: ParaId) -> Result<ChainSpec, String> {
-	let properties = get_properties("PILT", 15, 38);
+	let properties = get_properties("PILT", 6, 42);
 	let wasm = WASM_BINARY.ok_or("No WASM")?;
 
 	Ok(ChainSpec::from_genesis(
@@ -105,7 +105,7 @@ pub fn make_dev_spec(id: ParaId) -> Result<ChainSpec, String> {
 }
 
 pub fn make_new_spec(id: ParaId) -> Result<ChainSpec, String> {
-	let properties = get_properties("PILT", 15, 38);
+	let properties = get_properties("PIL", 6, 42);
 	let wasm = WASM_BINARY.ok_or("No WASM")?;
 
 	Ok(ChainSpec::from_genesis(

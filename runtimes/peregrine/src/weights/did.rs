@@ -46,7 +46,7 @@ use sp_std::marker::PhantomData;
 
 /// Weights for did using the recommended hardware.
 pub struct WeightInfo<T>(PhantomData<T>);
-impl<T: frame_system::Config> did::WeightInfo for WeightInfo<T> {
+impl<T: frame_system::Config> pallet_did::WeightInfo for WeightInfo<T> {
 	fn create_ed25519_keys(n: u32, c: u32, ) -> Weight {
 		(155_554_000_u64)
 			// Standard Error: 40_000

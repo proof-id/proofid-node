@@ -46,7 +46,7 @@ use sp_std::marker::PhantomData;
 
 /// Weights for ctype using the recommended hardware.
 pub struct WeightInfo<T>(PhantomData<T>);
-impl<T: frame_system::Config> ctype::WeightInfo for WeightInfo<T> {
+impl<T: frame_system::Config> pallet_ctype::WeightInfo for WeightInfo<T> {
 	fn add(l: u32, ) -> Weight {
 		(0_u64)
 			// Standard Error: 0

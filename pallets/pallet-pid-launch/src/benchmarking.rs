@@ -19,7 +19,7 @@
 use super::*;
 
 #[allow(unused)]
-use crate::{BalanceLocks, BalanceOf, LockedBalance, Pallet as KiltLaunch, UnownedAccount, PID_LAUNCH_ID};
+use crate::{BalanceLocks, BalanceOf, LockedBalance, Pallet as PidLaunch, UnownedAccount, PID_LAUNCH_ID};
 use frame_benchmarking::{account, benchmarks, impl_benchmark_test_suite, vec, whitelist_account, Zero};
 use frame_support::{
 	assert_ok,
@@ -74,7 +74,7 @@ where
 	// Setup transfer account
 	let transfer: T::AccountId = account("transfer", 0, SEED);
 	let transfer_lookup: <T::Lookup as StaticLookup>::Source = as_lookup::<T>(transfer.clone());
-	KiltLaunch::<T>::change_transfer_account(RawOrigin::Root.into(), transfer_lookup.clone())?;
+	PidLaunch::<T>::change_transfer_account(RawOrigin::Root.into(), transfer_lookup.clone())?;
 
 	// Create `n` genesis accounts each for vesting and locking
 	let (v_accs, l_accs) = (1..=n).into_iter().fold((vec![], vec![]), |mut acc, i| {
@@ -135,7 +135,7 @@ benchmarks! {
 		for (c, (_, source_lookup)) in s.into_iter().enumerate() {
 			let target: T::AccountId = account("target", u32::try_from(c).unwrap(), SEED);
 			let target_lookup: <T::Lookup as StaticLookup>::Source = as_lookup::<T>(target);
-			KiltLaunch::<T>::migrate_genesis_account(RawOrigin::Signed(transfer.clone()).into(), source_lookup, target_lookup)?;
+			PidLaunch::<T>::migrate_genesis_account(RawOrigin::Signed(transfer.clone()).into(), source_lookup, target_lookup)?;
 		}
 		assert_eq!(UnlockingAt::<T>::get::<T::BlockNumber>(UNLOCK_BLOCK.into()).expect("UnlockingAt should not be empty").len(), n as usize);
 	}: _(RawOrigin::Root, UNLOCK_BLOCK.into())
@@ -153,7 +153,7 @@ benchmarks! {
 		// Set custom lock with amount `2 * AMOUNT` for source
 		let source: T::AccountId = account("source", 0, SEED);
 		let source_lookup: <T::Lookup as StaticLookup>::Source = as_lookup::<T>(source.clone());
-		KiltLaunch::<T>::migrate_multiple_genesis_accounts(RawOrigin::Signed(transfer.clone()).into(), locked_lookups, source_lookup)?;
+		PidLaunch::<T>::migrate_multiple_genesis_accounts(RawOrigin::Signed(transfer.clone()).into(), locked_lookups, source_lookup)?;
 		assert_eq!(BalanceLocks::<T>::get(&source), Some(LockedBalance::<T> {
 			block: UNLOCK_BLOCK.into(),
 			amount: (2 * AMOUNT).into(),
@@ -163,7 +163,7 @@ benchmarks! {
 		// Set custom lock with amount `AMOUNT` for target
 		let target: T::AccountId = account("target", 0, SEED);
 		let target_lookup: <T::Lookup as StaticLookup>::Source = as_lookup::<T>(target.clone());
-		KiltLaunch::<T>::migrate_multiple_genesis_accounts(RawOrigin::Signed(transfer).into(), locked_lookup, target_lookup.clone())?;
+		PidLaunch::<T>::migrate_multiple_genesis_accounts(RawOrigin::Signed(transfer).into(), locked_lookup, target_lookup.clone())?;
 		assert_eq!(BalanceLocks::<T>::get(&target), Some(LockedBalance::<T> {
 			block: UNLOCK_BLOCK.into(),
 			amount: AMOUNT.into(),
@@ -263,23 +263,23 @@ benchmarks! {
 		for (c, (_, source_lookup)) in s.into_iter().enumerate() {
 			let target: T::AccountId = account("target", u32::try_from(c).unwrap(), SEED);
 			let target_lookup: <T::Lookup as StaticLookup>::Source = as_lookup::<T>(target);
-			KiltLaunch::<T>::migrate_genesis_account(RawOrigin::Signed(transfer.clone()).into(), source_lookup, target_lookup)?;
+			PidLaunch::<T>::migrate_genesis_account(RawOrigin::Signed(transfer.clone()).into(), source_lookup, target_lookup)?;
 		}
 		let block: T::BlockNumber = UNLOCK_BLOCK.into();
 		assert_eq!(UnlockingAt::<T>::get(&block).expect("UnlockingAt should not be empty").len(), n as usize);
-	}: { KiltLaunch::<T>::on_initialize(block) }
+	}: { PidLaunch::<T>::on_initialize(block) }
 	verify {
 		assert!(UnlockingAt::<T>::get(&block).is_none());
 	}
 
 	on_initialize_no_action {
-	}: { KiltLaunch::<T>::on_initialize(0_u32.into()) }
+	}: { PidLaunch::<T>::on_initialize(0_u32.into()) }
 	verify {
 	}
 }
 
 impl_benchmark_test_suite!(
-	KiltLaunch,
+	PidLaunch,
 	crate::mock::ExtBuilder::default().build(),
 	crate::mock::Test,
 );
