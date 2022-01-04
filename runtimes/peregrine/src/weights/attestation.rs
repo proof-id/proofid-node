@@ -46,7 +46,7 @@ use sp_std::marker::PhantomData;
 
 /// Weights for attestation using the recommended hardware.
 pub struct WeightInfo<T>(PhantomData<T>);
-impl<T: frame_system::Config> attestation::WeightInfo for WeightInfo<T> {
+impl<T: frame_system::Config> pallet_attestation::WeightInfo for WeightInfo<T> {
 	fn add() -> Weight {
 		(74_682_000_u64)
 			.saturating_add(T::DbWeight::get().reads(6_u64))

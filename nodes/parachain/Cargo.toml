@@ -1,13 +1,13 @@
 [package]
-authors = ["KILT <info@kilt.io>"]
+authors = ["ProofID <info@proofid.me>"]
 build = "build.rs"
-description = "KILT parachain"
+description = "PID parachain"
 edition = "2018"
-name = "kilt-parachain"
+name = "pid-parachain"
 version = "1.2.0"
 
 [[bin]]
-name = "kilt-parachain"
+name = "pid-parachain"
 path = "src/main.rs"
 
 [dependencies]

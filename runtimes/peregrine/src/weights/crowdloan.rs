@@ -47,7 +47,7 @@ use sp_std::marker::PhantomData;
 
 /// Weight functions for `crowdloan`.
 pub struct WeightInfo<T>(PhantomData<T>);
-impl<T: frame_system::Config> crowdloan::WeightInfo for WeightInfo<T> {
+impl<T: frame_system::Config> pallet_crowdloan::WeightInfo for WeightInfo<T> {
 	// Storage: CrowdloanContributors RegistrarAccount (r:1 w:1)
 	fn set_registrar_account() -> Weight {
 		(21_029_000 as Weight)

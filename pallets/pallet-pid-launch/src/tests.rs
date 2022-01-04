@@ -136,11 +136,11 @@ fn check_build_genesis_config() {
 fn check_migrate_single_account_locked() {
 	ExtBuilder::default().pseudos_lock_all().build().execute_with(|| {
 		assert_noop!(
-			KiltLaunch::migrate_genesis_account(Origin::signed(TRANSFER_ACCOUNT), PSEUDO_1, PSEUDO_1),
+			PidLaunch::migrate_genesis_account(Origin::signed(TRANSFER_ACCOUNT), PSEUDO_1, PSEUDO_1),
 			Error::<Test>::SameDestination
 		);
 		assert_noop!(
-			KiltLaunch::migrate_genesis_account(Origin::signed(TRANSFER_ACCOUNT), USER, PSEUDO_1),
+			PidLaunch::migrate_genesis_account(Origin::signed(TRANSFER_ACCOUNT), USER, PSEUDO_1),
 			Error::<Test>::NotUnownedAccount
 		);
 
@@ -153,7 +153,7 @@ fn check_migrate_single_account_locked() {
 
 		// Reach balance lock limit
 		System::set_block_number(100);
-		<KiltLaunch as OnInitialize<BlockNumber>>::on_initialize(System::block_number());
+		<PidLaunch as OnInitialize<BlockNumber>>::on_initialize(System::block_number());
 		assert!(UnlockingAt::<Test>::get(100).is_none());
 		assert!(Locks::<Test>::get(&USER).len().is_zero());
 
@@ -219,7 +219,7 @@ fn check_migrate_single_account_locked_twice() {
 
 		// Reach balance lock limit
 		System::set_block_number(100);
-		<KiltLaunch as OnInitialize<BlockNumber>>::on_initialize(System::block_number());
+		<PidLaunch as OnInitialize<BlockNumber>>::on_initialize(System::block_number());
 		assert!(UnlockingAt::<Test>::get(100).is_none());
 		assert!(Locks::<Test>::get(&USER).len().is_zero());
 
@@ -236,7 +236,7 @@ fn check_migrate_single_account_locked_twice() {
 fn check_migrate_accounts_locked() {
 	ExtBuilder::default().pseudos_lock_all().build().execute_with(|| {
 		assert_noop!(
-			KiltLaunch::migrate_multiple_genesis_accounts(
+			PidLaunch::migrate_multiple_genesis_accounts(
 				Origin::signed(USER),
 				vec![PSEUDO_1, PSEUDO_2, PSEUDO_3],
 				USER
@@ -249,7 +249,7 @@ fn check_migrate_accounts_locked() {
 			block: 100,
 			amount: 10_000 + 300_000 - 2 * <Test as crate::Config>::UsableBalance::get(),
 		};
-		assert_ok!(KiltLaunch::migrate_multiple_genesis_accounts(
+		assert_ok!(PidLaunch::migrate_multiple_genesis_accounts(
 			Origin::signed(TRANSFER_ACCOUNT),
 			vec![PSEUDO_1, PSEUDO_3],
 			USER
@@ -288,7 +288,7 @@ fn check_migrate_accounts_locked() {
 
 		// Reach balance lock limit
 		System::set_block_number(100);
-		<KiltLaunch as OnInitialize<BlockNumber>>::on_initialize(System::block_number());
+		<PidLaunch as OnInitialize<BlockNumber>>::on_initialize(System::block_number());
 		assert!(UnlockingAt::<Test>::get(100).is_none());
 		assert!(Locks::<Test>::get(&USER).len().is_zero());
 		assert_balance(
@@ -324,13 +324,13 @@ fn check_locked_transfer() {
 
 			// Cannot transfer from source to source
 			assert_noop!(
-				KiltLaunch::locked_transfer(Origin::signed(USER), USER, 1),
+				PidLaunch::locked_transfer(Origin::signed(USER), USER, 1),
 				Error::<Test>::SameDestination
 			);
 
 			// Cannot transfer without a KILT balance lock
 			assert_noop!(
-				KiltLaunch::locked_transfer(Origin::signed(PSEUDO_4), USER, 1),
+				PidLaunch::locked_transfer(Origin::signed(PSEUDO_4), USER, 1),
 				Error::<Test>::BalanceLockNotFound
 			);
 
@@ -338,12 +338,12 @@ fn check_locked_transfer() {
 			<<Test as pallet_vesting::Config>::Currency as Currency<<Test as frame_system::Config>::AccountId>>::make_free_balance_be(&USER, locked_info.amount + 1 + <Test as crate::Config>::UsableBalance::get());
 			// Cannot transfer more locked than which is locked
 			assert_noop!(
-				KiltLaunch::locked_transfer(Origin::signed(USER), PSEUDO_1, locked_info.amount + 1 + <Test as crate::Config>::UsableBalance::get()),
+				PidLaunch::locked_transfer(Origin::signed(USER), PSEUDO_1, locked_info.amount + 1 + <Test as crate::Config>::UsableBalance::get()),
 				Error::<Test>::InsufficientLockedBalance
 			);
 
 			// Locked_Transfer everything but 3000
-			assert_ok!(KiltLaunch::locked_transfer(
+			assert_ok!(PidLaunch::locked_transfer(
 				Origin::signed(USER),
 				PSEUDO_1,
 				locked_info.amount - 3000
@@ -368,7 +368,7 @@ fn check_locked_transfer() {
 			assert_balance(PSEUDO_1, locked_info.amount - 3000, 0, 0, false);
 
 			// Locked_Transfer rest
-			assert_ok!(KiltLaunch::locked_transfer(Origin::signed(USER), PSEUDO_1, 3000));
+			assert_ok!(PidLaunch::locked_transfer(Origin::signed(USER), PSEUDO_1, 3000));
 			assert_eq!(Locks::<Test>::get(&USER), vec![]);
 			assert_eq!(
 				Locks::<Test>::get(&PSEUDO_1),
@@ -385,7 +385,7 @@ fn check_locked_transfer() {
 
 			// Reach balance lock limit
 			System::set_block_number(100);
-			<KiltLaunch as OnInitialize<BlockNumber>>::on_initialize(System::block_number());
+			<PidLaunch as OnInitialize<BlockNumber>>::on_initialize(System::block_number());
 			assert!(UnlockingAt::<Test>::get(100).is_none());
 			assert!(Locks::<Test>::get(&PSEUDO_1).len().is_zero());
 			assert_balance(PSEUDO_1, locked_info.amount, locked_info.amount, locked_info.amount, true);
@@ -396,11 +396,11 @@ fn check_locked_transfer() {
 fn check_migrate_single_account_vested() {
 	ExtBuilder::default().pseudos_vest_all().build().execute_with(|| {
 		assert_noop!(
-			KiltLaunch::migrate_genesis_account(Origin::signed(TRANSFER_ACCOUNT), PSEUDO_1, PSEUDO_1),
+			PidLaunch::migrate_genesis_account(Origin::signed(TRANSFER_ACCOUNT), PSEUDO_1, PSEUDO_1),
 			Error::<Test>::SameDestination
 		);
 		assert_noop!(
-			KiltLaunch::migrate_genesis_account(Origin::signed(TRANSFER_ACCOUNT), USER, PSEUDO_1),
+			PidLaunch::migrate_genesis_account(Origin::signed(TRANSFER_ACCOUNT), USER, PSEUDO_1),
 			Error::<Test>::NotUnownedAccount
 		);
 
@@ -482,7 +482,7 @@ fn check_migrate_single_account_twice_vested() {
 fn check_migrate_accounts_vested() {
 	ExtBuilder::default().pseudos_vest_all().build().execute_with(|| {
 		assert_noop!(
-			KiltLaunch::migrate_multiple_genesis_accounts(
+			PidLaunch::migrate_multiple_genesis_accounts(
 				Origin::signed(USER),
 				vec![PSEUDO_1, PSEUDO_2, PSEUDO_3],
 				USER
@@ -490,7 +490,7 @@ fn check_migrate_accounts_vested() {
 			Error::<Test>::Unauthorized
 		);
 		assert_noop!(
-			KiltLaunch::migrate_multiple_genesis_accounts(
+			PidLaunch::migrate_multiple_genesis_accounts(
 				Origin::signed(TRANSFER_ACCOUNT),
 				vec![PSEUDO_1, USER],
 				PSEUDO_2
@@ -498,7 +498,7 @@ fn check_migrate_accounts_vested() {
 			Error::<Test>::NotUnownedAccount
 		);
 
-		assert_ok!(KiltLaunch::migrate_multiple_genesis_accounts(
+		assert_ok!(PidLaunch::migrate_multiple_genesis_accounts(
 			Origin::signed(TRANSFER_ACCOUNT),
 			vec![PSEUDO_1, PSEUDO_2, PSEUDO_3],
 			USER
@@ -578,13 +578,13 @@ fn check_negative_migrate_accounts_vested() {
 	ExtBuilder::default().pseudos_vest_all().build().execute_with(|| {
 		// Migrate from source to source
 		assert_noop!(
-			KiltLaunch::migrate_multiple_genesis_accounts(Origin::signed(TRANSFER_ACCOUNT), vec![PSEUDO_1, USER], USER),
+			PidLaunch::migrate_multiple_genesis_accounts(Origin::signed(TRANSFER_ACCOUNT), vec![PSEUDO_1, USER], USER),
 			Error::<Test>::SameDestination
 		);
 
 		// Migrate too many accounts
 		assert_noop!(
-			KiltLaunch::migrate_multiple_genesis_accounts(
+			PidLaunch::migrate_multiple_genesis_accounts(
 				Origin::signed(TRANSFER_ACCOUNT),
 				vec![PSEUDO_1, PSEUDO_2, PSEUDO_3, PSEUDO_4],
 				USER
@@ -596,7 +596,7 @@ fn check_negative_migrate_accounts_vested() {
 		let pseudo_4_vesting = VestingInfo::new(10_000, 1, 1);
 		assert_ok!(VestingStorage::<Test>::try_append(PSEUDO_4, pseudo_4_vesting));
 		assert_noop!(
-			KiltLaunch::migrate_multiple_genesis_accounts(
+			PidLaunch::migrate_multiple_genesis_accounts(
 				Origin::signed(TRANSFER_ACCOUNT),
 				vec![PSEUDO_1, PSEUDO_4],
 				USER
@@ -605,7 +605,7 @@ fn check_negative_migrate_accounts_vested() {
 		);
 		UnownedAccount::<Test>::insert(PSEUDO_4, ());
 		assert_noop!(
-			KiltLaunch::migrate_multiple_genesis_accounts(
+			PidLaunch::migrate_multiple_genesis_accounts(
 				Origin::signed(TRANSFER_ACCOUNT),
 				vec![PSEUDO_1, PSEUDO_4],
 				USER
@@ -621,7 +621,7 @@ fn check_negative_migrate_accounts_vested() {
 			WithdrawReasons::TRANSFER | WithdrawReasons::RESERVE,
 		);
 		assert_noop!(
-			KiltLaunch::migrate_multiple_genesis_accounts(Origin::signed(TRANSFER_ACCOUNT), vec![PSEUDO_4], USER),
+			PidLaunch::migrate_multiple_genesis_accounts(Origin::signed(TRANSFER_ACCOUNT), vec![PSEUDO_4], USER),
 			Error::<Test>::UnexpectedLocks
 		);
 	});
@@ -632,13 +632,13 @@ fn check_negative_migrate_accounts_locked() {
 	ExtBuilder::default().pseudos_lock_all().build().execute_with(|| {
 		// Migrate from source to source
 		assert_noop!(
-			KiltLaunch::migrate_multiple_genesis_accounts(Origin::signed(TRANSFER_ACCOUNT), vec![PSEUDO_1, USER], USER),
+			PidLaunch::migrate_multiple_genesis_accounts(Origin::signed(TRANSFER_ACCOUNT), vec![PSEUDO_1, USER], USER),
 			Error::<Test>::SameDestination
 		);
 
 		// Migrate two accounts with different ending blocks
 		assert_noop!(
-			KiltLaunch::migrate_multiple_genesis_accounts(
+			PidLaunch::migrate_multiple_genesis_accounts(
 				Origin::signed(TRANSFER_ACCOUNT),
 				vec![PSEUDO_1, PSEUDO_2],
 				USER
@@ -649,7 +649,7 @@ fn check_negative_migrate_accounts_locked() {
 		// Add a lock to pseudo2 which should not be there
 		Balances::set_lock(PID_LAUNCH_ID, &PSEUDO_2, 1, WithdrawReasons::all());
 		assert_noop!(
-			KiltLaunch::migrate_multiple_genesis_accounts(Origin::signed(TRANSFER_ACCOUNT), vec![PSEUDO_2], USER),
+			PidLaunch::migrate_multiple_genesis_accounts(Origin::signed(TRANSFER_ACCOUNT), vec![PSEUDO_2], USER),
 			Error::<Test>::UnexpectedLocks
 		);
 	});
@@ -664,7 +664,7 @@ fn check_force_unlock() {
 		};
 		ensure_single_migration_works(&PSEUDO_1, &USER, None, Some((user_locked_info, 0)));
 
-		assert_ok!(KiltLaunch::force_unlock(Origin::root(), 100));
+		assert_ok!(PidLaunch::force_unlock(Origin::root(), 100));
 		assert!(BalanceLocks::<Test>::get(&USER).is_none());
 		assert!(Locks::<Test>::get(&USER).len().is_zero());
 		assert_eq!(Balances::usable_balance(&USER), 10_000);
@@ -675,7 +675,7 @@ fn check_force_unlock() {
 fn check_change_transfer_account() {
 	ExtBuilder::default().build().execute_with(|| {
 		assert_eq!(TransferAccount::<Test>::get(), Some(TRANSFER_ACCOUNT));
-		assert_ok!(KiltLaunch::change_transfer_account(Origin::root(), PSEUDO_1));
+		assert_ok!(PidLaunch::change_transfer_account(Origin::root(), PSEUDO_1));
 		assert_eq!(TransferAccount::<Test>::get(), Some(PSEUDO_1));
 	});
 }

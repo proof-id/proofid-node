@@ -41,17 +41,17 @@ pub const DAYS: BlockNumber = HOURS * 24;
 // Julian year as Substrate handles it
 pub const BLOCKS_PER_YEAR: BlockNumber = DAYS * 36525 / 100;
 
-pub const MIN_VESTED_TRANSFER_AMOUNT: Balance = 100 * MILLI_PID;
+pub const MIN_VESTED_TRANSFER_AMOUNT: Balance = 100 * PID;
 pub const MAX_COLLATOR_STAKE: Balance = 200_000 * PID;
 
 /// One PID
-pub const PID: Balance = 10u128.pow(15);
+pub const PID: Balance = 10u128.pow(6);
 
 /// 0.001 PID
-pub const MILLI_PID: Balance = 10u128.pow(12);
+pub const MILLI_PID: Balance = PID / 1000;
 
 /// 0.000_001 PID
-pub const MICRO_PID: Balance = 10u128.pow(9);
+pub const MICRO_PID: Balance = MILLI_PID / 1000;
 
 // 1 in 4 blocks (on average, not counting collisions) will be primary babe
 // blocks.
@@ -198,7 +198,7 @@ pub mod governance {
 pub mod did {
 	use crate::BlockNumber;
 
-	use super::{Balance, HOURS, PID, MILLI_PID};
+	use super::{Balance, HOURS, MILLI_PID, PID};
 
 	pub const DID_DEPOSIT: Balance = 2 * PID;
 	pub const DID_FEE: Balance = 50 * MILLI_PID;

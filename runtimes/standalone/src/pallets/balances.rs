@@ -5,9 +5,9 @@ use pallet_balances::Config;
 use crate::*;
 
 parameter_types! {
-	pub const ExistentialDeposit: Balance = 10 * MILLI_PID;
-	pub const MaxLocks: u32 = 50;
-	pub const MaxReserves: u32 = 50;
+	pub const ExistentialDeposit: Balance = 0; // 10 * MILLI_PID
+	pub const MaxLocks: u32 = 0; // 50
+	pub const MaxReserves: u32 = 0; // 50
 }
 
 impl Config for Runtime {

@@ -49,7 +49,7 @@ frame_support::construct_runtime!(
 	{
 		System: frame_system::{Pallet, Call, Config, Storage, Event<T>},
 		Balances: pallet_balances::{Pallet, Call, Config<T>, Storage, Event<T>},
-		KiltLaunch: pid_launch::{Pallet, Call, Config<T>, Storage, Event<T>},
+		PidLaunch: pid_launch::{Pallet, Call, Config<T>, Storage, Event<T>},
 		Vesting: pallet_vesting::{Pallet, Call, Config<T>, Storage, Event<T>},
 	}
 );
@@ -159,10 +159,10 @@ pub fn ensure_single_migration_works(
 	locked_info: Option<(pid_launch::LockedBalance<Test>, Balance)>,
 ) {
 	assert_noop!(
-		KiltLaunch::migrate_genesis_account(Origin::signed(PSEUDO_1), source.to_owned(), dest.to_owned()),
+		PidLaunch::migrate_genesis_account(Origin::signed(PSEUDO_1), source.to_owned(), dest.to_owned()),
 		pid_launch::Error::<Test>::Unauthorized
 	);
-	assert_ok!(KiltLaunch::migrate_genesis_account(
+	assert_ok!(PidLaunch::migrate_genesis_account(
 		Origin::signed(TRANSFER_ACCOUNT),
 		source.to_owned(),
 		dest.to_owned()
@@ -230,7 +230,7 @@ pub fn ensure_single_migration_works(
 
 	if num_of_locks > 0 {
 		assert_noop!(
-			KiltLaunch::migrate_genesis_account(Origin::signed(TRANSFER_ACCOUNT), dest.to_owned(), TRANSFER_ACCOUNT),
+			PidLaunch::migrate_genesis_account(Origin::signed(TRANSFER_ACCOUNT), dest.to_owned(), TRANSFER_ACCOUNT),
 			pid_launch::Error::<Test>::NotUnownedAccount
 		);
 	}
