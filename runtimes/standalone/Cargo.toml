@@ -84,6 +84,7 @@ pallet-randomness-collective-flip = { branch = "polkadot-v0.9.12", default-featu
 pallet-session = { branch = "polkadot-v0.9.12", default-features = false, git = "https://github.com/paritytech/substrate" }
 pallet-sudo = { branch = "polkadot-v0.9.12", default-features = false, git = "https://github.com/paritytech/substrate" }
 pallet-timestamp = { branch = "polkadot-v0.9.12", default-features = false, git = "https://github.com/paritytech/substrate" }
+pallet-assets = { branch = "polkadot-v0.9.12", default-features = false, git = "https://github.com/paritytech/substrate" }
 pallet-transaction-payment = { branch = "polkadot-v0.9.12", default-features = false, git = "https://github.com/paritytech/substrate" }
 pallet-transaction-payment-rpc-runtime-api = { branch = "polkadot-v0.9.12", default-features = false, git = "https://github.com/paritytech/substrate" }
 pallet-utility = { branch = "polkadot-v0.9.12", default-features = false, git = "https://github.com/paritytech/substrate" }
@@ -129,6 +130,7 @@ runtime-benchmarks = [
     "pallet-indices/runtime-benchmarks",
     "pallet-timestamp/runtime-benchmarks",
     "pallet-vesting/runtime-benchmarks",
+    'pallet-assets/runtime-benchmarks',
     "sp-runtime/runtime-benchmarks",
 ]
 std = [
@@ -158,6 +160,7 @@ std = [
     "pallet-transaction-payment/std",
     "pallet-transaction-payment-rpc-runtime-api/std",
     "pallet-vesting/std",
+    'pallet-assets/std',
     "scale-info/std",
     "sp-api/std",
     "sp-arithmetic/std",

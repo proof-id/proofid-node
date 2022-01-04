@@ -18,6 +18,7 @@ pub use timestamp::*;
 pub use transaction_payment::*;
 pub use utility::*;
 pub use vesting::*;
+pub use assets::*;
 
 mod attestation;
 mod aura;
@@ -39,5 +40,6 @@ mod transaction_payment;
 mod utility;
 mod vesting;
 mod session;
+mod assets;
 
 // pub use nicks::*;
