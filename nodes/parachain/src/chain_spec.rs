@@ -26,7 +26,7 @@ use sp_core::{Pair, Public};
 use sp_runtime::traits::IdentifyAccount;
 
 pub mod peregrine;
-pub mod spiritnet;
+pub mod midgard;
 
 const TELEMETRY_URL: &str = "wss://telemetry-backend.kilt.io:8080/submit";
 

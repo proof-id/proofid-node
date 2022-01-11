@@ -42,16 +42,16 @@ fn load_spec(id: &str, runtime: &str, para_id: ParaId) -> std::result::Result<Bo
 	match id {
 		"dev" => Ok(Box::new(chain_spec::peregrine::make_dev_spec(para_id)?)),
 		"peregrine-new" => Ok(Box::new(chain_spec::peregrine::make_new_spec(para_id)?)),
-		"spiritnet-dev" => Ok(Box::new(chain_spec::spiritnet::get_chain_spec_dev(para_id)?)),
-		"wilt-new" => Ok(Box::new(chain_spec::spiritnet::get_chain_spec_wilt()?)),
-		"spiritnet" => Ok(Box::new(chain_spec::spiritnet::load_pidnet_spec()?)),
+		"midgard-dev" => Ok(Box::new(chain_spec::midgard::get_chain_spec_dev(para_id)?)),
+		"wilt-new" => Ok(Box::new(chain_spec::midgard::get_chain_spec_wilt()?)),
+		"midgard" => Ok(Box::new(chain_spec::midgard::load_pidnet_spec()?)),
 		"" => match runtime {
-			"spiritnet" => Ok(Box::new(chain_spec::spiritnet::get_chain_spec_dev(para_id)?)),
+			"midgard" => Ok(Box::new(chain_spec::midgard::get_chain_spec_dev(para_id)?)),
 			"peregrine" => Ok(Box::new(chain_spec::peregrine::make_dev_spec(para_id)?)),
 			_ => Err("Unknown runtime".to_owned()),
 		},
 		path => match runtime {
-			"spiritnet" => Ok(Box::new(chain_spec::spiritnet::ChainSpec::from_json_file(path.into())?)),
+			"midgard" => Ok(Box::new(chain_spec::midgard::ChainSpec::from_json_file(path.into())?)),
 			"peregrine" => Ok(Box::new(chain_spec::peregrine::ChainSpec::from_json_file(path.into())?)),
 			_ => Err("Unknown runtime".to_owned()),
 		},
@@ -101,8 +101,8 @@ impl SubstrateCli for Cli {
 	}
 
 	fn native_runtime_version(spec: &Box<dyn ChainSpec>) -> &'static RuntimeVersion {
-		if spec.id().starts_with("spiritnet") {
-			&spiritnet_runtime::VERSION
+		if spec.id().starts_with("midgard") {
+			&midgard_runtime::VERSION
 		} else {
 			&peregrine_runtime::VERSION
 		}
@@ -161,11 +161,11 @@ macro_rules! construct_async_run {
 	(|$components:ident, $cli:ident, $cmd:ident, $config:ident| $( $code:tt )* ) => {{
 		let runner = $cli.create_runner($cmd)?;
 		match $cli.runtime.as_str() {
-			"spiritnet" => {
+			"midgard" => {
 					runner.async_run(|$config| {
-						let $components = new_partial::<spiritnet_runtime::RuntimeApi, SpiritRuntimeExecutor, _>(
+						let $components = new_partial::<midgard_runtime::RuntimeApi, SpiritRuntimeExecutor, _>(
 							&$config,
-							crate::service::build_import_queue::<SpiritRuntimeExecutor, spiritnet_runtime::RuntimeApi>,
+							crate::service::build_import_queue::<SpiritRuntimeExecutor, midgard_runtime::RuntimeApi>,
 						)?;
 						let task_manager = $components.task_manager;
 						{ $( $code )* }.map(|v| (v, task_manager))
@@ -250,7 +250,7 @@ pub fn run() -> Result<()> {
 				let runner = cli.create_runner(cmd)?;
 				match cli.runtime.as_str() {
 					"peregrine" => runner.sync_run(|config| cmd.run::<Block, MashRuntimeExecutor>(config)),
-					"spiritnet" => runner.sync_run(|config| cmd.run::<Block, SpiritRuntimeExecutor>(config)),
+					"midgard" => runner.sync_run(|config| cmd.run::<Block, SpiritRuntimeExecutor>(config)),
 					_ => Err("Unknown runtime".into()),
 				}
 			} else {
@@ -362,7 +362,7 @@ pub fn run() -> Result<()> {
 					.await
 					.map(|r| r.0)
 					.map_err(Into::into),
-					"spiritnet" => crate::service::start_node::<SpiritRuntimeExecutor, spiritnet_runtime::RuntimeApi>(
+					"midgard" => crate::service::start_node::<SpiritRuntimeExecutor, midgard_runtime::RuntimeApi>(
 						config,
 						polkadot_config,
 						id,
