@@ -106,8 +106,8 @@ build-wasm-spiritnet:
     - develop
     - master
   script:
-    - export PACKAGE=spiritnet-runtime
-    - export RUNTIME_DIR=runtimes/spiritnet
+    - export PACKAGE=midgard-runtime
+    - export RUNTIME_DIR=runtimes/midgard
     - cp -r * /build
     - /srtool/build build
     - mkdir ./out

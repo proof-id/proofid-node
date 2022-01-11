@@ -20,7 +20,7 @@
 //!
 //! THIS FILE WAS AUTO-GENERATED USING THE SUBSTRATE BENCHMARK CLI VERSION 4.0.0-dev
 //! DATE: 2021-10-28, STEPS: `50`, REPEAT: 20, LOW RANGE: `[]`, HIGH RANGE: `[]`
-//! EXECUTION: Some(Wasm), WASM-EXECUTION: Compiled, CHAIN: Some("spiritnet-dev"), DB CACHE: 128
+//! EXECUTION: Some(Wasm), WASM-EXECUTION: Compiled, CHAIN: Some("midgard-dev"), DB CACHE: 128
 
 // Executed Command:
 // ./target/release/kilt-parachain

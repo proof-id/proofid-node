@@ -13,7 +13,7 @@ import tempfile
 logger = logging.getLogger(__name__)
 
 WILT_KILT = "dev-specs/kilt-parachain/kilt-westend.json"
-SPIRITNET_KILT = "nodes/parachain/res/spiritnet.json"
+SPIRITNET_KILT = "nodes/parachain/res/midgard.json"
 
 PERE_DEV_KILT = "dev-specs/kilt-parachain/peregrine-dev-kilt.json"
 PERE_DEV_RELAY = "dev-specs/kilt-parachain/peregrine-dev-relay.json"
@@ -135,8 +135,8 @@ if __name__ == "__main__":
     parser.add_argument("--wilt", "-w", action="store_true", dest="wilt",
                         help="reset the wilt (westend) chainspec")
 
-    parser.add_argument("--spiritnet", "-s", action="store_true", dest="spiritnet",
-                        help="reset the spiritnet chainspec")
+    parser.add_argument("--midgard", "-s", action="store_true", dest="midgard",
+                        help="reset the midgard chainspec")
 
     parser.add_argument("--peregrine", "-p", action="store_true", dest="peregrine",
                         help="reset the peregrine chainspec")
@@ -161,10 +161,10 @@ if __name__ == "__main__":
         logging.getLogger().setLevel(logging.INFO)
 
     if args.wilt:
-        make_native(args.image, WILT_PID, "wilt-new", "spiritnet")
+        make_native(args.image, WILT_PID, "wilt-new", "midgard")
 
     if args.spiritnet:
-        make_native(args.image, SPIRITNET_PID, "spiritnet-new", "spiritnet")
+        make_native(args.image, SPIRITNET_PID, "midgard-new", "midgard")
 
     if args.peregrine:
         with tempfile.TemporaryDirectory() as tmpdirname:
