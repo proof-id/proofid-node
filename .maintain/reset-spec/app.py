@@ -13,7 +13,7 @@ import tempfile
 logger = logging.getLogger(__name__)
 
 WILT_KILT = "dev-specs/kilt-parachain/kilt-westend.json"
-SPIRITNET_KILT = "nodes/parachain/res/midgard.json"
+MIDGARD_KILT = "nodes/parachain/res/midgard.json"
 
 PERE_DEV_KILT = "dev-specs/kilt-parachain/peregrine-dev-kilt.json"
 PERE_DEV_RELAY = "dev-specs/kilt-parachain/peregrine-dev-relay.json"
@@ -163,8 +163,8 @@ if __name__ == "__main__":
     if args.wilt:
         make_native(args.image, WILT_PID, "wilt-new", "midgard")
 
-    if args.spiritnet:
-        make_native(args.image, SPIRITNET_PID, "midgard-new", "midgard")
+    if args.midgard:
+        make_native(args.image, MIDGARD_PID, "midgard-new", "midgard")
 
     if args.peregrine:
         with tempfile.TemporaryDirectory() as tmpdirname:

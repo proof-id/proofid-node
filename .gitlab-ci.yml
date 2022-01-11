@@ -97,7 +97,7 @@ build-wasm-peregrine:
       - out/*.wasm
     expire_in: 12 week
 
-build-wasm-spiritnet:
+build-wasm-midgard:
   image:
     name: paritytech/srtool:1.53.0
     entrypoint: [""]

@@ -52,7 +52,7 @@ type PartialComponents<Block, RuntimeApi, Executor, Telemetry, TelemetryWorkerHa
 	(Option<Telemetry>, Option<TelemetryWorkerHandle>),
 >;
 
-/// Native Spiritnet executor instance.
+/// Native Midgard executor instance.
 pub struct SpiritRuntimeExecutor;
 
 impl sc_executor::NativeExecutionDispatch for SpiritRuntimeExecutor {
