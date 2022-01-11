@@ -161,6 +161,9 @@ construct_runtime! {
 		// System scheduler.
 		Scheduler: pallet_scheduler::{Pallet, Call, Storage, Event<T>} = 42,
 
+		// Assets module.
+		Assets: pallet_assets::{Pallet, Call, Storage, Event<T>} = 43,
+
 		// PID Pallets. Start indices 60 to leave room
 		PidLaunch: pallet_pid_launch::{Pallet, Call, Storage, Event<T>, Config<T>} = 60,
 		Ctype: pallet_ctype::{Pallet, Call, Storage, Event<T>} = 61,
