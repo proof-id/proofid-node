@@ -1,5 +1,5 @@
 // KILT Blockchain – https://botlabs.org
-// Copyright (C) 2019-2021 BOTLabs GmbH
+// Copyright (C) 2019-2022 BOTLabs GmbH
 
 // The KILT Blockchain is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,75 +16,68 @@
 
 // If you feel like getting in touch with us, you can do so at info@botlabs.org
 
-//! The PID runtime. This can be compiled with `#[no_std]`, ready for Wasm.
+//! The KILT runtime. This can be compiled with `#[no_std]`, ready for Wasm.
 #![cfg_attr(not(feature = "std"), no_std)]
 // `construct_runtime!` does a lot of recursion and requires us to increase the limit to 256.
 #![recursion_limit = "256"]
 // The `from_over_into` warning originates from `construct_runtime` macro.
 #![allow(clippy::from_over_into)]
 
-pub use frame_support::{
-	ConsensusEngineId, construct_runtime,
-	parameter_types,
-	StorageValue,
-	traits::{Currency, FindAuthor, Imbalance, KeyOwnerProofSystem, OnUnbalanced, Randomness}, weights::{
-		constants::{BlockExecutionWeight, ExtrinsicBaseWeight, RocksDbWeight, WEIGHT_PER_SECOND},
-		IdentityFee, Weight,
-    },
-};
-use frame_system::EnsureRoot;
+// Make the WASM binary available
+#[cfg(feature = "std")]
+include!(concat!(env!("OUT_DIR"), "/wasm_binary.rs"));
+
 #[cfg(feature = "runtime-benchmarks")]
 use frame_system::EnsureSigned;
-// pub use consensus::Call as ConsensusCall;
-pub use pallet_balances::Call as BalancesCall;
-use pallet_grandpa::{AuthorityId as GrandpaId, AuthorityList as GrandpaAuthorityList, fg_primitives};
-pub use pallet_timestamp::Call as TimestampCall;
+
+use pallet_grandpa::{fg_primitives, AuthorityId as GrandpaId, AuthorityList as GrandpaAuthorityList};
 use pallet_transaction_payment::{CurrencyAdapter, FeeDetails};
+use runtime_common::{
+	constants::{self, PID, MICRO_PID, MILLI_PID},
+	fees::ToAuthor,
+	pallet_id, AccountId, Balance, BlockNumber, DidIdentifier, Hash, Index, Signature, SlowAdjustingFeeUpdate,
+};
 use sp_api::impl_runtime_apis;
 use sp_consensus_aura::{ed25519::AuthorityId as AuraId, SlotDuration};
-use sp_core::OpaqueMetadata;
+use sp_core::{crypto::KeyTypeId, OpaqueMetadata};
 use sp_runtime::{
-	ApplyExtrinsicResult, create_runtime_str, generic,
-	impl_opaque_keys,
+	create_runtime_str, generic, impl_opaque_keys,
 	traits::{AccountIdLookup, BlakeTwo256, Block as BlockT, ConvertInto, NumberFor, OpaqueKeys, Verify},
 	transaction_validity::{TransactionSource, TransactionValidity},
+	ApplyExtrinsicResult,
 };
-pub use sp_runtime::{Perbill, Permill};
-#[cfg(any(feature = "std", test))]
-pub use sp_runtime::BuildStorage;
 use sp_std::prelude::*;
 #[cfg(feature = "std")]
 use sp_version::NativeVersion;
 use sp_version::RuntimeVersion;
 
-use pid_primitives::{
-	AccountId,
-	Balance,
-	BlockNumber, constants::{
-		attestation::ATTESTATION_DEPOSIT,
-		delegation::{
-			DELEGATION_DEPOSIT, MAX_CHILDREN, MAX_PARENT_CHECKS, MAX_REMOVALS, MAX_REVOCATIONS,
-			MAX_SIGNATURE_BYTE_LENGTH,
-        },
-		did::{
-			DID_DEPOSIT, DID_FEE, MAX_BLOCKS_TX_VALIDITY, MAX_ENDPOINT_URLS_COUNT, MAX_KEY_AGREEMENT_KEYS,
-			MAX_NUMBER_OF_SERVICES_PER_DID, MAX_NUMBER_OF_TYPES_PER_SERVICE, MAX_NUMBER_OF_URLS_PER_SERVICE,
-			MAX_PUBLIC_KEYS_PER_DID, MAX_SERVICE_ID_LENGTH, MAX_SERVICE_TYPE_LENGTH, MAX_SERVICE_URL_LENGTH,
-			MAX_TOTAL_KEY_AGREEMENT_KEYS, MAX_URL_LENGTH,
-        },
-		MILLI_PID, MIN_VESTED_TRANSFER_AMOUNT, PID,
-    }, DidIdentifier, fees::ToAuthor, Hash, Index, Signature, SlowAdjustingFeeUpdate,
-};
+// pub use consensus::Call as ConsensusCall;
+pub use pallet_balances::Call as BalancesCall;
 
-// Make the WASM binary available
-#[cfg(feature = "std")]
-include!(concat!(env!("OUT_DIR"), "/wasm_binary.rs"));
+pub use frame_support::{
+	construct_runtime, parameter_types,
+	traits::{Currency, FindAuthor, Imbalance, KeyOwnerProofSystem, OnUnbalanced, Randomness},
+	weights::{
+		constants::{BlockExecutionWeight, ExtrinsicBaseWeight, RocksDbWeight, WEIGHT_PER_SECOND},
+		IdentityFee, Weight,
+	},
+	ConsensusEngineId, StorageValue,
+};
+pub use pallet_timestamp::Call as TimestampCall;
+#[cfg(any(feature = "std", test))]
+pub use sp_runtime::BuildStorage;
+pub use sp_runtime::{Perbill, Permill};
+
+pub use attestation;
+pub use ctype;
+pub use delegation;
+pub use did;
 
 /// Digest item type.
-pub type DigestItem = generic::DigestItem<Hash>;
+pub type DigestItem = generic::DigestItem;
 
 pub type NegativeImbalance<T> =
-<pallet_balances::Pallet<T> as Currency<<T as frame_system::Config>::AccountId>>::NegativeImbalance;
+	<pallet_balances::Pallet<T> as Currency<<T as frame_system::Config>::AccountId>>::NegativeImbalance;
 
 /// Opaque types. These are used by the CLI to instantiate machinery that don't
 /// need to know the specifics of the runtime. They can then be made to be
@@ -92,18 +85,18 @@ pub type NegativeImbalance<T> =
 /// continue syncing the network through upgrades to even the core data
 /// structures.
 pub mod opaque {
-	pub use sp_runtime::OpaqueExtrinsic as UncheckedExtrinsic;
-
 	use super::*;
 
-	/// Opaque block header type.
-    pub type Header = generic::Header<BlockNumber, BlakeTwo256>;
-    /// Opaque block type.
-    pub type Block = generic::Block<Header, UncheckedExtrinsic>;
-    /// Opaque block identifier type.
-    pub type BlockId = generic::BlockId<Block>;
+	pub use sp_runtime::OpaqueExtrinsic as UncheckedExtrinsic;
 
-    impl_opaque_keys! {
+	/// Opaque block header type.
+	pub type Header = generic::Header<BlockNumber, BlakeTwo256>;
+	/// Opaque block type.
+	pub type Block = generic::Block<Header, UncheckedExtrinsic>;
+	/// Opaque block identifier type.
+	pub type BlockId = generic::BlockId<Block>;
+
+	impl_opaque_keys! {
 		pub struct SessionKeys {
 			pub aura: Aura,
 			pub grandpa: Grandpa,
@@ -111,30 +104,394 @@ pub mod opaque {
 	}
 }
 
-pub mod pallets;
-pub mod weights;
-
 /// This runtime version.
 #[sp_version::runtime_version]
 pub const VERSION: RuntimeVersion = RuntimeVersion {
-    spec_name: create_runtime_str!("proofid-node"),
-    impl_name: create_runtime_str!("proofid-node"),
-    authoring_version: 4,
-    spec_version: 10200,
-    impl_version: 0,
-    apis: RUNTIME_API_VERSIONS,
-    transaction_version: 2,
+	spec_name: create_runtime_str!("midgard-node"),
+	impl_name: create_runtime_str!("midgard-node"),
+	authoring_version: 4,
+	spec_version: 10310,
+	impl_version: 0,
+	apis: RUNTIME_API_VERSIONS,
+	transaction_version: 2,
 };
 
 /// The version information used to identify this runtime when compiled
 /// natively.
 #[cfg(feature = "std")]
 pub fn native_version() -> NativeVersion {
-    NativeVersion {
-        runtime_version: VERSION,
-        can_author_with: Default::default(),
-    }
+	NativeVersion {
+		runtime_version: VERSION,
+		can_author_with: Default::default(),
+	}
 }
+
+const NORMAL_DISPATCH_RATIO: Perbill = Perbill::from_percent(75);
+
+parameter_types! {
+	pub const Version: RuntimeVersion = VERSION;
+	pub const BlockHashCount: BlockNumber = 2400;
+	/// We allow for 2 seconds of compute with a 6 second average block time.
+	pub BlockWeights: frame_system::limits::BlockWeights = frame_system::limits::BlockWeights
+		::with_sensible_defaults(2 * WEIGHT_PER_SECOND, NORMAL_DISPATCH_RATIO);
+	pub BlockLength: frame_system::limits::BlockLength = frame_system::limits::BlockLength
+		::max_with_normal_ratio(5 * 1024 * 1024, NORMAL_DISPATCH_RATIO);
+	pub const SS58Prefix: u8 = 42;
+}
+
+// Configure FRAME pallets to include in runtime.
+
+impl frame_system::Config for Runtime {
+	/// The basic call filter to use in dispatchable.
+	type BaseCallFilter = frame_support::traits::Everything;
+	/// Block & extrinsics weights: base values and limits.
+	type BlockWeights = BlockWeights;
+	/// The maximum length of a block (in bytes).
+	type BlockLength = BlockLength;
+	/// The identifier used to distinguish between accounts.
+	type AccountId = AccountId;
+	/// The aggregated dispatch type that is available for extrinsics.
+	type Call = Call;
+	/// The lookup mechanism to get account ID from whatever is passed in
+	/// dispatchers.
+	type Lookup = AccountIdLookup<AccountId, ()>;
+	/// The index type for storing how many extrinsics an account has signed.
+	type Index = Index;
+	/// The index type for blocks.
+	type BlockNumber = BlockNumber;
+	/// The type for hashing blocks and tries.
+	type Hash = Hash;
+	/// The hashing algorithm used.
+	type Hashing = BlakeTwo256;
+	/// The header type.
+	type Header = generic::Header<BlockNumber, BlakeTwo256>;
+	/// The ubiquitous event type.
+	type Event = Event;
+	/// The ubiquitous origin type.
+	type Origin = Origin;
+	/// Maximum number of block number to block hash mappings to keep (oldest
+	/// pruned first).
+	type BlockHashCount = BlockHashCount;
+	/// The weight of database operations that the runtime can invoke.
+	type DbWeight = RocksDbWeight;
+	/// Version of the runtime.
+	type Version = Version;
+	/// Converts a Pallet to the index of the Pallet in `construct_runtime!`.
+	///
+	/// This type is being generated by `construct_runtime!`.
+	type PalletInfo = PalletInfo;
+	/// What to do if a new account is created.
+	type OnNewAccount = ();
+	/// What to do if an account is fully reaped from the system.
+	type OnKilledAccount = ();
+	/// The data to be stored in an account.
+	type AccountData = pallet_balances::AccountData<Balance>;
+	/// Weight information for the extrinsics of this pallet.
+	type SystemWeightInfo = ();
+	/// This is used as an identifier of the chain. 42 is the generic substrate
+	/// prefix.
+	type SS58Prefix = SS58Prefix;
+	/// The set code logic, just the default since we're not a parachain.
+	type OnSetCode = ();
+}
+
+parameter_types! {
+	pub const MaxAuthorities: u32 = constants::staking::MAX_CANDIDATES;
+}
+
+impl pallet_aura::Config for Runtime {
+	type AuthorityId = AuraId;
+	type DisabledValidators = ();
+	type MaxAuthorities = MaxAuthorities;
+}
+
+impl pallet_grandpa::Config for Runtime {
+	type Event = Event;
+	type Call = Call;
+
+	type KeyOwnerProofSystem = ();
+
+	type KeyOwnerProof = <Self::KeyOwnerProofSystem as KeyOwnerProofSystem<(KeyTypeId, GrandpaId)>>::Proof;
+
+	type KeyOwnerIdentification =
+		<Self::KeyOwnerProofSystem as KeyOwnerProofSystem<(KeyTypeId, GrandpaId)>>::IdentificationTuple;
+
+	type HandleEquivocation = ();
+
+	type WeightInfo = ();
+	type MaxAuthorities = MaxAuthorities;
+}
+
+parameter_types! {
+	pub const MinimumPeriod: u64 = constants::SLOT_DURATION / 2;
+}
+
+impl pallet_timestamp::Config for Runtime {
+	/// A timestamp: milliseconds since the unix epoch.
+	type Moment = u64;
+	type OnTimestampSet = Aura;
+	type MinimumPeriod = MinimumPeriod;
+	type WeightInfo = ();
+}
+
+parameter_types! {
+	pub const Deposit: Balance = 1_000;
+}
+
+impl pallet_indices::Config for Runtime {
+	type AccountIndex = Index;
+	type Currency = Balances;
+	type Deposit = Deposit;
+	type Event = Event;
+	type WeightInfo = ();
+}
+
+parameter_types! {
+	// pub const ExistentialDeposit: Balance = 10 * MILLI_KILT;
+	pub const ExistentialDeposit: Balance = 0; // TODO: Remove in production.
+	pub const MaxLocks: u32 = 50;
+	pub const MaxReserves: u32 = 50;
+}
+
+impl pallet_balances::Config for Runtime {
+	type MaxLocks = MaxLocks;
+	type MaxReserves = MaxReserves;
+	type ReserveIdentifier = [u8; 8];
+	/// The type for recording an account's balance.
+	type Balance = Balance;
+	/// The ubiquitous event type.
+	type Event = Event;
+	type DustRemoval = ();
+	type ExistentialDeposit = ExistentialDeposit;
+	type AccountStore = System;
+	type WeightInfo = ();
+}
+
+parameter_types! {
+	pub const MaxClaims: u32 = 50;
+	pub const AutoUnlockBound: u32 = 100;
+	pub const UsableBalance: Balance = PID;
+}
+
+impl kilt_launch::Config for Runtime {
+	type Event = Event;
+	type MaxClaims = MaxClaims;
+	type UsableBalance = UsableBalance;
+	type WeightInfo = ();
+	type AutoUnlockBound = AutoUnlockBound;
+	type PalletId = pallet_id::Launch;
+}
+
+parameter_types! {
+	pub const TransactionByteFee: Balance = MICRO_PID;
+	/// This value increases the priority of `Operational` transactions by adding
+	/// a "virtual tip" that's equal to the `OperationalFeeMultiplier * final_fee`.
+	pub const OperationalFeeMultiplier: u8 = 5;
+}
+
+impl pallet_transaction_payment::Config for Runtime {
+	type OnChargeTransaction = CurrencyAdapter<Balances, runtime_common::fees::ToAuthor<Runtime>>;
+	type TransactionByteFee = TransactionByteFee;
+	type OperationalFeeMultiplier = OperationalFeeMultiplier;
+	type WeightToFee = IdentityFee<Balance>;
+	type FeeMultiplierUpdate = SlowAdjustingFeeUpdate<Self>;
+}
+
+impl pallet_sudo::Config for Runtime {
+	type Event = Event;
+	type Call = Call;
+}
+
+parameter_types! {
+	pub const MaxDelegatedAttestations: u32 = 1000;
+	pub const AttestationDeposit: Balance = constants::attestation::ATTESTATION_DEPOSIT;
+}
+
+impl attestation::Config for Runtime {
+	type EnsureOrigin = did::EnsureDidOrigin<DidIdentifier, AccountId>;
+	type OriginSuccess = did::DidRawOrigin<DidIdentifier, AccountId>;
+	type Event = Event;
+	type WeightInfo = ();
+	type Currency = Balances;
+	type Deposit = AttestationDeposit;
+	type MaxDelegatedAttestations = MaxDelegatedAttestations;
+}
+
+parameter_types! {
+	pub const MaxSignatureByteLength: u16 = constants::delegation::MAX_SIGNATURE_BYTE_LENGTH;
+	pub const MaxParentChecks: u32 = constants::delegation::MAX_PARENT_CHECKS;
+	pub const MaxRevocations: u32 = constants::delegation::MAX_REVOCATIONS;
+	pub const MaxRemovals: u32 = constants::delegation::MAX_REMOVALS;
+	#[derive(Clone)]
+	pub const MaxChildren: u32 = constants::delegation::MAX_CHILDREN;
+	pub const DelegationDeposit: Balance = constants::delegation::DELEGATION_DEPOSIT;
+}
+
+impl delegation::Config for Runtime {
+	#[cfg(not(feature = "runtime-benchmarks"))]
+	type Signature = did::DidSignature;
+	#[cfg(not(feature = "runtime-benchmarks"))]
+	type DelegationSignatureVerification = did::DidSignatureVerify<Self>;
+
+	#[cfg(feature = "runtime-benchmarks")]
+	type Signature = runtime_common::benchmarks::DummySignature;
+	#[cfg(feature = "runtime-benchmarks")]
+	type DelegationSignatureVerification = kilt_support::signature::AlwaysVerify<AccountId, Vec<u8>, Self::Signature>;
+
+	type DelegationEntityId = DidIdentifier;
+	type DelegationNodeId = Hash;
+	type EnsureOrigin = did::EnsureDidOrigin<DidIdentifier, AccountId>;
+	type OriginSuccess = did::DidRawOrigin<AccountId, DidIdentifier>;
+	type Event = Event;
+	type MaxSignatureByteLength = MaxSignatureByteLength;
+	type MaxParentChecks = MaxParentChecks;
+	type MaxRevocations = MaxRevocations;
+	type MaxRemovals = MaxRemovals;
+	type MaxChildren = MaxChildren;
+	type WeightInfo = ();
+	type Currency = Balances;
+	type Deposit = DelegationDeposit;
+}
+
+parameter_types! {
+	pub const Fee: Balance = 500;
+}
+
+impl ctype::Config for Runtime {
+	type Currency = Balances;
+	type Fee = Fee;
+	type FeeCollector = runtime_common::fees::ToAuthor<Runtime>;
+
+	type CtypeCreatorId = DidIdentifier;
+	type EnsureOrigin = did::EnsureDidOrigin<DidIdentifier, AccountId>;
+	type OriginSuccess = did::DidRawOrigin<AccountId, DidIdentifier>;
+	type Event = Event;
+	type WeightInfo = ();
+}
+
+parameter_types! {
+	pub const MaxNewKeyAgreementKeys: u32 = constants::did::MAX_KEY_AGREEMENT_KEYS;
+	#[derive(Debug, Clone, PartialEq)]
+	pub const MaxUrlLength: u32 = constants::did::MAX_URL_LENGTH;
+	pub const MaxPublicKeysPerDid: u32 = constants::did::MAX_PUBLIC_KEYS_PER_DID;
+	#[derive(Debug, Clone, PartialEq)]
+	pub const MaxTotalKeyAgreementKeys: u32 = constants::did::MAX_TOTAL_KEY_AGREEMENT_KEYS;
+	#[derive(Debug, Clone, PartialEq)]
+	pub const MaxEndpointUrlsCount: u32 = constants::did::MAX_ENDPOINT_URLS_COUNT;
+	// Standalone block time is half the duration of a parachain block.
+	pub const MaxBlocksTxValidity: BlockNumber = constants::did::MAX_BLOCKS_TX_VALIDITY * 2;
+	pub const DidDeposit: Balance = constants::did::DID_DEPOSIT;
+	pub const DidFee: Balance = constants::did::DID_FEE;
+	pub const MaxNumberOfServicesPerDid: u32 = constants::did::MAX_NUMBER_OF_SERVICES_PER_DID;
+	pub const MaxServiceIdLength: u32 = constants::did::MAX_SERVICE_ID_LENGTH;
+	pub const MaxServiceTypeLength: u32 = constants::did::MAX_SERVICE_TYPE_LENGTH;
+	pub const MaxServiceUrlLength: u32 = constants::did::MAX_SERVICE_URL_LENGTH;
+	pub const MaxNumberOfTypesPerService: u32 = constants::did::MAX_NUMBER_OF_TYPES_PER_SERVICE;
+	pub const MaxNumberOfUrlsPerService: u32 = constants::did::MAX_NUMBER_OF_URLS_PER_SERVICE;
+}
+
+impl did::Config for Runtime {
+	type DidIdentifier = DidIdentifier;
+	type Event = Event;
+	type Call = Call;
+	type Origin = Origin;
+	type Currency = Balances;
+	type Deposit = DidDeposit;
+	type Fee = DidFee;
+	type FeeCollector = ToAuthor<Runtime>;
+
+	#[cfg(not(feature = "runtime-benchmarks"))]
+	type EnsureOrigin = did::EnsureDidOrigin<Self::DidIdentifier, AccountId>;
+	#[cfg(not(feature = "runtime-benchmarks"))]
+	type OriginSuccess = did::DidRawOrigin<AccountId, Self::DidIdentifier>;
+
+	#[cfg(feature = "runtime-benchmarks")]
+	type EnsureOrigin = EnsureSigned<Self::DidIdentifier>;
+	#[cfg(feature = "runtime-benchmarks")]
+	type OriginSuccess = Self::DidIdentifier;
+
+	type MaxNewKeyAgreementKeys = MaxNewKeyAgreementKeys;
+	type MaxTotalKeyAgreementKeys = MaxTotalKeyAgreementKeys;
+	type MaxPublicKeysPerDid = MaxPublicKeysPerDid;
+	type MaxBlocksTxValidity = MaxBlocksTxValidity;
+	type MaxNumberOfServicesPerDid = MaxNumberOfServicesPerDid;
+	type MaxServiceIdLength = MaxServiceIdLength;
+	type MaxServiceTypeLength = MaxServiceTypeLength;
+	type MaxServiceUrlLength = MaxServiceUrlLength;
+	type MaxNumberOfTypesPerService = MaxNumberOfTypesPerService;
+	type MaxNumberOfUrlsPerService = MaxNumberOfUrlsPerService;
+	type WeightInfo = ();
+}
+
+parameter_types! {
+	pub const DidLookupDeposit: Balance = PID;
+}
+
+impl pallet_did_lookup::Config for Runtime {
+	type Event = Event;
+	type Signature = Signature;
+	type Signer = <Signature as Verify>::Signer;
+	type DidIdentifier = DidIdentifier;
+
+	type Currency = Balances;
+	type Deposit = DidLookupDeposit;
+
+	type EnsureOrigin = did::EnsureDidOrigin<DidIdentifier, AccountId>;
+	type OriginSuccess = did::DidRawOrigin<AccountId, DidIdentifier>;
+
+	type WeightInfo = ();
+}
+
+parameter_types! {
+	pub const Period: u64 = 0xFFFF_FFFF_FFFF_FFFF;
+	pub const Offset: u64 = 0xFFFF_FFFF_FFFF_FFFF;
+}
+
+impl pallet_session::Config for Runtime {
+	type Event = Event;
+	type ValidatorId = AccountId;
+	type ValidatorIdOf = ();
+	type ShouldEndSession = pallet_session::PeriodicSessions<Period, Offset>;
+	type NextSessionRotation = ();
+	type SessionManager = ();
+	type SessionHandler = <opaque::SessionKeys as OpaqueKeys>::KeyTypeIdProviders;
+	type Keys = opaque::SessionKeys;
+	type WeightInfo = ();
+}
+
+parameter_types! {
+	pub const UncleGenerations: u32 = 0;
+}
+
+impl pallet_authorship::Config for Runtime {
+	type FindAuthor = pallet_session::FindAccountFromAuthorIndex<Self, Aura>;
+	type UncleGenerations = UncleGenerations;
+	type FilterUncle = ();
+	type EventHandler = ();
+}
+
+parameter_types! {
+	pub const MinVestedTransfer: Balance = constants::MIN_VESTED_TRANSFER_AMOUNT;
+}
+
+impl pallet_vesting::Config for Runtime {
+	type Event = Event;
+	type Currency = Balances;
+	type BlockNumberToBalance = ConvertInto;
+	// disable vested transfers by setting min amount to max balance
+	type MinVestedTransfer = MinVestedTransfer;
+	const MAX_VESTING_SCHEDULES: u32 = runtime_common::constants::MAX_VESTING_SCHEDULES;
+	type WeightInfo = ();
+}
+
+impl pallet_utility::Config for Runtime {
+	type Event = Event;
+	type Call = Call;
+	type PalletsOrigin = OriginCaller;
+	type WeightInfo = ();
+}
+
+impl pallet_randomness_collective_flip::Config for Runtime {}
 
 construct_runtime!(
 	pub enum Runtime where
@@ -142,87 +499,86 @@ construct_runtime!(
 		NodeBlock = opaque::Block,
 		UncheckedExtrinsic = UncheckedExtrinsic
 	{
-		System: frame_system::{Pallet, Call, Config, Storage, Event<T>} = 0,
-		RandomnessCollectiveFlip: pallet_randomness_collective_flip::{Pallet, Storage} = 1,
+		System: frame_system = 0,
+		RandomnessCollectiveFlip: pallet_randomness_collective_flip = 1,
 
-		Timestamp: pallet_timestamp::{Pallet, Call, Storage, Inherent} = 2,
-		Aura: pallet_aura::{Pallet, Config<T>, Storage} = 3,
-		Grandpa: pallet_grandpa::{Pallet, Call, Storage, Config, Event} = 4,
-		Indices: pallet_indices::{Pallet, Call, Storage, Event<T>} = 5,
-		Balances: pallet_balances::{Pallet, Call, Storage, Config<T>, Event<T>} = 6,
-		TransactionPayment: pallet_transaction_payment::{Pallet, Storage} = 7,
-		Sudo: pallet_sudo::{Pallet, Call, Config<T>, Storage, Event<T>} = 8,
+		Timestamp: pallet_timestamp = 2,
+		Aura: pallet_aura = 3,
+		Grandpa: pallet_grandpa = 4,
+		Indices: pallet_indices = 5,
+		Balances: pallet_balances = 6,
+		TransactionPayment: pallet_transaction_payment = 7,
+		Sudo: pallet_sudo = 8,
 
-		Ctype: pallet_ctype::{Pallet, Call, Storage, Event<T>} = 9,
-		Attestation: pallet_attestation::{Pallet, Call, Storage, Event<T>} = 10,
-		Delegation: pallet_delegation::{Pallet, Call, Storage, Event<T>} = 11,
-		Did: pallet_did::{Pallet, Call, Storage, Event<T>, Origin<T>} = 12,
-		DidLookup: pallet_did_lookup::{Pallet, Call, Storage, Event<T>} = 13,
+		Ctype: ctype = 9,
+		Attestation: attestation = 10,
+		Delegation: delegation = 11,
+		Did: did = 12,
+		DidLookup: pallet_did_lookup = 13,
 
-		Session: pallet_session::{Pallet, Call, Storage, Event, Config<T>} = 15,
-		Authorship: pallet_authorship::{Pallet, Call, Storage} = 16,
+		Session: pallet_session = 15,
+		Authorship: pallet_authorship = 16,
 
 		// // Governance stuff; uncallable initially.
-		// Democracy: pallet_democracy::{Module, Call, Storage, Config, Event<T>} = 25,
-		// Council: pallet_collective::<Instance1>::{Module, Call, Storage, Origin<T>, Event<T>, Config<T>} = 26,
-		// TechnicalCommittee: pallet_collective::<Instance2>::{Module, Call, Storage, Origin<T>, Event<T>, Config<T>} = 27,
-		// ElectionsPhragmen: pallet_elections_phragmen::{Module, Call, Storage, Event<T>, Config<T>} = 28,
-		// TechnicalMembership: pallet_membership::{Module, Call, Storage, Event<T>, Config<T>} = 29,
-		// Treasury: pallet_treasury::{Module, Call, Storage, Config, Event<T>} = 30,
+		// Democracy: pallet_democracy = 25,
+		// Council: pallet_collective = 26,
+		// TechnicalCommittee: pallet_collective = 27,
+		// ElectionsPhragmen: pallet_elections_phragmen = 28,
+		// TechnicalMembership: pallet_membership = 29,
+		// Treasury: pallet_treasury = 30,
 
 		// // System scheduler.
-		// Scheduler: pallet_scheduler::{Module, Call, Storage, Event<T>} = 32,
+		// Scheduler: pallet_scheduler = 32,
 
 		// Vesting. Usable initially, but removed once all vesting is finished.
-		Vesting: pallet_vesting::{Pallet, Call, Storage, Event<T>, Config<T>} = 33,
-		PidLaunch: pallet_pid_launch::{Pallet, Call, Storage, Event<T>, Config<T>} = 34,
-		Utility: pallet_utility::{Pallet, Call, Storage, Event} = 35,
-		CrowdloanContributors: pallet_crowdloan::{Pallet, Call, Storage, Event<T>, Config<T>, ValidateUnsigned} = 36,
-		Assets: pallet_assets::{Pallet, Call, Storage, Event<T>} = 37,
+		Vesting: pallet_vesting = 33,
+		KiltLaunch: kilt_launch = 34,
+		Utility: pallet_utility = 35,
+		// DELETED CrowdloanContributors: 36,
 	}
 );
 
-impl pallet_did::DeriveDidCallAuthorizationVerificationKeyRelationship for Call {
-    fn derive_verification_key_relationship(&self) -> pallet_did::DeriveDidCallKeyRelationshipResult {
-        fn single_key_relationship(calls: &[Call]) -> pallet_did::DeriveDidCallKeyRelationshipResult {
-            let init = calls
-                .get(0)
-                .ok_or(pallet_did::RelationshipDeriveError::InvalidCallParameter)?
-                .derive_verification_key_relationship()?;
-            calls
-                .iter()
-                .skip(1)
-                .map(Call::derive_verification_key_relationship)
-                .try_fold(init, |acc, next| {
-                    if Ok(acc) == next {
-                        Ok(acc)
-                    } else {
-                        Err(pallet_did::RelationshipDeriveError::InvalidCallParameter)
-                    }
-                })
-        }
-        match self {
-            Call::Attestation { .. } => Ok(pallet_did::DidVerificationKeyRelationship::AssertionMethod),
-            Call::Ctype { .. } => Ok(pallet_did::DidVerificationKeyRelationship::AssertionMethod),
-            Call::Delegation { .. } => Ok(pallet_did::DidVerificationKeyRelationship::CapabilityDelegation),
-            // DID creation is not allowed through the DID proxy.
-            Call::Did(pallet_did::Call::create { .. }) => Err(pallet_did::RelationshipDeriveError::NotCallableByDid),
-            Call::Did { .. } => Ok(pallet_did::DidVerificationKeyRelationship::Authentication),
-            Call::Utility(pallet_utility::Call::batch { calls }) => single_key_relationship(&calls[..]),
-            Call::Utility(pallet_utility::Call::batch_all { calls }) => single_key_relationship(&calls[..]),
-            #[cfg(not(feature = "runtime-benchmarks"))]
-            _ => Err(pallet_did::RelationshipDeriveError::NotCallableByDid),
-            // By default, returns the authentication key
-            #[cfg(feature = "runtime-benchmarks")]
-            _ => Ok(pallet_did::DidVerificationKeyRelationship::Authentication),
-        }
-    }
+impl did::DeriveDidCallAuthorizationVerificationKeyRelationship for Call {
+	fn derive_verification_key_relationship(&self) -> did::DeriveDidCallKeyRelationshipResult {
+		fn single_key_relationship(calls: &[Call]) -> did::DeriveDidCallKeyRelationshipResult {
+			let init = calls
+				.get(0)
+				.ok_or(did::RelationshipDeriveError::InvalidCallParameter)?
+				.derive_verification_key_relationship()?;
+			calls
+				.iter()
+				.skip(1)
+				.map(Call::derive_verification_key_relationship)
+				.try_fold(init, |acc, next| {
+					if Ok(acc) == next {
+						Ok(acc)
+					} else {
+						Err(did::RelationshipDeriveError::InvalidCallParameter)
+					}
+				})
+		}
+		match self {
+			Call::Attestation { .. } => Ok(did::DidVerificationKeyRelationship::AssertionMethod),
+			Call::Ctype { .. } => Ok(did::DidVerificationKeyRelationship::AssertionMethod),
+			Call::Delegation { .. } => Ok(did::DidVerificationKeyRelationship::CapabilityDelegation),
+			// DID creation is not allowed through the DID proxy.
+			Call::Did(did::Call::create { .. }) => Err(did::RelationshipDeriveError::NotCallableByDid),
+			Call::Did { .. } => Ok(did::DidVerificationKeyRelationship::Authentication),
+			Call::Utility(pallet_utility::Call::batch { calls }) => single_key_relationship(&calls[..]),
+			Call::Utility(pallet_utility::Call::batch_all { calls }) => single_key_relationship(&calls[..]),
+			#[cfg(not(feature = "runtime-benchmarks"))]
+			_ => Err(did::RelationshipDeriveError::NotCallableByDid),
+			// By default, returns the authentication key
+			#[cfg(feature = "runtime-benchmarks")]
+			_ => Ok(did::DidVerificationKeyRelationship::Authentication),
+		}
+	}
 
-    // Always return a System::remark() extrinsic call
-    #[cfg(feature = "runtime-benchmarks")]
-    fn get_call_for_did_call_benchmark() -> Self {
-        Call::System(frame_system::Call::remark { remark: vec![] })
-    }
+	// Always return a System::remark() extrinsic call
+	#[cfg(feature = "runtime-benchmarks")]
+	fn get_call_for_did_call_benchmark() -> Self {
+		Call::System(frame_system::Call::remark { remark: vec![] })
+	}
 }
 
 /// The address format for describing accounts.
@@ -237,13 +593,13 @@ pub type SignedBlock = generic::SignedBlock<Block>;
 pub type BlockId = generic::BlockId<Block>;
 /// The SignedExtension to the basic transaction logic.
 pub type SignedExtra = (
-    frame_system::CheckSpecVersion<Runtime>,
-    frame_system::CheckTxVersion<Runtime>,
-    frame_system::CheckGenesis<Runtime>,
-    frame_system::CheckEra<Runtime>,
-    frame_system::CheckNonce<Runtime>,
-    frame_system::CheckWeight<Runtime>,
-    pallet_transaction_payment::ChargeTransactionPayment<Runtime>,
+	frame_system::CheckSpecVersion<Runtime>,
+	frame_system::CheckTxVersion<Runtime>,
+	frame_system::CheckGenesis<Runtime>,
+	frame_system::CheckEra<Runtime>,
+	frame_system::CheckNonce<Runtime>,
+	frame_system::CheckWeight<Runtime>,
+	pallet_transaction_payment::ChargeTransactionPayment<Runtime>,
 );
 /// Unchecked extrinsic type as expected by this runtime.
 pub type UncheckedExtrinsic = generic::UncheckedExtrinsic<Address, Call, Signature, SignedExtra>;
@@ -251,7 +607,7 @@ pub type UncheckedExtrinsic = generic::UncheckedExtrinsic<Address, Call, Signatu
 pub type CheckedExtrinsic = generic::CheckedExtrinsic<AccountId, Call, SignedExtra>;
 /// Executive: handles dispatch to the various Pallets.
 pub type Executive =
-frame_executive::Executive<Runtime, Block, frame_system::ChainContext<Runtime>, Runtime, AllPallets>;
+	frame_executive::Executive<Runtime, Block, frame_system::ChainContext<Runtime>, Runtime, AllPallets>;
 
 impl_runtime_apis! {
 	impl sp_api::Core<Block> for Runtime {
@@ -387,12 +743,14 @@ impl_runtime_apis! {
 			Vec<frame_benchmarking::BenchmarkList>,
 			Vec<frame_support::traits::StorageInfo>,
 		) {
-			use frame_benchmarking::{list_benchmark, Benchmarking, BenchmarkList};
+			use frame_benchmarking::{list_benchmark, baseline, Benchmarking, BenchmarkList};
 			use frame_support::traits::StorageInfoTrait;
 			use frame_system_benchmarking::Pallet as SystemBench;
+			use baseline::Pallet as BaselineBench;
 
 			let mut list = Vec::<BenchmarkList>::new();
 
+			list_benchmark!(list, extra, frame_benchmarking, BaselineBench::<Runtime>);
 			list_benchmark!(list, extra, frame_system, SystemBench::<Runtime>);
 			list_benchmark!(list, extra, pallet_balances, Balances);
 			list_benchmark!(list, extra, pallet_timestamp, Timestamp);
@@ -400,14 +758,13 @@ impl_runtime_apis! {
 			list_benchmark!(list, extra, frame_system, SystemBench::<Runtime>);
 			list_benchmark!(list, extra, pallet_balances, Balances);
 			list_benchmark!(list, extra, pallet_timestamp, Timestamp);
-			list_benchmark!(list, extra, pid_launch, PidLaunch);
+			list_benchmark!(list, extra, kilt_launch, KiltLaunch);
 			list_benchmark!(list, extra, pallet_vesting, Vesting);
 
-			list_benchmark!(list, extra, pallet_did, Did);
-			list_benchmark!(list, extra, pallet_ctype, Ctype);
-			list_benchmark!(list, extra, pallet_crowdloan, CrowdloanContributors);
-			list_benchmark!(list, extra, pallet_delegation, Delegation);
-			list_benchmark!(list, extra, pallet_attestation, Attestation);
+			list_benchmark!(list, extra, did, Did);
+			list_benchmark!(list, extra, ctype, Ctype);
+			list_benchmark!(list, extra, delegation, Delegation);
+			list_benchmark!(list, extra, attestation, Attestation);
 
 			let storage_info = AllPalletsWithSystem::storage_info();
 
@@ -417,10 +774,13 @@ impl_runtime_apis! {
 		fn dispatch_benchmark(
 			config: frame_benchmarking::BenchmarkConfig
 		) -> Result<Vec<frame_benchmarking::BenchmarkBatch>, sp_runtime::RuntimeString> {
-			use frame_benchmarking::{Benchmarking, BenchmarkBatch, add_benchmark, TrackedStorageKey};
+			use frame_benchmarking::{baseline, Benchmarking, BenchmarkBatch, add_benchmark, TrackedStorageKey};
 
+			use baseline::Pallet as BaselineBench;
 			use frame_system_benchmarking::Pallet as SystemBench;
+
 			impl frame_system_benchmarking::Config for Runtime {}
+			impl baseline::Config for Runtime {}
 
 			let whitelist: Vec<TrackedStorageKey> = vec![
 				// Block Number
@@ -438,24 +798,24 @@ impl_runtime_apis! {
 				// System Events
 				hex_literal::hex!("26aa394eea5630e07c48ae0c9558cef780d41e5e16056765bc8461851072c9d7")
 					.to_vec().into(),
-				// PidLaunch transfer account
+				// KiltLaunch transfer account
 				hex_literal::hex!("6a3c793cec9dbe330b349dc4eea6801090f5e71f53b1b41ad11afb4a313a282c").to_vec().into(),
 			];
 
 			let mut batches = Vec::<BenchmarkBatch>::new();
 			let params = (&config, &whitelist);
 
+			add_benchmark!(params, batches, frame_benchmarking, BaselineBench::<Runtime>);
 			add_benchmark!(params, batches, frame_system, SystemBench::<Runtime>);
 			add_benchmark!(params, batches, pallet_balances, Balances);
 			add_benchmark!(params, batches, pallet_timestamp, Timestamp);
-			add_benchmark!(params, batches, pid_launch, PidLaunch);
+			add_benchmark!(params, batches, kilt_launch, KiltLaunch);
 			add_benchmark!(params, batches, pallet_vesting, Vesting);
 
-			add_benchmark!(params, batches, pallet_did, Did);
-			add_benchmark!(params, batches, pallet_ctype, Ctype);
-			add_benchmark!(params, batches, pallet_crowdloan, CrowdloanContributors);
-			add_benchmark!(params, batches, pallet_delegation, Delegation);
-			add_benchmark!(params, batches, pallet_attestation, Attestation);
+			add_benchmark!(params, batches, did, Did);
+			add_benchmark!(params, batches, ctype, Ctype);
+			add_benchmark!(params, batches, delegation, Delegation);
+			add_benchmark!(params, batches, attestation, Attestation);
 
 			if batches.is_empty() { return Err("Benchmark not found for this pallet.".into()) }
 			Ok(batches)

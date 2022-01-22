@@ -1,5 +1,5 @@
 // KILT Blockchain – https://botlabs.org
-// Copyright (C) 2019-2021 BOTLabs GmbH
+// Copyright (C) 2019-2022 BOTLabs GmbH
 
 // The KILT Blockchain is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -25,8 +25,8 @@ use frame_support::{
 	traits::{Currency, Get, OnInitialize},
 };
 use frame_system::{Pallet as System, RawOrigin};
-use pid_primitives::constants::BLOCKS_PER_YEAR;
 use pallet_session::Pallet as Session;
+use runtime_common::constants::BLOCKS_PER_YEAR;
 use sp_runtime::{
 	traits::{One, SaturatedConversion, StaticLookup},
 	Perquintill,
@@ -294,8 +294,8 @@ benchmarks! {
 	execute_leave_candidates {
 		let n in (T::MinCollators::get() + 1) .. T::MaxTopCandidates::get() - 1;
 		let m in 0 .. T::MaxDelegatorsPerCollator::get();
-		let u in 1 .. (T::MaxUnstakeRequests::get() as u32 - 1);
 
+		let u = T::MaxUnstakeRequests::get() as u32 - 1;
 		let candidates = setup_collator_candidates::<T>(n, None);
 		for (i, c) in candidates.iter().enumerate() {
 			fill_delegators::<T>(m, c.clone(), i.saturated_into::<u32>());
@@ -628,8 +628,8 @@ benchmarks! {
 impl_benchmark_test_suite!(
 	Pallet,
 	crate::mock::ExtBuilder::default()
-		.with_balances(vec![(u64::MAX, pid_primitives::constants::PID)])
-		.with_collators(vec![(u64::MAX, pid_primitives::constants::PID)])
+		.with_balances(vec![(u64::MAX, runtime_common::constants::PID)])
+		.with_collators(vec![(u64::MAX, runtime_common::constants::PID)])
 		.build(),
 	crate::mock::Test,
 );

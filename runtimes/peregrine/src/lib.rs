@@ -1,5 +1,5 @@
 // KILT Blockchain – https://botlabs.org
-// Copyright (C) 2019-2021 BOTLabs GmbH
+// Copyright (C) 2019-2022 BOTLabs GmbH
 
 // The KILT Blockchain is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -27,8 +27,8 @@ include!(concat!(env!("OUT_DIR"), "/wasm_binary.rs"));
 
 use frame_support::{
 	construct_runtime, parameter_types,
+	traits::EqualPrivilegeOnly,
 	weights::{constants::RocksDbWeight, Weight},
-	PalletId,
 };
 use frame_system::{EnsureOneOf, EnsureRoot};
 use sp_api::impl_runtime_apis;
@@ -45,43 +45,22 @@ use sp_runtime::{
 use sp_std::prelude::*;
 use sp_version::RuntimeVersion;
 
-use pid_primitives::{
-	constants::{
-		self,
-		attestation::ATTESTATION_DEPOSIT,
-		delegation::{
-			DELEGATION_DEPOSIT, MAX_CHILDREN, MAX_PARENT_CHECKS, MAX_REMOVALS, MAX_REVOCATIONS,
-			MAX_SIGNATURE_BYTE_LENGTH,
-		},
-		did::{
-			DID_DEPOSIT, DID_FEE, MAX_BLOCKS_TX_VALIDITY, MAX_ENDPOINT_URLS_COUNT, MAX_KEY_AGREEMENT_KEYS,
-			MAX_NUMBER_OF_SERVICES_PER_DID, MAX_NUMBER_OF_TYPES_PER_SERVICE, MAX_NUMBER_OF_URLS_PER_SERVICE,
-			MAX_PUBLIC_KEYS_PER_DID, MAX_SERVICE_ID_LENGTH, MAX_SERVICE_TYPE_LENGTH, MAX_SERVICE_URL_LENGTH,
-			MAX_TOTAL_KEY_AGREEMENT_KEYS, MAX_URL_LENGTH,
-		},
-		governance::{
-			COOLOFF_PERIOD, COUNCIL_MOTION_DURATION, ENACTMENT_PERIOD, FAST_TRACK_VOTING_PERIOD, LAUNCH_PERIOD,
-			SPEND_PERIOD, TECHNICAL_MOTION_DURATION, VOTING_PERIOD,
-		},
-		treasury::{INITIAL_PERIOD_LENGTH, INITIAL_PERIOD_REWARD_PER_BLOCK, TREASURY_PALLET_ID},
-		PID, MAXIMUM_BLOCK_WEIGHT, MICRO_PID, MILLI_PID, MIN_VESTED_TRANSFER_AMOUNT, SLOT_DURATION,
-	},
+use runtime_common::{
+	constants::{self, KILT, MICRO_KILT, MILLI_KILT},
 	fees::{ToAuthor, WeightToFee},
-	AccountId, AuthorityId, Balance, BlockHashCount, BlockLength, BlockNumber, BlockWeights, DidIdentifier, FeeSplit,
-	Hash, Header, Index, Signature, SlowAdjustingFeeUpdate,
+	pallet_id, AccountId, AuthorityId, Balance, BlockHashCount, BlockLength, BlockNumber, BlockWeights, DidIdentifier,
+	FeeSplit, Hash, Header, Index, Signature, SlowAdjustingFeeUpdate,
 };
 
 #[cfg(feature = "std")]
 use sp_version::NativeVersion;
 
 #[cfg(feature = "runtime-benchmarks")]
-use {frame_system::EnsureSigned, pid_primitives::benchmarks::DummySignature, pid_support::signature::AlwaysVerify};
+use {frame_system::EnsureSigned, kilt_support::signature::AlwaysVerify, runtime_common::benchmarks::DummySignature};
 
-mod migrations;
 #[cfg(test)]
 mod tests;
 mod weights;
-mod pallets;
 
 #[cfg(any(feature = "std", test))]
 pub use sp_runtime::BuildStorage;
@@ -97,10 +76,10 @@ impl_opaque_keys! {
 /// This runtime version.
 #[sp_version::runtime_version]
 pub const VERSION: RuntimeVersion = RuntimeVersion {
-	spec_name: create_runtime_str!("proofid-node"),
-	impl_name: create_runtime_str!("proofid-node"),
+	spec_name: create_runtime_str!("mashnet-node"),
+	impl_name: create_runtime_str!("mashnet-node"),
 	authoring_version: 4,
-	spec_version: 10200,
+	spec_version: 10310,
 	impl_version: 0,
 	apis: RUNTIME_API_VERSIONS,
 	transaction_version: 2,
@@ -116,14 +95,9 @@ pub fn native_version() -> NativeVersion {
 	}
 }
 
-// Pallet accounts of runtime
-parameter_types! {
-	pub const TreasuryPalletId: PalletId = TREASURY_PALLET_ID;
-}
-
 parameter_types! {
 	pub const Version: RuntimeVersion = VERSION;
-	pub const SS58Prefix: u8 = 42;
+	pub const SS58Prefix: u8 = 38;
 }
 
 impl frame_system::Config for Runtime {
@@ -143,7 +117,7 @@ impl frame_system::Config for Runtime {
 	/// The hashing algorithm used.
 	type Hashing = BlakeTwo256;
 	/// The header type.
-	type Header = pid_primitives::Header;
+	type Header = runtime_common::Header;
 	/// The ubiquitous event type.
 	type Event = Event;
 	/// The ubiquitous origin type.
@@ -169,7 +143,7 @@ impl frame_system::Config for Runtime {
 }
 
 parameter_types! {
-	pub const MinimumPeriod: u64 = SLOT_DURATION / 2;
+	pub const MinimumPeriod: u64 = constants::SLOT_DURATION / 2;
 }
 
 impl pallet_timestamp::Config for Runtime {
@@ -181,8 +155,8 @@ impl pallet_timestamp::Config for Runtime {
 }
 
 parameter_types! {
-	pub const ExistentialDeposit: u128 = 10 * MILLI_PID;
-	pub const TransactionByteFee: u128 = MICRO_PID;
+	pub const ExistentialDeposit: u128 = 10 * MILLI_KILT;
+	pub const TransactionByteFee: u128 = MICRO_KILT;
 	pub const MaxLocks: u32 = 50;
 	pub const MaxReserves: u32 = 50;
 }
@@ -230,8 +204,8 @@ impl pallet_sudo::Config for Runtime {
 }
 
 parameter_types! {
-	pub const ReservedXcmpWeight: Weight = MAXIMUM_BLOCK_WEIGHT / 4;
-	pub const ReservedDmpWeight: Weight = MAXIMUM_BLOCK_WEIGHT / 4;
+	pub const ReservedXcmpWeight: Weight = constants::MAXIMUM_BLOCK_WEIGHT / 4;
+	pub const ReservedDmpWeight: Weight = constants::MAXIMUM_BLOCK_WEIGHT / 4;
 }
 
 impl cumulus_pallet_parachain_system::Config for Runtime {
@@ -284,7 +258,7 @@ impl pallet_session::Config for Runtime {
 }
 
 parameter_types! {
-	pub const MinVestedTransfer: Balance = MIN_VESTED_TRANSFER_AMOUNT;
+	pub const MinVestedTransfer: Balance = constants::MIN_VESTED_TRANSFER_AMOUNT;
 }
 
 impl pallet_vesting::Config for Runtime {
@@ -294,21 +268,22 @@ impl pallet_vesting::Config for Runtime {
 	// disable vested transfers by setting min amount to max balance
 	type MinVestedTransfer = MinVestedTransfer;
 	type WeightInfo = weights::pallet_vesting::WeightInfo<Runtime>;
-	const MAX_VESTING_SCHEDULES: u32 = pid_primitives::constants::MAX_VESTING_SCHEDULES;
+	const MAX_VESTING_SCHEDULES: u32 = runtime_common::constants::MAX_VESTING_SCHEDULES;
 }
 
 parameter_types! {
 	pub const MaxClaims: u32 = 50;
-	pub const UsableBalance: Balance = PID;
+	pub const UsableBalance: Balance = KILT;
 	pub const AutoUnlockBound: u32 = 100;
 }
 
-impl pallet_pid_launch::Config for Runtime {
+impl kilt_launch::Config for Runtime {
 	type Event = Event;
 	type MaxClaims = MaxClaims;
 	type UsableBalance = UsableBalance;
 	type AutoUnlockBound = AutoUnlockBound;
-	type WeightInfo = weights::pid_launch::WeightInfo<Runtime>;
+	type WeightInfo = weights::kilt_launch::WeightInfo<Runtime>;
+	type PalletId = pallet_id::Launch;
 }
 
 parameter_types! {
@@ -325,17 +300,18 @@ impl pallet_scheduler::Config for Runtime {
 	type ScheduleOrigin = EnsureRoot<AccountId>;
 	type MaxScheduledPerBlock = MaxScheduledPerBlock;
 	type WeightInfo = weights::pallet_scheduler::WeightInfo<Runtime>;
+	type OriginPrivilegeCmp = EqualPrivilegeOnly;
 }
 
 parameter_types! {
-	pub const LaunchPeriod: BlockNumber = LAUNCH_PERIOD;
-	pub const VotingPeriod: BlockNumber = VOTING_PERIOD;
-	pub const FastTrackVotingPeriod: BlockNumber = FAST_TRACK_VOTING_PERIOD;
-	pub const MinimumDeposit: Balance = PID;
-	pub const EnactmentPeriod: BlockNumber = ENACTMENT_PERIOD;
-	pub const CooloffPeriod: BlockNumber = COOLOFF_PERIOD;
+	pub const LaunchPeriod: BlockNumber = constants::governance::LAUNCH_PERIOD;
+	pub const VotingPeriod: BlockNumber = constants::governance::VOTING_PERIOD;
+	pub const FastTrackVotingPeriod: BlockNumber = constants::governance::FAST_TRACK_VOTING_PERIOD;
+	pub const MinimumDeposit: Balance = KILT;
+	pub const EnactmentPeriod: BlockNumber = constants::governance::ENACTMENT_PERIOD;
+	pub const CooloffPeriod: BlockNumber = constants::governance::COOLOFF_PERIOD;
 	// One cent: $10,000 / MB
-	pub const PreimageByteDeposit: Balance = 10 * MILLI_PID;
+	pub const PreimageByteDeposit: Balance = 10 * MILLI_KILT;
 	pub const InstantAllowed: bool = true;
 	pub const MaxVotes: u32 = 100;
 	pub const MaxProposals: u32 = 100;
@@ -397,8 +373,8 @@ impl pallet_democracy::Config for Runtime {
 
 parameter_types! {
 	pub const ProposalBond: Permill = Permill::from_percent(5);
-	pub const ProposalBondMinimum: Balance = 20 * PID; // TODO: how much?
-	pub const SpendPeriod: BlockNumber = SPEND_PERIOD;
+	pub const ProposalBondMinimum: Balance = 20 * KILT;
+	pub const SpendPeriod: BlockNumber = constants::governance::SPEND_PERIOD;
 	pub const Burn: Permill = Permill::zero();
 	pub const MaxApprovals: u32 = 100;
 }
@@ -416,7 +392,7 @@ type MoreThanHalfCouncil = EnsureOneOf<
 >;
 
 impl pallet_treasury::Config for Runtime {
-	type PalletId = TreasuryPalletId;
+	type PalletId = pallet_id::Treasury;
 	type Currency = Balances;
 	type ApproveOrigin = ApproveOrigin;
 	type RejectOrigin = MoreThanHalfCouncil;
@@ -433,7 +409,7 @@ impl pallet_treasury::Config for Runtime {
 }
 
 parameter_types! {
-	pub const CouncilMotionDuration: BlockNumber = COUNCIL_MOTION_DURATION;
+	pub const CouncilMotionDuration: BlockNumber = constants::governance::COUNCIL_MOTION_DURATION;
 	pub const CouncilMaxProposals: u32 = 100;
 	pub const CouncilMaxMembers: u32 = 100;
 }
@@ -451,7 +427,7 @@ impl pallet_collective::Config<CouncilCollective> for Runtime {
 }
 
 parameter_types! {
-	pub const TechnicalMotionDuration: BlockNumber = TECHNICAL_MOTION_DURATION;
+	pub const TechnicalMotionDuration: BlockNumber = constants::governance::TECHNICAL_MOTION_DURATION;
 	pub const TechnicalMaxProposals: u32 = 100;
 	pub const TechnicalMaxMembers: u32 = 100;
 }
@@ -483,19 +459,12 @@ impl pallet_membership::Config for Runtime {
 
 parameter_types! {
 	pub const MaxDelegatedAttestations: u32 = 1000;
-	pub const AttestationDeposit: Balance = ATTESTATION_DEPOSIT;
+	pub const AttestationDeposit: Balance = constants::attestation::ATTESTATION_DEPOSIT;
 }
 
-impl pallet_attestation::Config for Runtime {
-	#[cfg(not(feature = "runtime-benchmarks"))]
-	type EnsureOrigin = pallet_did::EnsureDidOrigin<DidIdentifier, AccountId>;
-	#[cfg(not(feature = "runtime-benchmarks"))]
-	type OriginSuccess = pallet_did::DidRawOrigin<AccountId, DidIdentifier>;
-
-	#[cfg(feature = "runtime-benchmarks")]
-	type EnsureOrigin = EnsureSigned<DidIdentifier>;
-	#[cfg(feature = "runtime-benchmarks")]
-	type OriginSuccess = DidIdentifier;
+impl attestation::Config for Runtime {
+	type EnsureOrigin = did::EnsureDidOrigin<DidIdentifier, AccountId>;
+	type OriginSuccess = did::DidRawOrigin<AccountId, DidIdentifier>;
 
 	type Event = Event;
 	type WeightInfo = weights::attestation::WeightInfo<Runtime>;
@@ -506,32 +475,27 @@ impl pallet_attestation::Config for Runtime {
 }
 
 parameter_types! {
-	pub const MaxSignatureByteLength: u16 = MAX_SIGNATURE_BYTE_LENGTH;
-	pub const MaxParentChecks: u32 = MAX_PARENT_CHECKS;
-	pub const MaxRevocations: u32 = MAX_REVOCATIONS;
-	pub const MaxRemovals: u32 = MAX_REMOVALS;
+	pub const MaxSignatureByteLength: u16 = constants::delegation::MAX_SIGNATURE_BYTE_LENGTH;
+	pub const MaxParentChecks: u32 = constants::delegation::MAX_PARENT_CHECKS;
+	pub const MaxRevocations: u32 = constants::delegation::MAX_REVOCATIONS;
+	pub const MaxRemovals: u32 = constants::delegation::MAX_REMOVALS;
 	#[derive(Clone)]
-	pub const MaxChildren: u32 = MAX_CHILDREN;
-	pub const DelegationDeposit: Balance = DELEGATION_DEPOSIT;
+	pub const MaxChildren: u32 = constants::delegation::MAX_CHILDREN;
+	pub const DelegationDeposit: Balance = constants::delegation::DELEGATION_DEPOSIT;
 }
 
-impl pallet_delegation::Config for Runtime {
+impl delegation::Config for Runtime {
 	type DelegationEntityId = DidIdentifier;
 	type DelegationNodeId = Hash;
 
-	#[cfg(not(feature = "runtime-benchmarks"))]
-	type EnsureOrigin = pallet_did::EnsureDidOrigin<DidIdentifier, AccountId>;
-	#[cfg(not(feature = "runtime-benchmarks"))]
-	type OriginSuccess = pallet_did::DidRawOrigin<AccountId, DidIdentifier>;
-	#[cfg(not(feature = "runtime-benchmarks"))]
-	type DelegationSignatureVerification = pallet_did::DidSignatureVerify<Runtime>;
-	#[cfg(not(feature = "runtime-benchmarks"))]
-	type Signature = pallet_did::DidSignature;
+	type EnsureOrigin = did::EnsureDidOrigin<DidIdentifier, AccountId>;
+	type OriginSuccess = did::DidRawOrigin<AccountId, DidIdentifier>;
 
-	#[cfg(feature = "runtime-benchmarks")]
-	type EnsureOrigin = EnsureSigned<DidIdentifier>;
-	#[cfg(feature = "runtime-benchmarks")]
-	type OriginSuccess = DidIdentifier;
+	#[cfg(not(feature = "runtime-benchmarks"))]
+	type DelegationSignatureVerification = did::DidSignatureVerify<Runtime>;
+	#[cfg(not(feature = "runtime-benchmarks"))]
+	type Signature = did::DidSignature;
+
 	#[cfg(feature = "runtime-benchmarks")]
 	type Signature = DummySignature;
 	#[cfg(feature = "runtime-benchmarks")]
@@ -549,51 +513,44 @@ impl pallet_delegation::Config for Runtime {
 }
 
 parameter_types! {
-	pub const Fee: Balance = MILLI_PID;
+	pub const Fee: Balance = MILLI_KILT;
 }
 
-impl pallet_ctype::Config for Runtime {
+impl ctype::Config for Runtime {
 	type CtypeCreatorId = AccountId;
 	type Currency = Balances;
 	type Fee = Fee;
 	type FeeCollector = Treasury;
 
-	#[cfg(not(feature = "runtime-benchmarks"))]
-	type EnsureOrigin = pallet_did::EnsureDidOrigin<DidIdentifier, AccountId>;
-	#[cfg(not(feature = "runtime-benchmarks"))]
-	type OriginSuccess = pallet_did::DidRawOrigin<AccountId, DidIdentifier>;
-
-	#[cfg(feature = "runtime-benchmarks")]
-	type EnsureOrigin = EnsureSigned<DidIdentifier>;
-	#[cfg(feature = "runtime-benchmarks")]
-	type OriginSuccess = DidIdentifier;
+	type EnsureOrigin = did::EnsureDidOrigin<DidIdentifier, AccountId>;
+	type OriginSuccess = did::DidRawOrigin<AccountId, DidIdentifier>;
 
 	type Event = Event;
 	type WeightInfo = weights::ctype::WeightInfo<Runtime>;
 }
 
 parameter_types! {
-	pub const MaxNewKeyAgreementKeys: u32 = MAX_KEY_AGREEMENT_KEYS;
+	pub const MaxNewKeyAgreementKeys: u32 = constants::did::MAX_KEY_AGREEMENT_KEYS;
 	#[derive(Debug, Clone, PartialEq)]
-	pub const MaxUrlLength: u32 = MAX_URL_LENGTH;
-	pub const MaxPublicKeysPerDid: u32 = MAX_PUBLIC_KEYS_PER_DID;
+	pub const MaxUrlLength: u32 = constants::did::MAX_URL_LENGTH;
+	pub const MaxPublicKeysPerDid: u32 = constants::did::MAX_PUBLIC_KEYS_PER_DID;
 	#[derive(Debug, Clone, PartialEq)]
-	pub const MaxTotalKeyAgreementKeys: u32 = MAX_TOTAL_KEY_AGREEMENT_KEYS;
+	pub const MaxTotalKeyAgreementKeys: u32 = constants::did::MAX_TOTAL_KEY_AGREEMENT_KEYS;
 	#[derive(Debug, Clone, PartialEq)]
-	pub const MaxEndpointUrlsCount: u32 = MAX_ENDPOINT_URLS_COUNT;
+	pub const MaxEndpointUrlsCount: u32 = constants::did::MAX_ENDPOINT_URLS_COUNT;
 	// Standalone block time is half the duration of a parachain block.
-	pub const MaxBlocksTxValidity: BlockNumber = MAX_BLOCKS_TX_VALIDITY;
-	pub const DidDeposit: Balance = DID_DEPOSIT;
-	pub const DidFee: Balance = DID_FEE;
-	pub const MaxNumberOfServicesPerDid: u32 = MAX_NUMBER_OF_SERVICES_PER_DID;
-	pub const MaxServiceIdLength: u32 = MAX_SERVICE_ID_LENGTH;
-	pub const MaxServiceTypeLength: u32 = MAX_SERVICE_TYPE_LENGTH;
-	pub const MaxServiceUrlLength: u32 = MAX_SERVICE_URL_LENGTH;
-	pub const MaxNumberOfTypesPerService: u32 = MAX_NUMBER_OF_TYPES_PER_SERVICE;
-	pub const MaxNumberOfUrlsPerService: u32 = MAX_NUMBER_OF_URLS_PER_SERVICE;
+	pub const MaxBlocksTxValidity: BlockNumber = constants::did::MAX_BLOCKS_TX_VALIDITY;
+	pub const DidDeposit: Balance = constants::did::DID_DEPOSIT;
+	pub const DidFee: Balance = constants::did::DID_FEE;
+	pub const MaxNumberOfServicesPerDid: u32 = constants::did::MAX_NUMBER_OF_SERVICES_PER_DID;
+	pub const MaxServiceIdLength: u32 = constants::did::MAX_SERVICE_ID_LENGTH;
+	pub const MaxServiceTypeLength: u32 = constants::did::MAX_SERVICE_TYPE_LENGTH;
+	pub const MaxServiceUrlLength: u32 = constants::did::MAX_SERVICE_URL_LENGTH;
+	pub const MaxNumberOfTypesPerService: u32 = constants::did::MAX_NUMBER_OF_TYPES_PER_SERVICE;
+	pub const MaxNumberOfUrlsPerService: u32 = constants::did::MAX_NUMBER_OF_URLS_PER_SERVICE;
 }
 
-impl pallet_did::Config for Runtime {
+impl did::Config for Runtime {
 	type DidIdentifier = DidIdentifier;
 	type Event = Event;
 	type Call = Call;
@@ -604,9 +561,9 @@ impl pallet_did::Config for Runtime {
 	type FeeCollector = Treasury;
 
 	#[cfg(not(feature = "runtime-benchmarks"))]
-	type EnsureOrigin = pallet_did::EnsureDidOrigin<DidIdentifier, AccountId>;
+	type EnsureOrigin = did::EnsureDidOrigin<DidIdentifier, AccountId>;
 	#[cfg(not(feature = "runtime-benchmarks"))]
-	type OriginSuccess = pallet_did::DidRawOrigin<AccountId, DidIdentifier>;
+	type OriginSuccess = did::DidRawOrigin<AccountId, DidIdentifier>;
 
 	#[cfg(feature = "runtime-benchmarks")]
 	type EnsureOrigin = EnsureSigned<DidIdentifier>;
@@ -627,7 +584,7 @@ impl pallet_did::Config for Runtime {
 }
 
 parameter_types! {
-	pub const DidLookupDeposit: Balance = PID;
+	pub const DidLookupDeposit: Balance = KILT;
 }
 
 impl pallet_did_lookup::Config for Runtime {
@@ -639,24 +596,15 @@ impl pallet_did_lookup::Config for Runtime {
 	type Currency = Balances;
 	type Deposit = DidLookupDeposit;
 
-	type EnsureOrigin = pallet_did::EnsureDidOrigin<DidIdentifier, AccountId>;
-	type OriginSuccess = pallet_did::DidRawOrigin<AccountId, DidIdentifier>;
+	type EnsureOrigin = did::EnsureDidOrigin<DidIdentifier, AccountId>;
+	type OriginSuccess = did::DidRawOrigin<AccountId, DidIdentifier>;
 
 	type WeightInfo = weights::pallet_did_lookup::WeightInfo<Runtime>;
 }
 
-impl pallet_crowdloan::Config for Runtime {
-	type Currency = Balances;
-	type Vesting = Vesting;
-	type Balance = Balance;
-	type EnsureRegistrarOrigin = MoreThanHalfCouncil;
-	type Event = Event;
-	type WeightInfo = weights::crowdloan::WeightInfo<Runtime>;
-}
-
 parameter_types! {
-	pub const InitialPeriodLength: BlockNumber = INITIAL_PERIOD_LENGTH;
-	pub const InitialPeriodReward: Balance = INITIAL_PERIOD_REWARD_PER_BLOCK;
+	pub const InitialPeriodLength: BlockNumber = constants::treasury::INITIAL_PERIOD_LENGTH;
+	pub const InitialPeriodReward: Balance = constants::treasury::INITIAL_PERIOD_REWARD_PER_BLOCK;
 }
 
 impl pallet_inflation::Config for Runtime {
@@ -684,12 +632,12 @@ parameter_types! {
 	pub const MaxDelegationsPerRound: u32 = 1;
 	/// Maximum 25 delegators per collator at launch, might be increased later
 	#[derive(Debug, PartialEq)]
-	pub const MaxDelegatorsPerCollator: u32 = 25;
+	pub const MaxDelegatorsPerCollator: u32 = constants::staking::MAX_DELEGATORS_PER_COLLATOR;
 	/// Maximum 1 collator per delegator at launch, will be increased later
 	#[derive(Debug, PartialEq)]
 	pub const MaxCollatorsPerDelegator: u32 = 1;
 	/// Minimum stake required to be reserved to be a collator is 10_000
-	pub const MinCollatorStake: Balance = 10_000 * PID;
+	pub const MinCollatorStake: Balance = 10_000 * KILT;
 	/// Minimum stake required to be reserved to be a delegator is 1000
 	pub const MinDelegatorStake: Balance = constants::staking::MIN_DELEGATOR_STAKE;
 	/// Maximum number of collator candidates
@@ -698,7 +646,7 @@ parameter_types! {
 	/// Maximum number of concurrent requests to unlock unstaked balance
 	pub const MaxUnstakeRequests: u32 = 10;
 	/// The starting block number for the network rewards
-	pub const NetworkRewardStart: BlockNumber = INITIAL_PERIOD_LENGTH;
+	pub const NetworkRewardStart: BlockNumber = constants::treasury::INITIAL_PERIOD_LENGTH;
 	/// The rate in percent for the network rewards
 	pub const NetworkRewardRate: Perquintill = constants::staking::NETWORK_REWARD_RATE;
 }
@@ -731,6 +679,7 @@ impl parachain_staking::Config for Runtime {
 impl pallet_utility::Config for Runtime {
 	type Event = Event;
 	type Call = Call;
+	type PalletsOrigin = OriginCaller;
 	type WeightInfo = weights::pallet_utility::WeightInfo<Runtime>;
 }
 
@@ -739,67 +688,66 @@ impl pallet_randomness_collective_flip::Config for Runtime {}
 construct_runtime! {
 	pub enum Runtime where
 		Block = Block,
-		NodeBlock = pid_primitives::Block,
+		NodeBlock = runtime_common::Block,
 		UncheckedExtrinsic = UncheckedExtrinsic,
 	{
-		// Basic stuff; balances is uncallable initially.
-		System: frame_system::{Pallet, Call, Config, Storage, Event<T>} = 0,
-		RandomnessCollectiveFlip: pallet_randomness_collective_flip::{Pallet, Storage} = 1,
+		System: frame_system = 0,
+		RandomnessCollectiveFlip: pallet_randomness_collective_flip = 1,
 
-		Timestamp: pallet_timestamp::{Pallet, Call, Storage, Inherent} = 2,
+		Timestamp: pallet_timestamp = 2,
 		Indices: pallet_indices::{Pallet, Call, Storage, Event<T>} = 5,
-		Balances: pallet_balances::{Pallet, Call, Storage, Config<T>, Event<T>} = 6,
+		Balances: pallet_balances = 6,
 		TransactionPayment: pallet_transaction_payment::{Pallet, Storage} = 7,
-		Sudo: pallet_sudo::{Pallet, Call, Config<T>, Storage, Event<T>} = 8,
+		Sudo: pallet_sudo = 8,
 
 		// Consensus support.
 		// The following order MUST NOT be changed: Authorship -> Staking -> Session -> Aura -> AuraExt
 		Authorship: pallet_authorship::{Pallet, Call, Storage} = 20,
-		ParachainStaking: parachain_staking::{Pallet, Call, Storage, Event<T>, Config<T>} = 21,
-		Session: pallet_session::{Pallet, Call, Storage, Event, Config<T>} = 22,
-		Aura: pallet_aura::{Pallet, Config<T>} = 23,
-		AuraExt: cumulus_pallet_aura_ext::{Pallet, Config} = 24,
+		ParachainStaking: parachain_staking = 21,
+		Session: pallet_session = 22,
+		Aura: pallet_aura = 23,
+		AuraExt: cumulus_pallet_aura_ext = 24,
 
 		// Governance stuff
-		Democracy: pallet_democracy::{Pallet, Call, Storage, Config<T>, Event<T>} = 30,
-		Council: pallet_collective::<Instance1>::{Pallet, Call, Storage, Origin<T>, Event<T>, Config<T>} = 31,
-		TechnicalCommittee: pallet_collective::<Instance2>::{Pallet, Call, Storage, Origin<T>, Event<T>, Config<T>} = 32,
+		Democracy: pallet_democracy = 30,
+		Council: pallet_collective::<Instance1> = 31,
+		TechnicalCommittee: pallet_collective::<Instance2> = 32,
 		// placeholder: parachain council election = 33,
-		TechnicalMembership: pallet_membership::{Pallet, Call, Storage, Event<T>, Config<T>} = 34,
-		Treasury: pallet_treasury::{Pallet, Call, Storage, Config, Event<T>} = 35,
+		TechnicalMembership: pallet_membership = 34,
+		Treasury: pallet_treasury = 35,
 
 		// Utility module.
-		Utility: pallet_utility::{Pallet, Call, Storage, Event} = 40,
+		Utility: pallet_utility = 40,
 
 		// Vesting. Usable initially, but removed once all vesting is finished.
-		Vesting: pallet_vesting::{Pallet, Call, Storage, Event<T>, Config<T>} = 41,
+		Vesting: pallet_vesting = 41,
 
 		// System scheduler.
 		Scheduler: pallet_scheduler::{Pallet, Call, Storage, Event<T>} = 42,
 
-		// PID Pallets. Start indices 60 to leave room
-		PidLaunch: pallet_pid_launch::{Pallet, Call, Storage, Event<T>, Config<T>} = 60,
-		Ctype: pallet_ctype::{Pallet, Call, Storage, Event<T>} = 61,
-		Attestation: pallet_attestation::{Pallet, Call, Storage, Event<T>} = 62,
-		Delegation: pallet_delegation::{Pallet, Call, Storage, Event<T>} = 63,
-		Did: pallet_did::{Pallet, Call, Storage, Event<T>, Origin<T>} = 64,
-		CrowdloanContributors: pallet_crowdloan::{Pallet, Call, Storage, Event<T>, Config<T>, ValidateUnsigned} = 65,
-		Inflation: pallet_inflation::{Pallet, Storage} = 66,
-		DidLookup: pallet_did_lookup::{Pallet, Call, Storage, Event<T>} = 67,
+		// KILT Pallets. Start indices 60 to leave room
+		KiltLaunch: kilt_launch = 60,
+		Ctype: ctype = 61,
+		Attestation: attestation = 62,
+		Delegation: delegation = 63,
+		Did: did = 64,
+		// DELETED: CrowdloanContributors = 65,
+		Inflation: pallet_inflation = 66,
+		DidLookup: pallet_did_lookup = 67,
 
 		// Parachains pallets. Start indices at 80 to leave room.
-		ParachainSystem: cumulus_pallet_parachain_system::{Pallet, Call, Storage, Inherent, Event<T>, Config} = 80,
+		ParachainSystem: cumulus_pallet_parachain_system = 80,
 		ParachainInfo: parachain_info::{Pallet, Storage, Config} = 81,
 	}
 }
 
-impl pallet_did::DeriveDidCallAuthorizationVerificationKeyRelationship for Call {
-	fn derive_verification_key_relationship(&self) -> pallet_did::DeriveDidCallKeyRelationshipResult {
+impl did::DeriveDidCallAuthorizationVerificationKeyRelationship for Call {
+	fn derive_verification_key_relationship(&self) -> did::DeriveDidCallKeyRelationshipResult {
 		/// ensure that all calls have the same VerificationKeyRelationship
-		fn single_key_relationship(calls: &[Call]) -> pallet_did::DeriveDidCallKeyRelationshipResult {
+		fn single_key_relationship(calls: &[Call]) -> did::DeriveDidCallKeyRelationshipResult {
 			let init = calls
 				.get(0)
-				.ok_or(pallet_did::RelationshipDeriveError::InvalidCallParameter)?
+				.ok_or(did::RelationshipDeriveError::InvalidCallParameter)?
 				.derive_verification_key_relationship()?;
 			calls
 				.iter()
@@ -811,24 +759,24 @@ impl pallet_did::DeriveDidCallAuthorizationVerificationKeyRelationship for Call 
 					} else if Ok(acc) == next {
 						Ok(acc)
 					} else {
-						Err(pallet_did::RelationshipDeriveError::InvalidCallParameter)
+						Err(did::RelationshipDeriveError::InvalidCallParameter)
 					}
 				})
 		}
 		match self {
-			Call::Attestation { .. } => Ok(pallet_did::DidVerificationKeyRelationship::AssertionMethod),
-			Call::Ctype { .. } => Ok(pallet_did::DidVerificationKeyRelationship::AssertionMethod),
-			Call::Delegation { .. } => Ok(pallet_did::DidVerificationKeyRelationship::CapabilityDelegation),
+			Call::Attestation { .. } => Ok(did::DidVerificationKeyRelationship::AssertionMethod),
+			Call::Ctype { .. } => Ok(did::DidVerificationKeyRelationship::AssertionMethod),
+			Call::Delegation { .. } => Ok(did::DidVerificationKeyRelationship::CapabilityDelegation),
 			// DID creation is not allowed through the DID proxy.
-			Call::Did(pallet_did::Call::create { .. }) => Err(pallet_did::RelationshipDeriveError::NotCallableByDid),
-			Call::Did { .. } => Ok(pallet_did::DidVerificationKeyRelationship::Authentication),
+			Call::Did(did::Call::create { .. }) => Err(did::RelationshipDeriveError::NotCallableByDid),
+			Call::Did { .. } => Ok(did::DidVerificationKeyRelationship::Authentication),
 			Call::Utility(pallet_utility::Call::batch { calls }) => single_key_relationship(&calls[..]),
 			Call::Utility(pallet_utility::Call::batch_all { calls }) => single_key_relationship(&calls[..]),
 			#[cfg(not(feature = "runtime-benchmarks"))]
-			_ => Err(pallet_did::RelationshipDeriveError::NotCallableByDid),
+			_ => Err(did::RelationshipDeriveError::NotCallableByDid),
 			// By default, returns the authentication key
 			#[cfg(feature = "runtime-benchmarks")]
-			_ => Ok(pallet_did::DidVerificationKeyRelationship::Authentication),
+			_ => Ok(did::DidVerificationKeyRelationship::Authentication),
 		}
 	}
 
@@ -863,14 +811,8 @@ pub type UncheckedExtrinsic = generic::UncheckedExtrinsic<Address, Call, Signatu
 /// Extrinsic type that has already been checked.
 pub type CheckedExtrinsic = generic::CheckedExtrinsic<AccountId, Call, SignedExtra>;
 /// Executive: handles dispatch to the various modules.
-pub type Executive = frame_executive::Executive<
-	Runtime,
-	Block,
-	frame_system::ChainContext<Runtime>,
-	Runtime,
-	AllPallets,
-	migrations::RemoveCrowdloanContributors,
->;
+pub type Executive =
+	frame_executive::Executive<Runtime, Block, frame_system::ChainContext<Runtime>, Runtime, AllPallets>;
 
 impl_runtime_apis! {
 	impl sp_api::Core<Block> for Runtime {
@@ -982,14 +924,16 @@ impl_runtime_apis! {
 			Vec<frame_benchmarking::BenchmarkList>,
 			Vec<frame_support::traits::StorageInfo>,
 		) {
-			use frame_benchmarking::{list_benchmark, Benchmarking, BenchmarkList};
+			use frame_benchmarking::{list_benchmark, baseline, Benchmarking, BenchmarkList};
 			use frame_support::traits::StorageInfoTrait;
 			use frame_system_benchmarking::Pallet as SystemBench;
 			use cumulus_pallet_session_benchmarking::Pallet as SessionBench;
+			use baseline::Pallet as BaselineBench;
 
 			let mut list = Vec::<BenchmarkList>::new();
 
 			// Substrate
+			list_benchmark!(list, extra, frame_benchmarking, BaselineBench::<Runtime>);
 			list_benchmark!(list, extra, frame_system, SystemBench::<Runtime>);
 			list_benchmark!(list, extra, pallet_session, SessionBench::<Runtime>);
 			list_benchmark!(list, extra, pallet_balances, Balances);
@@ -1003,14 +947,13 @@ impl_runtime_apis! {
 			list_benchmark!(list, extra, pallet_utility, Utility);
 			list_benchmark!(list, extra, pallet_vesting, Vesting);
 
-			// PID
-			list_benchmark!(list, extra, pallet_attestation, Attestation);
-			list_benchmark!(list, extra, pallet_crowdloan, CrowdloanContributors);
-			list_benchmark!(list, extra, pallet_ctype, Ctype);
-			list_benchmark!(list, extra, pallet_delegation, Delegation);
-			list_benchmark!(list, extra, pallet_did, Did);
+			// KILT
+			list_benchmark!(list, extra, attestation, Attestation);
+			list_benchmark!(list, extra, ctype, Ctype);
+			list_benchmark!(list, extra, delegation, Delegation);
+			list_benchmark!(list, extra, did, Did);
 			list_benchmark!(list, extra, pallet_did_lookup, DidLookup);
-			list_benchmark!(list, extra, pallet_pid_launch, PidLaunch);
+			list_benchmark!(list, extra, kilt_launch, KiltLaunch);
 			list_benchmark!(list, extra, pallet_inflation, Inflation);
 			list_benchmark!(list, extra, parachain_staking, ParachainStaking);
 
@@ -1022,12 +965,14 @@ impl_runtime_apis! {
 		fn dispatch_benchmark(
 			config: frame_benchmarking::BenchmarkConfig
 		) -> Result<Vec<frame_benchmarking::BenchmarkBatch>, sp_runtime::RuntimeString> {
-			use frame_benchmarking::{Benchmarking, BenchmarkBatch, add_benchmark, TrackedStorageKey};
+			use frame_benchmarking::{baseline, Benchmarking, BenchmarkBatch, add_benchmark, TrackedStorageKey};
 			use frame_system_benchmarking::Pallet as SystemBench;
 			use cumulus_pallet_session_benchmarking::Pallet as SessionBench;
+			use baseline::Pallet as BaselineBench;
 
 			impl frame_system_benchmarking::Config for Runtime {}
 			impl cumulus_pallet_session_benchmarking::Config for Runtime {}
+			impl baseline::Config for Runtime {}
 
 			let whitelist: Vec<TrackedStorageKey> = vec![
 				// Block Number
@@ -1045,7 +990,7 @@ impl_runtime_apis! {
 				// System Events
 				hex_literal::hex!("26aa394eea5630e07c48ae0c9558cef780d41e5e16056765bc8461851072c9d7")
 					.to_vec().into(),
-				// PidLaunch transfer account
+				// KiltLaunch transfer account
 				hex_literal::hex!("6a3c793cec9dbe330b349dc4eea6801090f5e71f53b1b41ad11afb4a313a282c").to_vec().into(),
 			];
 
@@ -1053,6 +998,7 @@ impl_runtime_apis! {
 			let params = (&config, &whitelist);
 
 			// Substrate
+			add_benchmark!(params, batches, frame_benchmarking, BaselineBench::<Runtime>);
 			add_benchmark!(params, batches, pallet_balances, Balances);
 			add_benchmark!(params, batches, pallet_collective, Council);
 			add_benchmark!(params, batches, pallet_democracy, Democracy);
@@ -1066,14 +1012,13 @@ impl_runtime_apis! {
 			add_benchmark!(params, batches, pallet_utility, Utility);
 			add_benchmark!(params, batches, pallet_vesting, Vesting);
 
-			// PID
-			add_benchmark!(params, batches, pallet_attestation, Attestation);
-			add_benchmark!(params, batches, pallet_ctype, Ctype);
-			add_benchmark!(params, batches, pallet_crowdloan, CrowdloanContributors);
-			add_benchmark!(params, batches, pallet_delegation, Delegation);
-			add_benchmark!(params, batches, pallet_did, Did);
+			// KILT
+			add_benchmark!(params, batches, attestation, Attestation);
+			add_benchmark!(params, batches, ctype, Ctype);
+			add_benchmark!(params, batches, delegation, Delegation);
+			add_benchmark!(params, batches, did, Did);
 			add_benchmark!(params, batches, pallet_did_lookup, DidLookup);
-			add_benchmark!(params, batches, pallet_pid_launch, PidLaunch);
+			add_benchmark!(params, batches, kilt_launch, KiltLaunch);
 			add_benchmark!(params, batches, pallet_inflation, Inflation);
 			add_benchmark!(params, batches, parachain_staking, ParachainStaking);
 

@@ -1,5 +1,5 @@
 // KILT Blockchain – https://botlabs.org
-// Copyright (C) 2019-2021 BOTLabs GmbH
+// Copyright (C) 2019-2022 BOTLabs GmbH
 
 // The KILT Blockchain is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -26,8 +26,8 @@ use frame_support::{
 	traits::{Currency, GenesisBuild, OnFinalize, OnInitialize, OnUnbalanced},
 	weights::Weight,
 };
-use pid_primitives::constants::{staking::NETWORK_REWARD_RATE, treasury::INITIAL_PERIOD_LENGTH, PID};
 use pallet_authorship::EventHandler;
+use runtime_common::constants::{staking::NETWORK_REWARD_RATE, treasury::INITIAL_PERIOD_LENGTH, PID};
 use sp_consensus_aura::sr25519::AuthorityId;
 use sp_core::H256;
 use sp_runtime::{
@@ -38,7 +38,7 @@ use sp_runtime::{
 };
 use sp_std::fmt::Debug;
 
-pub use pid_primitives::BlockNumber;
+pub use runtime_common::BlockNumber;
 
 pub type AccountId = u64;
 pub type Balance = u128;

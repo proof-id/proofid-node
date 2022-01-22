@@ -1,5 +1,5 @@
 // KILT Blockchain – https://botlabs.org
-// Copyright (C) 2019-2021 BOTLabs GmbH
+// Copyright (C) 2019-2022 BOTLabs GmbH
 
 // The KILT Blockchain is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -22,6 +22,8 @@ use frame_support::traits::{Currency, ReservableCurrency};
 use sp_runtime::traits::Zero;
 
 pub mod deposit;
+#[cfg(any(feature = "runtime-benchmarks", feature = "mock"))]
+pub mod mock;
 pub mod signature;
 pub mod traits;
 

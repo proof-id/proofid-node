@@ -1,5 +1,5 @@
 // KILT Blockchain – https://botlabs.org
-// Copyright (C) 2019-2021 BOTLabs GmbH
+// Copyright (C) 2019-2022 BOTLabs GmbH
 
 // The KILT Blockchain is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,11 +18,11 @@
 
 //! KILT chain specification
 
-use pid_primitives::{constants::BLOCKS_PER_YEAR, AccountId, AccountPublic, Balance, BlockNumber};
-use proofid_node_runtime::{
-	BalancesConfig, CrowdloanContributorsConfig, GenesisConfig, PidLaunchConfig, SessionConfig, SudoConfig,
-	SystemConfig, VestingConfig, WASM_BINARY,
+use mashnet_node_runtime::{
+	BalancesConfig, GenesisConfig, IndicesConfig, KiltLaunchConfig, SessionConfig, SudoConfig, SystemConfig,
+	VestingConfig, WASM_BINARY,
 };
+use runtime_common::{constants::BLOCKS_PER_YEAR, AccountId, AccountPublic, Balance, BlockNumber};
 
 use hex_literal::hex;
 
@@ -49,7 +49,7 @@ pub enum Alternative {
 	/// Whatever the current runtime is, with simple Alice/Bob auths.
 	PidTestnet,
 	PidDevnet,
-	ProofIdStaging,
+	MidgardStaging,
 }
 
 /// Helper function to generate a crypto pair from seed
@@ -90,9 +90,11 @@ fn as_authority_key(public_key: [u8; 32]) -> (AccountId, AuraId, GrandpaId) {
 
 pub const SUPPLY: Balance = 1500000000_000000; // 300,000,000.000000 * 5 accounts.
 
-const DEV_AUTH_ALICE: [u8; 32] = hex!("9eadb73738c861ccf117e511cf131472d4925e6b95e38ac9faa21b5c08ca09c4");
-const DEV_AUTH_BOB: [u8; 32] = hex!("3ba64ead0167cd9b64029f9b5987b24a04c30c573259e3e498d4464d36d6e204");
-const TRANSFER_ACCOUNT: [u8; 32] = hex!("76d909437eaf36ce2d3f81cad105a67291c24239b1b698f67e3865b07e12641e");
+const DEV_AUTH_ALICE: [u8; 32] = hex!("d44da634611d9c26837e3b5114a7d460a4cb7d688119739000632ed2d3794ae9");
+const DEV_AUTH_BOB: [u8; 32] = hex!("06815321f16a5ae0fe246ee19285f8d8858fe60d5c025e060922153fcf8e54f9");
+const DEV_AUTH_CHARLIE: [u8; 32] = hex!("6d2d775fdc628134e3613a766459ccc57a29fd380cd410c91c6c79bc9c03b344");
+const DEV_FAUCET: [u8; 32] = hex!("2c9e9c40e15a2767e2d04dc1f05d824dd76d1d37bada3d7bb1d40eca29f3a4ff");
+const TRANSFER_ACCOUNT: [u8; 32] = hex!("6a3c793cec9dbe330b349dc4eea6801090f5e71f53b1b41ad11afb4a313a282c");
 
 impl Alternative {
 	/// Get an actual chain config from one of the alternatives.
@@ -100,9 +102,8 @@ impl Alternative {
 		let wasm_binary = WASM_BINARY.ok_or_else(|| "Development wasm binary not available".to_string())?;
 
 		let mut properties = Properties::new();
-		properties.insert("ss58Format".into(), 42.into());
-		properties.insert("tokenDecimals".into(), 6.into());
 		properties.insert("tokenSymbol".into(), "PID".into());
+		properties.insert("tokenDecimals".into(), 6.into());
 
 		Ok(match self {
 			Alternative::Development => {
@@ -113,16 +114,18 @@ impl Alternative {
 					move || {
 						testnet_genesis(
 							wasm_binary,
-							vec![get_authority_keys_from_secret("//Alice")],
+							vec![
+								get_authority_keys_from_secret("//Alice"),
+								get_authority_keys_from_secret("//Bob"),
+							],
 							get_account_id_from_secret::<ed25519::Public>("//Alice"),
 							vec![
-					// Dev Faucet account
-					get_account_id_from_secret::<ed25519::Public>("receive clutch item involve chaos clutch furnace arrest claw isolate okay together"),
-					get_account_id_from_secret::<ed25519::Public>("//Alice"),
-					get_account_id_from_secret::<ed25519::Public>("//Bob"),
-					get_account_id_from_secret::<sr25519::Public>("//Alice"),
-					get_account_id_from_secret::<sr25519::Public>("//Bob"),
-					],
+								// Dev Faucet account
+								// get_account_id_from_secret::<ed25519::Public>("//Alice"),
+								// get_account_id_from_secret::<ed25519::Public>("//Bob"),
+								// get_account_id_from_secret::<sr25519::Public>("//Alice"),
+								// get_account_id_from_secret::<sr25519::Public>("//Bob"),
+							],
 						)
 					},
 					vec![],
@@ -135,19 +138,31 @@ impl Alternative {
 			Alternative::PidTestnet => ChainSpec::from_json_bytes(&include_bytes!("../res/testnet.json")[..])?,
 			Alternative::PidDevnet => {
 				ChainSpec::from_genesis(
-					"ProofId Devnet",
-					"proofid_devnet",
+					"PID Devnet",
+					"pid_devnet",
 					ChainType::Live,
 					move || {
 						testnet_genesis(
 							wasm_binary,
 							// Initial Authorities
 							vec![
-								as_authority_key(DEV_AUTH_ALICE),
-								as_authority_key(DEV_AUTH_BOB),
+								get_authority_keys_from_secret("//Alice"),
+								get_authority_keys_from_secret("//Bob"),
+								/* as_authority_key(DEV_AUTH_ALICE),
+								 * as_authority_key(DEV_AUTH_BOB),
+								 * as_authority_key(DEV_AUTH_CHARLIE), */
 							],
-							DEV_AUTH_ALICE.into(),
-							vec![],
+							get_account_id_from_secret::<ed25519::Public>("//Alice"),
+							vec![
+								// DEV_FAUCET.into(),
+								// get_account_id_from_secret::<ed25519::Public>("//Alice"),
+								// get_account_id_from_secret::<ed25519::Public>("//Bob"),
+								// get_account_id_from_secret::<sr25519::Public>("//Alice"),
+								// get_account_id_from_secret::<sr25519::Public>("//Bob"),
+								/* DEV_AUTH_ALICE.into(),
+								 * DEV_AUTH_BOB.into(),
+								 * DEV_AUTH_CHARLIE.into(), */
+							],
 						)
 					},
 					vec![],
@@ -157,10 +172,10 @@ impl Alternative {
 					None,
 				)
 			}
-			Alternative::ProofIdStaging => {
+			Alternative::MidgardStaging => {
 				ChainSpec::from_genesis(
-					"ProofId Staging",
-					"proofid_staging",
+					"Midgar Staging",
+					"midgar_staging",
 					ChainType::Live,
 					move || {
 						testnet_genesis(
@@ -169,9 +184,15 @@ impl Alternative {
 							vec![
 								as_authority_key(DEV_AUTH_ALICE),
 								as_authority_key(DEV_AUTH_BOB),
+								as_authority_key(DEV_AUTH_CHARLIE),
 							],
 							DEV_AUTH_ALICE.into(),
-							vec![],
+							vec![
+								DEV_FAUCET.into(),
+								DEV_AUTH_ALICE.into(),
+								DEV_AUTH_BOB.into(),
+								DEV_AUTH_CHARLIE.into(),
+							],
 						)
 					},
 					vec![],
@@ -187,9 +208,9 @@ impl Alternative {
 	pub(crate) fn from(s: &str) -> Option<Self> {
 		match s {
 			"dev" => Some(Alternative::Development),
-			"testnet" => Some(Alternative::PidTestnet),
-			"devnet" => Some(Alternative::PidDevnet),
-			"staging" => Some(Alternative::ProofIdStaging),
+			"pid-testnet" => Some(Alternative::PidTestnet),
+			"pid-devnet" => Some(Alternative::PidDevnet),
+			"midgard-staging" => Some(Alternative::MidgardStaging),
 			_ => None,
 		}
 	}
@@ -209,19 +230,22 @@ fn testnet_genesis(
 	let airdrop_accounts: Vec<(AccountId, VestingPeriod, LockingPeriod)> =
 		serde_json::from_slice(airdrop_accounts_json).expect("Could not read from genesis_accounts.json");
 
-	let num_endowed_accounts = airdrop_accounts.len() as u128;
-	let amount: Balance = (SUPPLY / num_endowed_accounts) as Balance;
+	let airdrop_accounts_len = airdrop_accounts.len() as u128;
+	let endowed_accounts_len = endowed_accounts.len() as u128;
+
+	let amount: Balance = (SUPPLY / (airdrop_accounts_len + endowed_accounts_len)) as Balance;
 
 	GenesisConfig {
 		system: SystemConfig {
 			code: wasm_binary.to_vec(),
-			changes_trie_config: Default::default(),
 		},
+		indices: IndicesConfig { indices: vec![] },
+		transaction_payment: Default::default(),
 		balances: BalancesConfig {
 			balances: endowed_accounts
 				.iter()
 				.cloned()
-				.map(|a| (a, 1u128 << 90))
+				.map(|a| (a, amount))
 				.chain(airdrop_accounts.iter().cloned().map(|(who, _, _)| (who, amount)))
 				.collect(),
 		},
@@ -232,7 +256,7 @@ fn testnet_genesis(
 					(
 						x.0.clone(),
 						x.0.clone(),
-						proofid_node_runtime::opaque::SessionKeys {
+						mashnet_node_runtime::opaque::SessionKeys {
 							aura: x.1.clone(),
 							grandpa: x.2.clone(),
 						},
@@ -243,7 +267,7 @@ fn testnet_genesis(
 		aura: Default::default(),
 		grandpa: Default::default(),
 		sudo: SudoConfig { key: root_key },
-		pid_launch: PidLaunchConfig {
+		kilt_launch: KiltLaunchConfig {
 			balance_locks: airdrop_accounts
 				.iter()
 				.cloned()
@@ -255,9 +279,6 @@ fn testnet_genesis(
 				.map(|(who, vesting_length, _)| (who, vesting_length * BLOCKS_PER_YEAR / 12, amount))
 				.collect(),
 			transfer_account: TRANSFER_ACCOUNT.into(),
-		},
-		crowdloan_contributors: CrowdloanContributorsConfig {
-			registrar_account: TRANSFER_ACCOUNT.into(),
 		},
 		vesting: VestingConfig { vesting: vec![] },
 	}

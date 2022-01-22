@@ -1,5 +1,5 @@
 // KILT Blockchain – https://botlabs.org
-// Copyright (C) 2019-2021 BOTLabs GmbH
+// Copyright (C) 2019-2022 BOTLabs GmbH
 
 // The KILT Blockchain is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -22,12 +22,12 @@
 //! DATE: 2021-06-10, STEPS: {{cmd.steps}}\, REPEAT: {{cmd.repeat}}\, LOW RANGE:
 //! {{cmd.lowest_range_values}}\, HIGH RANGE: {{cmd.highest_range_values}}\
 //! EXECUTION: Some(Wasm), WASM-EXECUTION: Compiled, CHAIN:
-//! Some("midgard-dev"), DB CACHE: 128
+//! Some("spiritnet-dev"), DB CACHE: 128
 
 // Executed Command:
-// /home/willi/proofid-node/target/release/kilt-parachain
+// /home/willi/mashnet-node/target/release/kilt-parachain
 // benchmark
-// --chain=midgard-dev
+// --chain=spiritnet-dev
 // --execution=wasm
 // --wasm-execution=Compiled
 // --heap-pages=4096
@@ -36,7 +36,7 @@
 // --steps=50
 // --repeat=20
 // --output
-// ../../runtimes/midgard/src/weights/pallet_timestamp.rs
+// ../../runtimes/spiritnet/src/weights/pallet_timestamp.rs
 // --template
 // ../../.maintain/weight-template.hbs
 

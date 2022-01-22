@@ -1,0 +1,83 @@
+// KILT Blockchain – https://botlabs.org
+// Copyright (C) 2019-2022 BOTLabs GmbH
+
+// The KILT Blockchain is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+
+// The KILT Blockchain is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+// If you feel like getting in touch with us, you can do so at info@botlabs.org
+
+use frame_support::{assert_noop, assert_ok, sp_runtime::traits::Hash};
+use kilt_support::mock::mock_origin::DoubleOrigin;
+
+use crate::{self as ctype, mock::runtime::*};
+
+// submit_ctype_creation_operation
+
+#[test]
+fn check_successful_ctype_creation() {
+	let creator = DID_00;
+	let deposit_owner = ACCOUNT_00;
+	let ctype = [9u8; 256].to_vec();
+	let ctype_hash = <Test as frame_system::Config>::Hashing::hash(&ctype[..]);
+	let initial_balance = <Test as ctype::Config>::Fee::get() * 2;
+	ExtBuilder::default()
+		.with_balances(vec![(deposit_owner.clone(), initial_balance)])
+		.build()
+		.execute_with(|| {
+			assert_ok!(Ctype::add(
+				DoubleOrigin(deposit_owner.clone(), creator.clone()).into(),
+				ctype
+			));
+			let stored_ctype_creator = Ctype::ctypes(&ctype_hash).expect("CType hash should be present on chain.");
+
+			// Verify the CType has the right owner
+			assert_eq!(stored_ctype_creator, creator);
+			assert_eq!(
+				Balances::free_balance(deposit_owner),
+				initial_balance.saturating_sub(<Test as ctype::Config>::Fee::get())
+			);
+		});
+}
+
+#[test]
+fn insufficient_funds() {
+	let creator = DID_00;
+	let deposit_owner = ACCOUNT_00;
+	let ctype = [9u8; 256].to_vec();
+
+	ExtBuilder::default().build().execute_with(|| {
+		assert_noop!(
+			Ctype::add(DoubleOrigin(deposit_owner, creator).into(), ctype),
+			ctype::Error::<Test>::UnableToPayFees
+		);
+	});
+}
+
+#[test]
+fn check_duplicate_ctype_creation() {
+	let creator = DID_00;
+	let deposit_owner = ACCOUNT_00;
+	let ctype = [9u8; 256].to_vec();
+	let ctype_hash = <Test as frame_system::Config>::Hashing::hash(&ctype[..]);
+
+	ExtBuilder::default()
+		.with_ctypes(vec![(ctype_hash, creator.clone())])
+		.with_balances(vec![(deposit_owner.clone(), <Test as ctype::Config>::Fee::get() * 2)])
+		.build()
+		.execute_with(|| {
+			assert_noop!(
+				Ctype::add(DoubleOrigin(deposit_owner, creator).into(), ctype),
+				ctype::Error::<Test>::CTypeAlreadyExists
+			);
+		});
+}

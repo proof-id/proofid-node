@@ -3,8 +3,8 @@ version: "3"
 services:
   dev-node:
     build: .
-    image: local/proofid-node
-    command: ./target/release/proofid-node --dev --ws-port 9944 --ws-external
+    image: local/mashnet-node
+    command: ./target/release/mashnet-node --dev --ws-port 9944 --ws-external
     ports:
       - 9944:9944
   sdk:

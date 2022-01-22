@@ -1,5 +1,5 @@
 // KILT Blockchain – https://botlabs.org
-// Copyright (C) 2019-2021 BOTLabs GmbH
+// Copyright (C) 2019-2022 BOTLabs GmbH
 
 // The KILT Blockchain is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,8 +18,8 @@
 
 use codec::Encode;
 use frame_support::{assert_noop, assert_ok};
-use pid_primitives::BlockNumber;
-use pid_support::deposit::Deposit;
+use kilt_support::{deposit::Deposit, mock::mock_origin};
+use runtime_common::BlockNumber;
 use sp_runtime::{
 	app_crypto::{sr25519, Pair},
 	traits::IdentifyAccount,

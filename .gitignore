@@ -13,6 +13,6 @@
 .vscode
 
 # Custom Polkadot-js apps types
-pallets/pallet-did/src/custom_types.json
+pallets/did/src/custom_types.json
 
 **/__pycache__

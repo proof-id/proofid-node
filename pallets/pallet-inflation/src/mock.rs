@@ -1,5 +1,5 @@
 // KILT Blockchain – https://botlabs.org
-// Copyright (C) 2019-2021 BOTLabs GmbH
+// Copyright (C) 2019-2022 BOTLabs GmbH
 
 // The KILT Blockchain is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -22,7 +22,7 @@ use frame_support::{
 	parameter_types,
 	traits::{Currency, OnFinalize, OnInitialize, OnUnbalanced},
 };
-use pid_primitives::{
+use runtime_common::{
 	constants::treasury::{INITIAL_PERIOD_LENGTH, INITIAL_PERIOD_REWARD_PER_BLOCK},
 	AccountId, Balance, BlockHashCount, BlockNumber, Hash, Index,
 };
@@ -34,7 +34,7 @@ use sp_runtime::{
 type UncheckedExtrinsic = frame_system::mocking::MockUncheckedExtrinsic<Test>;
 type Block = frame_system::mocking::MockBlock<Test>;
 
-pub(crate) const TREASURY_ACC: AccountId = pid_primitives::AccountId::new([0u8; 32]);
+pub(crate) const TREASURY_ACC: AccountId = runtime_common::AccountId::new([1u8; 32]);
 
 frame_support::construct_runtime!(
 	pub enum Test where

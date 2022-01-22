@@ -1,5 +1,5 @@
 // KILT Blockchain – https://botlabs.org
-// Copyright (C) 2019-2021 BOTLabs GmbH
+// Copyright (C) 2019-2022 BOTLabs GmbH
 
 // The KILT Blockchain is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,8 +18,8 @@
 
 //! Helper methods for computing issuance based on inflation
 use crate::{pallet::Config, types::BalanceOf};
-use pid_primitives::constants::BLOCKS_PER_YEAR;
 use parity_scale_codec::{Decode, Encode};
+use runtime_common::constants::BLOCKS_PER_YEAR;
 use scale_info::TypeInfo;
 use sp_runtime::{traits::Saturating, Perquintill, RuntimeDebug};
 
@@ -144,7 +144,7 @@ mod tests {
 
 	use super::*;
 	use crate::mock::{almost_equal, ExtBuilder, Test, DECIMALS};
-	use pid_primitives::constants::{BLOCKS_PER_YEAR, MAX_COLLATOR_STAKE};
+	use runtime_common::constants::{BLOCKS_PER_YEAR, MAX_COLLATOR_STAKE};
 
 	#[test]
 	fn perquintill() {
